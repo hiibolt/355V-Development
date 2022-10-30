@@ -75,6 +75,13 @@ void removeLowPowerIssues(signed char* value){
 		*value =  -30;
 	}
 }
+void removeLowPowerIssues(signed short* value){
+	if(*value < 30 && *value > 5){
+		*value =  30;
+	}else if(*value > -30 && *value < -5){
+		*value =  -30;
+	}
+}
 /**
  * Runs the operator control code. This function will be started in its own task
  * with the default priority and stack size whenever the robot is enabled via
@@ -96,13 +103,14 @@ void opcontrol() {
 	pros::Motor right_mtr1(8, false);
 	pros::Motor right_mtr2(9, false);
 	pros::Motor right_mtr3(10, false);
+
 	unsigned char driveType = 0;
+
 	/**
 		0: Tank
-		1: Split Arcade
+		1: Split Arcade [High precision, low rotation speed]
+		2: Split Arcade [High speed, low rotation speed]
 	**/
-
-	printf("Initialized!");
 	while (true) {
 		//Switching drive types
 		if(master.get_digital_new_press(DIGITAL_UP)){
@@ -129,29 +137,29 @@ void opcontrol() {
 				break;
 			}
 			case 1: {
-				//Split Arcade (High Precision, Half Speed)
-				info = "Split Arcade [HP]";
+				//Split Arcade (High Turn, Half Speed)
+				info = "Split Arcade [HT]";
 				signed char left = (master.get_analog(ANALOG_LEFT_Y) + master.get_analog(ANALOG_RIGHT_X)) / 2;
 				signed char right = (master.get_analog(ANALOG_LEFT_Y) - master.get_analog(ANALOG_RIGHT_X)) / 2;
+				signed char left_delta = (master.get_analog(ANALOG_RIGHT_X) * (1 - abs(master.get_analog(ANALOG_LEFT_Y)) / 127)) / 2;
+				signed char right_delta = (master.get_analog(ANALOG_RIGHT_X) * (1 - abs(master.get_analog(ANALOG_LEFT_Y)) / 127)) / 2;
 				removeLowPowerIssues(&left);
 				removeLowPowerIssues(&right);
 
-				left_mtr1.move(left);
-				left_mtr2.move(left);
-				left_mtr3.move(left);
-				right_mtr1.move(right);
-				right_mtr2.move(right);
-				right_mtr3.move(right);
-				pros::lcd::set_text(0,std::to_string(left) + " | " + std::to_string(right) + " | " + std::to_string(driveType));
-
+				left_mtr1.move(left + left_delta);
+				left_mtr2.move(left + left_delta);
+				left_mtr3.move(left + left_delta);
+				right_mtr1.move(right + right_delta);
+				right_mtr2.move(right + right_delta);
+				right_mtr3.move(right + right_delta);
 				break;
 			}
 			case 2: {
-				//Split Arcade (High Speed, Half Precision)
+				//Split Arcade (High Speed, Half Turn)
 				info = "Split Arcade [HS]";
 				signed char left = (master.get_analog(ANALOG_LEFT_Y) + master.get_analog(ANALOG_RIGHT_X)) / 2;
 				signed char right = (master.get_analog(ANALOG_LEFT_Y) - master.get_analog(ANALOG_RIGHT_X)) / 2;
-				signed char up = (master.get_analog(ANALOG_LEFT_Y) * (1 - (127 / abs(master.get_analog(ANALOG_LEFT_X)))) ) / 2;
+				signed char up = (master.get_analog(ANALOG_LEFT_Y) * (1 - (abs(master.get_analog(ANALOG_LEFT_X)) / 127)) ) / 2;
 				removeLowPowerIssues(&left);
 				removeLowPowerIssues(&right);
 
@@ -161,8 +169,45 @@ void opcontrol() {
 				right_mtr1.move(right + up);
 				right_mtr2.move(right + up);
 				right_mtr3.move(right + up);
-				pros::lcd::set_text(0,std::to_string(left) + " | " + std::to_string(right) + " | " + std::to_string(driveType));
+				break;
+			}
+			case 3: {
+				//Split Arcade (CAR)
+				info = "Split Arcade [CAR]";
+				signed char up = master.get_analog(ANALOG_LEFT_Y);
+				float left_delta = master.get_analog(ANALOG_RIGHT_X) < 0 ? 1 - abs(master.get_analog(ANALOG_RIGHT_X)) / 127 : 1;
+				float right_delta = master.get_analog(ANALOG_RIGHT_X) > 0 ? 1 - master.get_analog(ANALOG_RIGHT_X) / 127 : 1;
+				removeLowPowerIssues(&up);
 
+				left_mtr1.move(up * left_delta);
+				left_mtr2.move(up * left_delta);
+				left_mtr3.move(up * left_delta);
+				right_mtr1.move(up * right_delta);
+				right_mtr2.move(up * right_delta);
+				right_mtr3.move(up * right_delta);
+				break;
+			}
+			case 4: {
+				//Split Arcade (Scalar)
+				info = "Split Arcade [SC]";
+				signed short left = master.get_analog(ANALOG_LEFT_Y) + master.get_analog(ANALOG_RIGHT_X);
+				signed short right = master.get_analog(ANALOG_LEFT_Y) - master.get_analog(ANALOG_RIGHT_X);
+				if(abs(left) > 127){
+					right = right * (127 / abs(left));
+					left = left > 0 ? 127 : -127;
+				}else if(abs(right) > 127){
+					left = left * (127 / abs(right));
+					right = right > 0 ? 127 : -127;
+				}
+				removeLowPowerIssues(&left);
+				removeLowPowerIssues(&right);
+
+				left_mtr1.move(left);
+				left_mtr2.move(left);
+				left_mtr3.move(left);
+				right_mtr1.move(right);
+				right_mtr2.move(right);
+				right_mtr3.move(right);
 				break;
 			}
 			default:
@@ -170,7 +215,7 @@ void opcontrol() {
 		}
 
 		//Display padded information, otherwise information ghosts on screen
-		info.insert(info.end(),18 - info.size(), ' ');
+		info.insert(info.end(),19 - info.size(), ' ');
 		master.set_text(0,0,info);
 
 		//Delay to prevent code overflow
