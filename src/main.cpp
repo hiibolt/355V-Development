@@ -110,11 +110,16 @@ void opcontrol() {
 		0: Tank
 		1: Split Arcade [High precision, low rotation speed]
 		2: Split Arcade [High speed, low rotation speed]
+		3: Split Arcade [RC Car-type controls, no point turns]
+		4: Split Arcade [Scalar Split Arcade, Kind Medium]
 	**/
 	while (true) {
 		//Switching drive types
 		if(master.get_digital_new_press(DIGITAL_UP)){
 			driveType ++;
+		}
+		if(master.get_digital_new_press(DIGITAL_DOWN)){
+			driveType = driveType == 0 ? 4 : driveType - 1;
 		}
 
 		//Will be printed later
@@ -142,7 +147,7 @@ void opcontrol() {
 				signed char left = (master.get_analog(ANALOG_LEFT_Y) + master.get_analog(ANALOG_RIGHT_X)) / 2;
 				signed char right = (master.get_analog(ANALOG_LEFT_Y) - master.get_analog(ANALOG_RIGHT_X)) / 2;
 				signed char left_delta = (master.get_analog(ANALOG_RIGHT_X) * (1 - abs(master.get_analog(ANALOG_LEFT_Y)) / 127)) / 2;
-				signed char right_delta = (master.get_analog(ANALOG_RIGHT_X) * (1 - abs(master.get_analog(ANALOG_LEFT_Y)) / 127)) / 2;
+				signed char right_delta = (-master.get_analog(ANALOG_RIGHT_X) * (1 - abs(master.get_analog(ANALOG_LEFT_Y)) / 127)) / 2;
 				removeLowPowerIssues(&left);
 				removeLowPowerIssues(&right);
 
@@ -215,10 +220,10 @@ void opcontrol() {
 		}
 
 		//Display padded information, otherwise information ghosts on screen
-		info.insert(info.end(),19 - info.size(), ' ');
+		info.insert(info.end(),18 - info.size(), ' ');
 		master.set_text(0,0,info);
 
 		//Delay to prevent code overflow
-		pros::delay(5);
+		pros::delay(2);
 	}
 }
