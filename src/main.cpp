@@ -81,7 +81,7 @@ void removeLowPowerIssues(signed short* value){
 	}
 }
 void turn(unsigned short initialDegrees, unsigned short rotateBy){
-	signed short targetRotation = (initialDegrees + rotateBy)
+	signed short targetRotation = (initialDegrees + rotateBy);
 	while (abs(targetRotation - inertia.get_rotation()) > 3){
 	}
 }
