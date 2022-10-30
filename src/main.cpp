@@ -2,21 +2,18 @@
 #include <string.h>
 #include <math.h>
 
-/**
- * A callback function for LLEMU's center button.
- *
- * When this callback is fired, it will toggle line 2 of the LCD text between
- * "I was pressed!" and nothing.
- */
-void on_center_button() {
-	static bool pressed = false;
-	pressed = !pressed;
-	if (pressed) {
-		pros::lcd::set_text(2, "I was pressed!");
-	} else {
-		pros::lcd::clear_line(2);
-	}
-}
+/** 			Constants 			**/
+//Controller constructor
+pros::Controller master(pros::E_CONTROLLER_MASTER);
+//Inertial Sensor
+pros::Imu inertia(19);
+//Motor Array
+pros::Motor left_mtr1(1, true);
+pros::Motor left_mtr2(4, true);
+pros::Motor left_mtr3(5, true);
+pros::Motor right_mtr1(8, false);
+pros::Motor right_mtr2(9, false);
+pros::Motor right_mtr3(10, false);
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -26,9 +23,10 @@ void on_center_button() {
  */
 void initialize() {
 	pros::lcd::initialize();
-	pros::lcd::set_text(1, "spaghetti code activated.");
 
-	pros::lcd::register_btn1_cb(on_center_button);
+	master.set_text(0,0,"Init Inertia Sensor");
+	inertia.reset(true);
+
 }
 
 /**
@@ -82,6 +80,11 @@ void removeLowPowerIssues(signed short* value){
 		*value =  -30;
 	}
 }
+void turn(unsigned short initialDegrees, unsigned short rotateBy){
+	signed short targetRotation = (initialDegrees + rotateBy)
+	while (abs(targetRotation - inertia.get_rotation()) > 3){
+	}
+}
 /**
  * Runs the operator control code. This function will be started in its own task
  * with the default priority and stack size whenever the robot is enabled via
@@ -96,16 +99,6 @@ void removeLowPowerIssues(signed short* value){
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	pros::Controller master(pros::E_CONTROLLER_MASTER);
-	pros::Motor left_mtr1(1, true);
-	pros::Motor left_mtr2(4, true);
-	pros::Motor left_mtr3(5, true);
-	pros::Motor right_mtr1(8, false);
-	pros::Motor right_mtr2(9, false);
-	pros::Motor right_mtr3(10, false);
-
-	unsigned char driveType = 0;
-
 	/**
 		0: Tank
 		1: Split Arcade [High precision, low rotation speed]
@@ -113,6 +106,7 @@ void opcontrol() {
 		3: Split Arcade [RC Car-type controls, no point turns]
 		4: Split Arcade [Scalar Split Arcade, Kind Medium]
 	**/
+	unsigned char driveType = 0;
 	while (true) {
 		//Switching drive types
 		if(master.get_digital_new_press(DIGITAL_UP)){
@@ -219,8 +213,11 @@ void opcontrol() {
 				driveType = 0;
 		}
 
-		//Display padded information, otherwise information ghosts on screen
-		info.insert(info.end(),18 - info.size(), ' ');
+		//Pilot/Debug Information
+		pros::lcd::set_text(0,"Drive Type: " + info);
+		pros::lcd::set_text(1,"Rotation: " + std::to_string(inertia.get_rotation()) + " (deg)");
+
+		master.clear_line(0);
 		master.set_text(0,0,info);
 
 		//Delay to prevent code overflow
