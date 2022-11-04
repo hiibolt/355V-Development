@@ -90,20 +90,24 @@ void drive(float distance){
 void turn(double aim){
 	while (std::round(abs(aim - inertia.get_rotation())) > 0.5){
 		pros::delay(2);
+		std::int32_t speed = 200 * (abs(aim - inertia.get_rotation()) / 100);
 		if(aim < inertia.get_rotation()){
-			left_mtr1.move(-100);
-			left_mtr2.move(-100);
-			left_mtr3.move(-100);
-			right_mtr1.move(100);
-			right_mtr2.move(100);
-			right_mtr3.move(100);
+			//distance to = abs(aim - inertia.get_rotation())
+			//higher distance = more turn
+			//100 / distance
+			left_mtr1.move(-speed);
+			left_mtr2.move(-speed);
+			left_mtr3.move(-speed);
+			right_mtr1.move(speed);
+			right_mtr2.move(speed);
+			right_mtr3.move(speed);
 		}else{
-			left_mtr1.move(100);
-			left_mtr2.move(100);
-			left_mtr3.move(100);
-			right_mtr1.move(-100);
-			right_mtr2.move(-100);
-			right_mtr3.move(-100);
+			left_mtr1.move(speed);
+			left_mtr2.move(speed);
+			left_mtr3.move(speed);
+			right_mtr1.move(-speed);
+			right_mtr2.move(-speed);
+			right_mtr3.move(-speed);
 		}
 		master.set_text(0,0,std::to_string(aim) + " | " + std::to_string(inertia.get_rotation()));
 	}
