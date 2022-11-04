@@ -66,8 +66,8 @@ void autonomous() {}
 	Sets that voltage to -30 or 30 respectively if it's close to zero
 	This fixes non-functioning low power when it should be moving
 **/
-double voltageToPercent(int32_t voltage){
-	return (double)voltage / 127;
+float voltageToPercent(int32_t voltage){
+	return (float)voltage / 127;
 }
 void removeLowPowerIssues(signed char* value){
 	if(*value < 30 && *value > 5){
@@ -83,9 +83,29 @@ void removeLowPowerIssues(signed short* value){
 		*value =  -30;
 	}
 }
-void turn(unsigned short initialDegrees, unsigned short rotateBy){
-	signed short targetRotation = (initialDegrees + rotateBy);
-	while (abs(targetRotation - inertia.get_rotation()) > 3){
+void drive(float distance){
+	//Distance is measured in CM, cry about it
+
+}
+void turn(double aim){
+	while (std::round(abs(aim - inertia.get_rotation())) > 0.5){
+		pros::delay(2);
+		if(aim < inertia.get_rotation()){
+			left_mtr1.move(-100);
+			left_mtr2.move(-100);
+			left_mtr3.move(-100);
+			right_mtr1.move(100);
+			right_mtr2.move(100);
+			right_mtr3.move(100);
+		}else{
+			left_mtr1.move(100);
+			left_mtr2.move(100);
+			left_mtr3.move(100);
+			right_mtr1.move(-100);
+			right_mtr2.move(-100);
+			right_mtr3.move(-100);
+		}
+		master.set_text(0,0,std::to_string(aim) + " | " + std::to_string(inertia.get_rotation()));
 	}
 }
 /**
@@ -112,11 +132,25 @@ void opcontrol() {
 	**/
 	unsigned char driveType = 0;
 	while (true) {
-		//Switching drive types
+		//Autonmous Functions
 		if(master.get_digital_new_press(DIGITAL_UP)){
-			driveType ++;
+			drive(100);
 		}
 		if(master.get_digital_new_press(DIGITAL_DOWN)){
+			drive(-100);
+		}
+		if(master.get_digital_new_press(DIGITAL_LEFT)){
+			turn(inertia.get_rotation() - 90);
+		}
+		if(master.get_digital_new_press(DIGITAL_RIGHT)){
+			turn(inertia.get_rotation() + 90);
+		}
+
+		//Switching drive types
+		if(master.get_digital_new_press(DIGITAL_A)){
+			driveType ++;
+		}
+		if(master.get_digital_new_press(DIGITAL_B)){
 			driveType = driveType == 0 ? 5 : driveType - 1;
 		}
 
@@ -216,10 +250,10 @@ void opcontrol() {
 			case 5: {
 				//Cheesy drive (Oli's favorite)
 				info = "Cheesy Drive";
-				double throttle = voltageToPercent(master.get_analog(ANALOG_LEFT_Y));
-				double turn = voltageToPercent(master.get_analog(ANALOG_RIGHT_X)) * std::abs(throttle);
-				double left = voltageToPercent(master.get_analog(ANALOG_RIGHT_X));
-				double right = -voltageToPercent(master.get_analog(ANALOG_RIGHT_X));
+				float throttle = voltageToPercent(master.get_analog(ANALOG_LEFT_Y));
+				float turn = voltageToPercent(master.get_analog(ANALOG_RIGHT_X)) * std::abs(throttle);
+				float left = voltageToPercent(master.get_analog(ANALOG_RIGHT_X));
+				float right = -voltageToPercent(master.get_analog(ANALOG_RIGHT_X));
 
 				if(std::abs(throttle) > 0.01){
 					left = throttle + turn;
