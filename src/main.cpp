@@ -66,6 +66,9 @@ void autonomous() {}
 	Sets that voltage to -30 or 30 respectively if it's close to zero
 	This fixes non-functioning low power when it should be moving
 **/
+double voltageToPercent(int32_t voltage){
+	return (double)voltage / 127;
+}
 void removeLowPowerIssues(signed char* value){
 	if(*value < 30 && *value > 5){
 		*value =  30;
@@ -99,6 +102,7 @@ void turn(unsigned short initialDegrees, unsigned short rotateBy){
  * task, not resume it from where it left off.
  */
 void opcontrol() {
+	master.clear_line(0);
 	/**
 		0: Tank
 		1: Split Arcade [High precision, low rotation speed]
@@ -113,7 +117,7 @@ void opcontrol() {
 			driveType ++;
 		}
 		if(master.get_digital_new_press(DIGITAL_DOWN)){
-			driveType = driveType == 0 ? 4 : driveType - 1;
+			driveType = driveType == 0 ? 5 : driveType - 1;
 		}
 
 		//Will be printed later
@@ -209,6 +213,29 @@ void opcontrol() {
 				right_mtr3.move(right);
 				break;
 			}
+			case 5: {
+				//Cheesy drive (Oli's favorite)
+				info = "Cheesy Drive";
+				double throttle = voltageToPercent(master.get_analog(ANALOG_LEFT_Y));
+				double turn = voltageToPercent(master.get_analog(ANALOG_RIGHT_X)) * std::abs(throttle);
+				double left = voltageToPercent(master.get_analog(ANALOG_RIGHT_X));
+				double right = -voltageToPercent(master.get_analog(ANALOG_RIGHT_X));
+
+				if(std::abs(throttle) > 0.01){
+					left = throttle + turn;
+					right = throttle - turn;
+				}
+				//removeLowPowerIssues(&left);
+				//removeLowPowerIssues(&right);
+
+				left_mtr1.move(left * 127);
+				left_mtr2.move(left * 127);
+				left_mtr3.move(left * 127);
+				right_mtr1.move(right * 127);
+				right_mtr2.move(right * 127);
+				right_mtr3.move(right * 127);
+				break;
+			}
 			default:
 				driveType = 0;
 		}
@@ -217,7 +244,7 @@ void opcontrol() {
 		pros::lcd::set_text(0,"Drive Type: " + info);
 		pros::lcd::set_text(1,"Rotation: " + std::to_string(inertia.get_rotation()) + " (deg)");
 
-		master.clear_line(0);
+
 		master.set_text(0,0,info);
 
 		//Delay to prevent code overflow
