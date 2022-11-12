@@ -23,6 +23,8 @@ pros::Motor right_mtr3(10, false);
  */
 void initialize() {
 	pros::lcd::initialize();
+	left_mtr2.set_encoder_units(pros::E_MOTOR_ENCODER_ROTATIONS);
+	right_mtr2.set_encoder_units(pros::E_MOTOR_ENCODER_ROTATIONS);
 
 	master.set_text(0,0,"Init Inertia Sensor");
 	inertia.reset(true);
@@ -83,14 +85,43 @@ void removeLowPowerIssues(signed short* value){
 		*value =  -30;
 	}
 }
-void drive(float distance){
-	//Distance is measured in CM, cry about it
-
+void removePowerIssues(std::int32_t* value){
+	if(*value < 20 && *value > 5){
+		*value =  20;
+	}else if(*value > -20 && *value < -5){
+		*value =  -20;
+	}
+	if(*value > 127){
+		*value = 127;
+	}
+	if(*value < -127){
+		*value = -127;
+	}
 }
-void turn(double aim){
-	while (std::round(abs(aim - inertia.get_rotation())) > 0.5){
-		pros::delay(2);
-		std::int32_t speed = 200 * (abs(aim - inertia.get_rotation()) / 100);
+/**
+void drive(double targetTick){
+	//Proportional Constant (Strength of distance)
+	double Kp = 0;
+	//"Integral" Constant (Strength of stacking adjustment)
+	double Ki = 0;
+	//"Derivative" constant (Strength of adjustment based off last)
+	double Kd = 0;
+
+	//The error between the target and current
+	double error = 0;
+	//The previous error
+	double lastError = 0;
+	//Total error communications
+	double integral = 0;
+	//Error change compared to previous Error
+	double derivative = 0;
+
+	while (left_mtr2.get_position() < targetTick){
+		error = left_mtr2.get_position() - right_mtr2.get_position();
+		integral = integral + error;
+		derivative = error - lastError;
+
+		removePowerIssues(&speed);
 		if(aim < inertia.get_rotation()){
 			//distance to = abs(aim - inertia.get_rotation())
 			//higher distance = more turn
@@ -110,6 +141,61 @@ void turn(double aim){
 			right_mtr3.move(-speed);
 		}
 		master.set_text(0,0,std::to_string(aim) + " | " + std::to_string(inertia.get_rotation()));
+
+		pros::delay(20);
+	}
+}
+**/
+
+void turn(double turn){
+	//Grab original rotation
+	const double _initialrotation = inertia.get_rotation();
+
+	//Proportional Constant (Strength of distance)
+	const double Kp = 0.2;
+	//"Integral" Constant (Strength of stacking adjustment)
+	const double Ki = 0.002;
+	//"Derivative" constant (Strength of adjustment based off last)
+	const double Kd = 0;
+
+	//The error between the target and current
+	double error = 0;
+	//The previous error
+	double lastError = 0;
+	//Total error communications
+	double integral = 0;
+	//Error change compared to previous Error
+	double derivative = 0;
+
+	//Final power
+	double power = 0;
+
+	while (abs((inertia.get_rotation() - _initialrotation) - turn) > 0.05){
+		//Update PID values
+		error = turn - (inertia.get_rotation() - _initialrotation);
+		integral = integral + error;
+		derivative = error + lastError;
+
+
+		power = (error * Kp) + (integral * Ki) + (derivative * Ki);
+		/**
+		if(power > 127){
+			power = 127;
+		}else if(power < 127){
+			power = -127;
+		}
+		**/
+		power = power * 5;
+		left_mtr1.move(power);
+		left_mtr2.move(power);
+		left_mtr3.move(power);
+		right_mtr1.move(-power);
+		right_mtr2.move(-power);
+		right_mtr3.move(-power);
+
+		master.set_text(0,0,std::to_string((int)(error * Kp)) + "," + std::to_string((int)(integral * Ki)) + "," + std::to_string((int)(derivative * Ki)) + "," + std::to_string((int)turn) + "|" + std::to_string((int)inertia.get_rotation() - _initialrotation));
+
+		pros::delay(2);
 	}
 }
 /**
@@ -138,16 +224,16 @@ void opcontrol() {
 	while (true) {
 		//Autonmous Functions
 		if(master.get_digital_new_press(DIGITAL_UP)){
-			drive(100);
+			//drive(100);
 		}
 		if(master.get_digital_new_press(DIGITAL_DOWN)){
-			drive(-100);
+			//drive(-100);
 		}
 		if(master.get_digital_new_press(DIGITAL_LEFT)){
-			turn(inertia.get_rotation() - 90);
+			turn(-90);
 		}
 		if(master.get_digital_new_press(DIGITAL_RIGHT)){
-			turn(inertia.get_rotation() + 90);
+			turn(90);
 		}
 
 		//Switching drive types
@@ -284,6 +370,7 @@ void opcontrol() {
 
 
 		master.set_text(0,0,info);
+		//master.set_text(0,0,std::to_string(left_mtr2.get_position()));
 
 		//Delay to prevent code overflow
 		pros::delay(2);
