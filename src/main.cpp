@@ -152,9 +152,9 @@ void turn(double turn){
 	const double _initialrotation = inertia.get_rotation();
 
 	//Proportional Constant (Strength of distance)
-	const double Kp = 0.2;
+	const double Kp = 0.4;
 	//"Integral" Constant (Strength of stacking adjustment)
-	const double Ki = 0.002;
+	const double Ki = 0;
 	//"Derivative" constant (Strength of adjustment based off last)
 	const double Kd = 0;
 
@@ -185,7 +185,6 @@ void turn(double turn){
 			power = -127;
 		}
 		**/
-		power = power * 5;
 		left_mtr1.move(power);
 		left_mtr2.move(power);
 		left_mtr3.move(power);
