@@ -152,9 +152,9 @@ void turn(double turn){
 	const double _initialrotation = inertia.get_rotation();
 
 	//Proportional Constant (Strength of distance)
-	const double Kp = 0.4;
+	const double Kp = 10.0;
 	//"Integral" Constant (Strength of stacking adjustment)
-	const double Ki = 0;
+	const double Ki = 0.1;
 	//"Derivative" constant (Strength of adjustment based off last)
 	const double Kd = 0;
 
@@ -174,7 +174,7 @@ void turn(double turn){
 		//Update PID values
 		error = turn - (inertia.get_rotation() - _initialrotation);
 		integral = integral + error;
-		derivative = error + lastError;
+		derivative = error - lastError;
 
 
 		power = (error * Kp) + (integral * Ki) + (derivative * Ki);

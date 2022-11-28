@@ -1,3 +1,4 @@
+#include "EZ-Template/api.hpp"
 /**
  * \file main.h
  *
