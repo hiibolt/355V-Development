@@ -4,6 +4,7 @@
 
 /** 			Constants 			**/
 //Controller constructor
+/**
 pros::Controller master(pros::E_CONTROLLER_MASTER);
 //Inertial Sensor
 pros::Imu inertia(19);
@@ -14,7 +15,26 @@ pros::Motor left_mtr3(5, true);
 pros::Motor right_mtr1(8, false);
 pros::Motor right_mtr2(9, false);
 pros::Motor right_mtr3(10, false);
+*/
 
+// Chassis Controller - lets us drive the robot around with open- or closed-loop control
+MotorGroup leftMotors = MotorGroup({-1, -4, -5});
+MotorGroup rightMotors = MotorGroup({8, 9, 10});
+std::shared_ptr<ChassisController> drive =
+    ChassisControllerBuilder()
+        .withMotors(leftMotors, rightMotors)
+        .withDimensions({AbstractMotor::gearset::blue, 60.0/36.0}, {{3.25_in, 11.9_in}, imev5BlueTPR})
+		.withMaxVelocity(600)
+		.withGains(
+			{0.01, 0, 0},  // Distance PID
+			{0.0025, 0, 0.00006}   // Turn     PID
+		)
+		.build();
+Controller controller;
+ControllerButton turnLeftButton(ControllerDigital::A);
+ControllerButton turnRightButton(ControllerDigital::B);
+
+ControllerButton driveForwardButton(ControllerDigital::X);
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
@@ -22,12 +42,6 @@ pros::Motor right_mtr3(10, false);
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-	pros::lcd::initialize();
-	left_mtr2.set_encoder_units(pros::E_MOTOR_ENCODER_ROTATIONS);
-	right_mtr2.set_encoder_units(pros::E_MOTOR_ENCODER_ROTATIONS);
-
-	master.set_text(0,0,"Init Inertia Sensor");
-	inertia.reset(true);
 
 }
 
@@ -61,141 +75,7 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {}
-
-/**
-	Accepts a pointer to a signed char voltage (-127-127)
-		[Coincidentally the max/min voltage the motors accept]
-	Sets that voltage to -30 or 30 respectively if it's close to zero
-	This fixes non-functioning low power when it should be moving
-**/
-float voltageToPercent(int32_t voltage){
-	return (float)voltage / 127;
-}
-void removeLowPowerIssues(signed char* value){
-	if(*value < 30 && *value > 5){
-		*value =  30;
-	}else if(*value > -30 && *value < -5){
-		*value =  -30;
-	}
-}
-void removeLowPowerIssues(signed short* value){
-	if(*value < 30 && *value > 5){
-		*value =  30;
-	}else if(*value > -30 && *value < -5){
-		*value =  -30;
-	}
-}
-void removePowerIssues(std::int32_t* value){
-	if(*value < 20 && *value > 5){
-		*value =  20;
-	}else if(*value > -20 && *value < -5){
-		*value =  -20;
-	}
-	if(*value > 127){
-		*value = 127;
-	}
-	if(*value < -127){
-		*value = -127;
-	}
-}
-/**
-void drive(double targetTick){
-	//Proportional Constant (Strength of distance)
-	double Kp = 0;
-	//"Integral" Constant (Strength of stacking adjustment)
-	double Ki = 0;
-	//"Derivative" constant (Strength of adjustment based off last)
-	double Kd = 0;
-
-	//The error between the target and current
-	double error = 0;
-	//The previous error
-	double lastError = 0;
-	//Total error communications
-	double integral = 0;
-	//Error change compared to previous Error
-	double derivative = 0;
-
-	while (left_mtr2.get_position() < targetTick){
-		error = left_mtr2.get_position() - right_mtr2.get_position();
-		integral = integral + error;
-		derivative = error - lastError;
-
-		removePowerIssues(&speed);
-		if(aim < inertia.get_rotation()){
-			//distance to = abs(aim - inertia.get_rotation())
-			//higher distance = more turn
-			//100 / distance
-			left_mtr1.move(-speed);
-			left_mtr2.move(-speed);
-			left_mtr3.move(-speed);
-			right_mtr1.move(speed);
-			right_mtr2.move(speed);
-			right_mtr3.move(speed);
-		}else{
-			left_mtr1.move(speed);
-			left_mtr2.move(speed);
-			left_mtr3.move(speed);
-			right_mtr1.move(-speed);
-			right_mtr2.move(-speed);
-			right_mtr3.move(-speed);
-		}
-		master.set_text(0,0,std::to_string(aim) + " | " + std::to_string(inertia.get_rotation()));
-
-		pros::delay(20);
-	}
-}
-**/
-
-void turn(double turn){
-	//Grab original rotation
-	const double _initialrotation = inertia.get_rotation();
-
-	//Proportional Constant (Strength of distance)
-	const double Kp = 0.4;
-	//"Integral" Constant (Strength of stacking adjustment)
-	const double Ki = 0;
-	//"Derivative" constant (Strength of adjustment based off last)
-	const double Kd = 0;
-
-	//The error between the target and current
-	double error = 0;
-	//The previous error
-	double lastError = 0;
-	//Total error communications
-	double integral = 0;
-	//Error change compared to previous Error
-	double derivative = 0;
-
-	//Final power
-	double power = 0;
-
-	while (abs((inertia.get_rotation() - _initialrotation) - turn) > 0.05){
-		//Update PID values
-		error = turn - (inertia.get_rotation() - _initialrotation);
-		integral = integral + error;
-		derivative = error + lastError;
-
-
-		power = (error * Kp) + (integral * Ki) + (derivative * Ki);
-		/**
-		if(power > 127){
-			power = 127;
-		}else if(power < 127){
-			power = -127;
-		}
-		**/
-		left_mtr1.move(power);
-		left_mtr2.move(power);
-		left_mtr3.move(power);
-		right_mtr1.move(-power);
-		right_mtr2.move(-power);
-		right_mtr3.move(-power);
-
-		master.set_text(0,0,std::to_string((int)(error * Kp)) + "," + std::to_string((int)(integral * Ki)) + "," + std::to_string((int)(derivative * Ki)) + "," + std::to_string((int)turn) + "|" + std::to_string((int)inertia.get_rotation() - _initialrotation));
-
-		pros::delay(2);
-	}
+void turn(){
 }
 /**
  * Runs the operator control code. This function will be started in its own task
@@ -211,167 +91,23 @@ void turn(double turn){
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	master.clear_line(0);
-	/**
-		0: Tank
-		1: Split Arcade [High precision, low rotation speed]
-		2: Split Arcade [High speed, low rotation speed]
-		3: Split Arcade [RC Car-type controls, no point turns]
-		4: Split Arcade [Scalar Split Arcade, Kind Medium]
-	**/
-	unsigned char driveType = 0;
-	while (true) {
-		//Autonmous Functions
-		if(master.get_digital_new_press(DIGITAL_UP)){
-			//drive(100);
+	while (true){
+		// Cheesy Drive (for Oli)
+    	drive->getModel()->curvature(controller.getAnalog(ControllerAnalog::leftY), controller.getAnalog(ControllerAnalog::rightX));
+		if(driveForwardButton.isPressed()){
+			drive->moveDistance(2_ft);
 		}
-		if(master.get_digital_new_press(DIGITAL_DOWN)){
-			//drive(-100);
+		if(turnLeftButton.isPressed()){
+			drive->setMaxVelocity(500);
+			drive->turnAngle(90_deg);
+			drive->setMaxVelocity(600);
+		}else if(turnRightButton.isPressed()){
+			drive->setMaxVelocity(500);
+			drive->turnAngle(-90_deg);
+			drive->setMaxVelocity(600);
 		}
-		if(master.get_digital_new_press(DIGITAL_LEFT)){
-			turn(-90);
-		}
-		if(master.get_digital_new_press(DIGITAL_RIGHT)){
-			turn(90);
-		}
-
-		//Switching drive types
-		if(master.get_digital_new_press(DIGITAL_A)){
-			driveType ++;
-		}
-		if(master.get_digital_new_press(DIGITAL_B)){
-			driveType = driveType == 0 ? 5 : driveType - 1;
-		}
-
-		//Will be printed later
-		std::string info = "";
-		switch(driveType){
-			case 0: {
-				//Tank
-				info = "Tank";
-				signed char left = master.get_analog(ANALOG_LEFT_Y);
-				signed char right = master.get_analog(ANALOG_RIGHT_Y);
-				removeLowPowerIssues(&left);
-				removeLowPowerIssues(&right);
-
-				left_mtr1.move(left);
-				left_mtr2.move(left);
-				left_mtr3.move(left);
-				right_mtr1.move(right);
-				right_mtr2.move(right);
-				right_mtr3.move(right);
-				break;
-			}
-			case 1: {
-				//Split Arcade (High Turn, Half Speed)
-				info = "Split Arcade [HT]";
-				signed char left = (master.get_analog(ANALOG_LEFT_Y) + master.get_analog(ANALOG_RIGHT_X)) / 2;
-				signed char right = (master.get_analog(ANALOG_LEFT_Y) - master.get_analog(ANALOG_RIGHT_X)) / 2;
-				signed char left_delta = (master.get_analog(ANALOG_RIGHT_X) * (1 - abs(master.get_analog(ANALOG_LEFT_Y)) / 127)) / 2;
-				signed char right_delta = (-master.get_analog(ANALOG_RIGHT_X) * (1 - abs(master.get_analog(ANALOG_LEFT_Y)) / 127)) / 2;
-				removeLowPowerIssues(&left);
-				removeLowPowerIssues(&right);
-
-				left_mtr1.move(left + left_delta);
-				left_mtr2.move(left + left_delta);
-				left_mtr3.move(left + left_delta);
-				right_mtr1.move(right + right_delta);
-				right_mtr2.move(right + right_delta);
-				right_mtr3.move(right + right_delta);
-				break;
-			}
-			case 2: {
-				//Split Arcade (High Speed, Half Turn)
-				info = "Split Arcade [HS]";
-				signed char left = (master.get_analog(ANALOG_LEFT_Y) + master.get_analog(ANALOG_RIGHT_X)) / 2;
-				signed char right = (master.get_analog(ANALOG_LEFT_Y) - master.get_analog(ANALOG_RIGHT_X)) / 2;
-				signed char up = (master.get_analog(ANALOG_LEFT_Y) * (1 - (abs(master.get_analog(ANALOG_LEFT_X)) / 127)) ) / 2;
-				removeLowPowerIssues(&left);
-				removeLowPowerIssues(&right);
-
-				left_mtr1.move(left + up);
-				left_mtr2.move(left + up);
-				left_mtr3.move(left + up);
-				right_mtr1.move(right + up);
-				right_mtr2.move(right + up);
-				right_mtr3.move(right + up);
-				break;
-			}
-			case 3: {
-				//Split Arcade (CAR)
-				info = "Split Arcade [CAR]";
-				signed char up = master.get_analog(ANALOG_LEFT_Y);
-				float left_delta = master.get_analog(ANALOG_RIGHT_X) < 0 ? 1 - abs(master.get_analog(ANALOG_RIGHT_X)) / 127 : 1;
-				float right_delta = master.get_analog(ANALOG_RIGHT_X) > 0 ? 1 - master.get_analog(ANALOG_RIGHT_X) / 127 : 1;
-				removeLowPowerIssues(&up);
-
-				left_mtr1.move(up * left_delta);
-				left_mtr2.move(up * left_delta);
-				left_mtr3.move(up * left_delta);
-				right_mtr1.move(up * right_delta);
-				right_mtr2.move(up * right_delta);
-				right_mtr3.move(up * right_delta);
-				break;
-			}
-			case 4: {
-				//Split Arcade (Scalar)
-				info = "Split Arcade [SC]";
-				signed short left = master.get_analog(ANALOG_LEFT_Y) + master.get_analog(ANALOG_RIGHT_X);
-				signed short right = master.get_analog(ANALOG_LEFT_Y) - master.get_analog(ANALOG_RIGHT_X);
-				if(abs(left) > 127){
-					right = right * (127 / abs(left));
-					left = left > 0 ? 127 : -127;
-				}else if(abs(right) > 127){
-					left = left * (127 / abs(right));
-					right = right > 0 ? 127 : -127;
-				}
-				removeLowPowerIssues(&left);
-				removeLowPowerIssues(&right);
-
-				left_mtr1.move(left);
-				left_mtr2.move(left);
-				left_mtr3.move(left);
-				right_mtr1.move(right);
-				right_mtr2.move(right);
-				right_mtr3.move(right);
-				break;
-			}
-			case 5: {
-				//Cheesy drive (Oli's favorite)
-				info = "Cheesy Drive";
-				float throttle = voltageToPercent(master.get_analog(ANALOG_LEFT_Y));
-				float turn = voltageToPercent(master.get_analog(ANALOG_RIGHT_X)) * std::abs(throttle);
-				float left = voltageToPercent(master.get_analog(ANALOG_RIGHT_X));
-				float right = -voltageToPercent(master.get_analog(ANALOG_RIGHT_X));
-
-				if(std::abs(throttle) > 0.01){
-					left = throttle + turn;
-					right = throttle - turn;
-				}
-				//removeLowPowerIssues(&left);
-				//removeLowPowerIssues(&right);
-
-				left_mtr1.move(left * 127);
-				left_mtr2.move(left * 127);
-				left_mtr3.move(left * 127);
-				right_mtr1.move(right * 127);
-				right_mtr2.move(right * 127);
-				right_mtr3.move(right * 127);
-				break;
-			}
-			default:
-				driveType = 0;
-		}
-
-		//Pilot/Debug Information
-		pros::lcd::set_text(0,"Drive Type: " + info);
-		pros::lcd::set_text(1,"Rotation: " + std::to_string(inertia.get_rotation()) + " (deg)");
-
-
-		master.set_text(0,0,info);
-		//master.set_text(0,0,std::to_string(left_mtr2.get_position()));
-
-		//Delay to prevent code overflow
-		pros::delay(2);
+    	// Wait and give up the time we don't need to other tasks.
+    	// Additionally, joystick values, motor telemetry, etc. all updates every 10 ms.
+    	pros::delay(10);
 	}
 }
