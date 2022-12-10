@@ -20,6 +20,9 @@ pros::Motor right_mtr3(10, false);
 // Chassis Controller - lets us drive the robot around with open- or closed-loop control
 MotorGroup leftMotors = MotorGroup({-1, -4, -5});
 MotorGroup rightMotors = MotorGroup({8, 9, 10});
+const float Kp = 0.0020;
+const float Ki = 0;
+const float Kd = 0.00008;
 std::shared_ptr<ChassisController> drive =
     ChassisControllerBuilder()
         .withMotors(leftMotors, rightMotors)
@@ -27,7 +30,7 @@ std::shared_ptr<ChassisController> drive =
 		.withMaxVelocity(600)
 		.withGains(
 			{0.01, 0, 0},  // Distance PID
-			{0.0025, 0, 0.00006}   // Turn     PID
+			{Kp, Ki, Kd}   // Turn     PID
 		)
 		.build();
 Controller controller;
@@ -98,12 +101,12 @@ void opcontrol() {
 			drive->moveDistance(2_ft);
 		}
 		if(turnLeftButton.isPressed()){
-			drive->setMaxVelocity(500);
-			drive->turnAngle(90_deg);
+			//drive->setMaxVelocity(500);
+			drive->turnAngle(45_deg);
 			drive->setMaxVelocity(600);
 		}else if(turnRightButton.isPressed()){
-			drive->setMaxVelocity(500);
-			drive->turnAngle(-90_deg);
+			//drive->setMaxVelocity(500);
+			drive->turnAngle(-45_deg);
 			drive->setMaxVelocity(600);
 		}
     	// Wait and give up the time we don't need to other tasks.
