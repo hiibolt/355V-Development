@@ -44,8 +44,8 @@ ControllerButton driveForwardButton(ControllerDigital::X);
  - 1 = Drive
  - 2 = PID
 */
+//Main GUI
 lv_obj_t * mainPage = lv_obj_create(NULL,NULL);
-lv_obj_t * PIDPage = lv_obj_create (NULL,NULL);
 
 lv_obj_t * buttonLeft;
 lv_obj_t * buttonLeftLabel;
@@ -65,6 +65,13 @@ lv_obj_t * buttonDriveLabel;
 lv_obj_t * buttonPID;
 lv_obj_t * buttonPIDLabel;
 
+
+//PID GUI
+lv_obj_t * PIDPage = lv_obj_create (NULL,NULL);
+
+lv_obj_t * PID_buttonHome;
+lv_obj_t * PID_buttonHomeLabel;
+
 lv_obj_t * buttonColor;
 lv_obj_t * buttonColorLabel;
 
@@ -74,6 +81,11 @@ lv_style_t buttonActive;
 lv_style_t buttonInactive;
 
 /** LED Strips */
+/*
+ 0 - Orange
+ 1 - Blue 
+ 2 - c h r i s t m a s
+*/
 int currentColor = 0;
 pros::ADIDigitalOut LED_strip_1_brightness({18,1},1);
 pros::ADILed LED_strip_1({18,1}, 44);
@@ -139,13 +151,14 @@ void buildMainPage() {
 	buttonInactive.body.border.width = 3;
     buttonInactive.text.color = LV_COLOR_MAKE(255,113,2);
 
-	buttonLeft = lv_btn_create(mainPage, NULL);                    //Creates parent button
+	buttonLeft = lv_btn_create(mainPage, NULL);                        //Creates parent button
 	lv_btn_set_style(buttonLeft, LV_BTN_STYLE_PR,  &buttonActive);     //Binds active style
 	lv_btn_set_style(buttonLeft, LV_BTN_STYLE_REL, &buttonInactive);   //Binds inactive style
     lv_obj_set_size(buttonLeft, 130, 60);                              //Sets button size
 	lv_obj_align(buttonLeft,NULL,LV_ALIGN_IN_TOP_RIGHT,5,-5);          //Places button
 	buttonLeftLabel = lv_label_create(buttonLeft, NULL);               //Snap label to button
     lv_label_set_text(buttonLeftLabel, "Left");                        //sets button text
+
 
 	buttonRight = lv_btn_create(mainPage, NULL);
 	lv_btn_set_style(buttonRight, LV_BTN_STYLE_PR,  &buttonActive);
@@ -217,8 +230,27 @@ void buildMainPage() {
 	lv_btn_set_action(buttonColor, LV_BTN_ACTION_CLICK, onClick);
 	
 }
+void createButton(std::string _text,lv_obj_t * _page, lv_align_t _alignto,int _x_offset, int _y_offset, int _width, int _height, int _id){
+	// Create temporary button objects, these do not matter
+	lv_obj_t * _TEMPBUTTON;
+	lv_obj_t * _TEMPBUTTONLABEL;
+
+	_TEMPBUTTON = lv_btn_create(_page, NULL);// Bind the button to specified _page
+	lv_btn_set_style(_TEMPBUTTON, LV_BTN_STYLE_PR,  &buttonActive); // Bind the PRESSED look
+	lv_btn_set_style(_TEMPBUTTON, LV_BTN_STYLE_REL, &buttonInactive);// Bind the RELEASED look
+    lv_obj_set_size(_TEMPBUTTON,_width,_height); // Set the button size
+	lv_obj_align(_TEMPBUTTON,NULL,_alignto,_x_offset,_y_offset); //Align and offset position
+	_TEMPBUTTONLABEL = lv_label_create(_TEMPBUTTON, NULL); //Create the label text
+    lv_label_set_text(_TEMPBUTTONLABEL, "Home"); //Set the label text
+	lv_obj_set_free_num(buttonColor,_id); // Set the ID of the button
+	lv_btn_set_action(buttonColor, LV_BTN_ACTION_CLICK, onClick); // Bind master onClick function
+}
+void buildPIDPage() {
+	createButton("Home",PIDPage,LV_ALIGN_IN_TOP_MID,0,-5,130,60,10);
+}
 void initialize() {
-	buildMainPage();//255,100,0
+	buildMainPage();
+	buildPIDPage();
 	lv_scr_load(mainPage);
 	LED_strip_1.clear_all();
 	for(int i = 0;i < 43;i++){
