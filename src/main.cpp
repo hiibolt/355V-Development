@@ -44,36 +44,8 @@ ControllerButton driveForwardButton(ControllerDigital::X);
  - 1 = Drive
  - 2 = PID
 */
-//Main GUI
 lv_obj_t * mainPage = lv_obj_create(NULL,NULL);
-
-lv_obj_t * buttonLeft;
-lv_obj_t * buttonLeftLabel;
-lv_obj_t * buttonRight;
-lv_obj_t * buttonRightLabel;
-lv_obj_t * buttonAWP;
-lv_obj_t * buttonAWPLabel;
-lv_obj_t * buttonShoot;
-lv_obj_t * buttonShootLabel;
-lv_obj_t * buttonSkills;
-lv_obj_t * buttonSkillsLabel;
-lv_obj_t * buttonNothing;
-lv_obj_t * buttonNothingLabel;
-
-lv_obj_t * buttonDrive;
-lv_obj_t * buttonDriveLabel;
-lv_obj_t * buttonPID;
-lv_obj_t * buttonPIDLabel;
-
-
-//PID GUI
 lv_obj_t * PIDPage = lv_obj_create (NULL,NULL);
-
-lv_obj_t * PID_buttonHome;
-lv_obj_t * PID_buttonHomeLabel;
-
-lv_obj_t * buttonColor;
-lv_obj_t * buttonColorLabel;
 
 lv_obj_t * logo;
 
@@ -134,7 +106,18 @@ static lv_res_t onClick(lv_obj_t * btn)
 
     return LV_RES_OK;
 }
-void buildMainPage() {
+void createButton(const char * _text,lv_obj_t * _page, lv_align_t _alignto,int _x_offset, int _y_offset, int _width, int _height, int _id, lv_obj_t * _TEMPBUTTON, lv_obj_t * _TEMPBUTTONLABEL){
+	_TEMPBUTTON = lv_btn_create(_page, NULL);// Bind the button to specified _page
+	lv_btn_set_style(_TEMPBUTTON, LV_BTN_STYLE_PR,  &buttonActive); // Bind the PRESSED look
+	lv_btn_set_style(_TEMPBUTTON, LV_BTN_STYLE_REL, &buttonInactive);// Bind the RELEASED look
+    lv_obj_set_size(_TEMPBUTTON,_width,_height); // Set the button size
+	lv_obj_align(_TEMPBUTTON,NULL,_alignto,_x_offset,_y_offset); //Align and offset position
+	_TEMPBUTTONLABEL = lv_label_create(_TEMPBUTTON, NULL); //Create the label text
+    lv_label_set_text(_TEMPBUTTONLABEL, _text); //Set the label text
+	lv_obj_set_free_num(_TEMPBUTTON,_id); // Set the ID of the button
+	lv_btn_set_action(_TEMPBUTTONLABEL, LV_BTN_ACTION_CLICK, onClick); // Bind master onClick
+}
+void buildStyles(){
 	lv_style_copy(&buttonActive, &lv_style_plain);
     buttonActive.body.main_color = LV_COLOR_MAKE(100,100,100);
     buttonActive.body.grad_color = LV_COLOR_MAKE(100,100,100);
@@ -150,105 +133,51 @@ void buildMainPage() {
 	buttonInactive.body.border.color = LV_COLOR_MAKE(255,113,2);
 	buttonInactive.body.border.width = 3;
     buttonInactive.text.color = LV_COLOR_MAKE(255,113,2);
-
-	buttonLeft = lv_btn_create(mainPage, NULL);                        //Creates parent button
-	lv_btn_set_style(buttonLeft, LV_BTN_STYLE_PR,  &buttonActive);     //Binds active style
-	lv_btn_set_style(buttonLeft, LV_BTN_STYLE_REL, &buttonInactive);   //Binds inactive style
-    lv_obj_set_size(buttonLeft, 130, 60);                              //Sets button size
-	lv_obj_align(buttonLeft,NULL,LV_ALIGN_IN_TOP_RIGHT,5,-5);          //Places button
-	buttonLeftLabel = lv_label_create(buttonLeft, NULL);               //Snap label to button
-    lv_label_set_text(buttonLeftLabel, "Left");                        //sets button text
-
-
-	buttonRight = lv_btn_create(mainPage, NULL);
-	lv_btn_set_style(buttonRight, LV_BTN_STYLE_PR,  &buttonActive);
-	lv_btn_set_style(buttonRight, LV_BTN_STYLE_REL, &buttonInactive);
-    lv_obj_set_size(buttonRight, 130,60); //set the button size
-	lv_obj_align(buttonRight,NULL,LV_ALIGN_IN_TOP_RIGHT,-128 + 5,-5);
-	buttonRightLabel = lv_label_create(buttonRight, NULL);
-    lv_label_set_text(buttonRightLabel, "Right");
-
-	buttonAWP = lv_btn_create(mainPage, NULL);
-	lv_btn_set_style(buttonAWP, LV_BTN_STYLE_PR,  &buttonActive);
-	lv_btn_set_style(buttonAWP, LV_BTN_STYLE_REL, &buttonInactive);
-    lv_obj_set_size(buttonAWP, 130,60); //set the button size
-	lv_obj_align(buttonAWP,NULL,LV_ALIGN_IN_TOP_RIGHT,-128 + 5,58 - 5);
-	buttonAWPLabel = lv_label_create(buttonAWP, NULL);
-    lv_label_set_text(buttonAWPLabel, "AWP");
-
-	buttonShoot = lv_btn_create(mainPage, NULL);
-	lv_btn_set_style(buttonShoot, LV_BTN_STYLE_PR,  &buttonActive);
-	lv_btn_set_style(buttonShoot, LV_BTN_STYLE_REL, &buttonInactive);
-    lv_obj_set_size(buttonShoot, 130,60); //set the button size
-	lv_obj_align(buttonShoot,NULL,LV_ALIGN_IN_TOP_RIGHT,0 + 5,58 - 5);
-	buttonShootLabel = lv_label_create(buttonShoot, NULL);
-    lv_label_set_text(buttonShootLabel, "Shoot");
-
-	buttonSkills = lv_btn_create(mainPage, NULL);
-	lv_btn_set_style(buttonSkills, LV_BTN_STYLE_PR,  &buttonActive);
-	lv_btn_set_style(buttonSkills, LV_BTN_STYLE_REL, &buttonInactive);
-    lv_obj_set_size(buttonSkills, 130,60); //set the button size
-	lv_obj_align(buttonSkills,NULL,LV_ALIGN_IN_TOP_RIGHT,-128 + 5,58 + 58 - 5);
-	buttonSkillsLabel = lv_label_create(buttonSkills, NULL);
-    lv_label_set_text(buttonSkillsLabel, "Skills");
-
-	buttonNothing = lv_btn_create(mainPage, NULL);
-	lv_btn_set_style(buttonNothing, LV_BTN_STYLE_PR,  &buttonActive);
-	lv_btn_set_style(buttonNothing, LV_BTN_STYLE_REL, &buttonInactive);
-    lv_obj_set_size(buttonNothing, 130,60); //set the button size
-	lv_obj_align(buttonNothing,NULL,LV_ALIGN_IN_TOP_RIGHT,5,58 + 58 - 5);
-	buttonNothingLabel = lv_label_create(buttonNothing, NULL);
-    lv_label_set_text(buttonNothingLabel, "Nothing");
-
-
-	buttonDrive = lv_btn_create(mainPage, NULL);
-	lv_btn_set_style(buttonDrive, LV_BTN_STYLE_PR,  &buttonActive);
-	lv_btn_set_style(buttonDrive, LV_BTN_STYLE_REL, &buttonInactive);
-    lv_obj_set_size(buttonDrive, 130,60); //set the button size
-	lv_obj_align(buttonDrive,NULL,LV_ALIGN_IN_TOP_RIGHT,-128 + 5,58 + 58 + 58 + 10);
-	buttonDriveLabel = lv_label_create(buttonDrive, NULL);
-    lv_label_set_text(buttonDriveLabel, "Drive");
-
-	buttonPID = lv_btn_create(mainPage, NULL);
-	lv_btn_set_style(buttonPID, LV_BTN_STYLE_PR,  &buttonActive);
-	lv_btn_set_style(buttonPID, LV_BTN_STYLE_REL, &buttonInactive);
-    lv_obj_set_size(buttonPID, 130,60); //set the button size
-	lv_obj_align(buttonPID,NULL,LV_ALIGN_IN_TOP_RIGHT,5,58 + 58 + 58 + 10);
-	buttonPIDLabel = lv_label_create(buttonPID, NULL);
-    lv_label_set_text(buttonPIDLabel, "PID");
-	lv_obj_set_free_num(buttonPID,8);
-	lv_btn_set_action(buttonPID, LV_BTN_ACTION_CLICK, onClick);
-
-	buttonColor = lv_btn_create(mainPage, NULL);
-	lv_btn_set_style(buttonColor, LV_BTN_STYLE_PR,  &buttonActive);
-	lv_btn_set_style(buttonColor, LV_BTN_STYLE_REL, &buttonInactive);
-    lv_obj_set_size(buttonColor, 130 * 0.75,60 * 0.75); //set the button size
-	lv_obj_align(buttonColor,NULL,LV_ALIGN_IN_BOTTOM_LEFT,65,10);
-	buttonColorLabel = lv_label_create(buttonColor, NULL);
-    lv_label_set_text(buttonColorLabel, "Color");
-	lv_obj_set_free_num(buttonColor,9);
-	lv_btn_set_action(buttonColor, LV_BTN_ACTION_CLICK, onClick);
-	
 }
-void createButton(std::string _text,lv_obj_t * _page, lv_align_t _alignto,int _x_offset, int _y_offset, int _width, int _height, int _id){
-	// Create temporary button objects, these do not matter
-	lv_obj_t * _TEMPBUTTON;
-	lv_obj_t * _TEMPBUTTONLABEL;
+void buildMainPage() {
+	lv_obj_t * HOME_buttonLeft;
+	lv_obj_t * HOME_buttonLeftLabel;
+	createButton("Left",mainPage,LV_ALIGN_IN_TOP_RIGHT,5,-5,130,60,1,HOME_buttonLeft,HOME_buttonLeftLabel);
 
-	_TEMPBUTTON = lv_btn_create(_page, NULL);// Bind the button to specified _page
-	lv_btn_set_style(_TEMPBUTTON, LV_BTN_STYLE_PR,  &buttonActive); // Bind the PRESSED look
-	lv_btn_set_style(_TEMPBUTTON, LV_BTN_STYLE_REL, &buttonInactive);// Bind the RELEASED look
-    lv_obj_set_size(_TEMPBUTTON,_width,_height); // Set the button size
-	lv_obj_align(_TEMPBUTTON,NULL,_alignto,_x_offset,_y_offset); //Align and offset position
-	_TEMPBUTTONLABEL = lv_label_create(_TEMPBUTTON, NULL); //Create the label text
-    lv_label_set_text(_TEMPBUTTONLABEL, "Home"); //Set the label text
-	lv_obj_set_free_num(buttonColor,_id); // Set the ID of the button
-	lv_btn_set_action(buttonColor, LV_BTN_ACTION_CLICK, onClick); // Bind master onClick function
+	lv_obj_t * HOME_buttonRight;
+	lv_obj_t * HOME_buttonRightLabel;
+	createButton("Right",mainPage,LV_ALIGN_IN_TOP_RIGHT,-128+5,-5,130,60,2,HOME_buttonRight,HOME_buttonRightLabel);
+
+	lv_obj_t * HOME_buttonAWP;
+	lv_obj_t * HOME_buttonAWPLabel;
+	createButton("AWP",mainPage,LV_ALIGN_IN_TOP_RIGHT,-128+5,58-5,130,60,3,HOME_buttonAWP,HOME_buttonAWPLabel);
+
+	lv_obj_t * HOME_buttonShoot;
+	lv_obj_t * HOME_buttonShootLabel;
+	createButton("Shoot",mainPage,LV_ALIGN_IN_TOP_RIGHT,5,58-5,130,60,4,HOME_buttonShoot,HOME_buttonShootLabel);
+
+	lv_obj_t * HOME_buttonSkills;
+	lv_obj_t * HOME_buttonSkillsLabel;
+	createButton("Skills",mainPage,LV_ALIGN_IN_TOP_RIGHT,-128+5,58+58-5,130,60,5,HOME_buttonSkills,HOME_buttonSkillsLabel);
+
+	lv_obj_t * HOME_buttonNothing;
+	lv_obj_t * HOME_buttonNothingLabel;
+	createButton("Nothing",mainPage,LV_ALIGN_IN_TOP_RIGHT,5,58+58-5,130,60,6,HOME_buttonNothing,HOME_buttonNothingLabel);
+
+	lv_obj_t * HOME_buttonDrive;
+	lv_obj_t * HOME_buttonDriveLabel;
+	createButton("Drive",mainPage,LV_ALIGN_IN_TOP_RIGHT,-128+5,58+58+58+10,130,60,7,HOME_buttonDrive,HOME_buttonDriveLabel);
+
+	lv_obj_t * HOME_buttonPID;
+	lv_obj_t * HOME_buttonPIDLabel;
+	createButton("PID",mainPage,LV_ALIGN_IN_TOP_RIGHT,5,58+58+58+10,130,60,8,HOME_buttonPID,HOME_buttonPIDLabel);
+
+	lv_obj_t * HOME_buttonColor;
+	lv_obj_t * HOME_buttonColorLabel;
+	createButton("Color",mainPage,LV_ALIGN_IN_BOTTOM_LEFT,65,10,130 * 0.75,60 * 0.75,9,HOME_buttonColor,HOME_buttonColorLabel);
 }
 void buildPIDPage() {
-	createButton("Home",PIDPage,LV_ALIGN_IN_TOP_MID,0,-5,130,60,10);
+	lv_obj_t * PID_buttonHome;
+	lv_obj_t * PID_buttonHomeLabel;
+	createButton("Home",PIDPage,LV_ALIGN_IN_TOP_MID,0,-5,130,60,10,PID_buttonHome,PID_buttonHomeLabel);
 }
 void initialize() {
+	buildStyles();
 	buildMainPage();
 	buildPIDPage();
 	lv_scr_load(mainPage);
