@@ -1,5 +1,6 @@
 #include "guifuncs.h"
 #include "main.h"
+#include "pid.h"
 #include <string.h>
 #include <math.h>
 
@@ -21,9 +22,6 @@ pros::Motor right_mtr3(10, false);
 // Chassis Controller - lets us drive the robot around with open- or closed-loop control
 MotorGroup leftMotors = MotorGroup({-1, -4, -5});
 MotorGroup rightMotors = MotorGroup({8, 9, 10});
-const float Kp = 0.0020;
-const float Ki = 0;
-const float Kd = 0.00008;
 std::shared_ptr<ChassisController> drive =
     ChassisControllerBuilder()
         .withMotors(leftMotors, rightMotors)
@@ -31,7 +29,7 @@ std::shared_ptr<ChassisController> drive =
 		.withMaxVelocity(600)
 		.withGains(
 			{0.01, 0, 0},  // Distance PID
-			{Kp, Ki, Kd}   // Turn     PID
+			{getConstant("Kp"), getConstant("Ki"), getConstant("Kd")}   // Turn     PID
 		)
 		.build();
 Controller controller;
@@ -92,7 +90,7 @@ void initialize() {
 	buildStyles();
 	buildMainPage();
 	buildPIDPage();
-	swapPage(0);
+	swapPage(1);
 	LED_strip_1.clear_all();
 	for(int i = 0;i < 43;i++){
 		LED_strip_1[i] = 0xff6400;
