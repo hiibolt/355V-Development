@@ -32,26 +32,40 @@ lv_obj_t * logo;
 lv_obj_t * Kp_Label;
 lv_obj_t * Ki_Label;
 lv_obj_t * Kd_Label;
+lv_obj_t * p_Label;
+lv_obj_t * i_Label;
+lv_obj_t * d_Label;
 
 lv_obj_t * PID_buttonHome;
 lv_obj_t * PID_buttonHomeLabel;
 
-lv_obj_t * PID_Kp_2xButton;
-lv_obj_t * PID_Kp_2xButtonLabel;
-lv_obj_t * PID_Ki_2xButton;
-lv_obj_t * PID_Ki_2xButtonLabel;
-lv_obj_t * PID_Kd_2xButton;
-lv_obj_t * PID_Kd_2xButtonLabel;
+lv_obj_t * PID_Kp_p1Button;
+lv_obj_t * PID_Kp_p1ButtonLabel;
+lv_obj_t * PID_Ki_p1Button;
+lv_obj_t * PID_Ki_p1ButtonLabel;
+lv_obj_t * PID_Kd_p1Button;
+lv_obj_t * PID_Kd_p1ButtonLabel;
 
-lv_obj_t * PID_Kp_HalfButton;
-lv_obj_t * PID_Kp_HalfButtonLabel;
-lv_obj_t * PID_Ki_HalfButton;
-lv_obj_t * PID_Ki_HalfButtonLabel;
-lv_obj_t * PID_Kd_HalfButton;
-lv_obj_t * PID_Kd_HalfButtonLabel;
+lv_obj_t * PID_Kp_m1Button;
+lv_obj_t * PID_Kp_m1ButtonLabel;
+lv_obj_t * PID_Ki_m1Button;
+lv_obj_t * PID_Ki_m1ButtonLabel;
+lv_obj_t * PID_Kd_m1Button;
+lv_obj_t * PID_Kd_m1ButtonLabel;
+
+
+
+float PID_increment = 1;
+
+lv_obj_t * PID_incrementLabel;
+lv_obj_t * PID_x10Increment;
+lv_obj_t * PID_x10IncrementLabel;
+lv_obj_t * PID_div10Increment;
+lv_obj_t * PID_div10IncrementLabel;
 
 lv_style_t buttonActive;
 lv_style_t buttonInactive;
+
 
 char tempBuffer[20];
 char * floatToChar(float input){
@@ -76,33 +90,41 @@ static lv_res_t onClick(lv_obj_t * btn)
 			break;
 		case 11:
 			setConstant((char *)"prev_Kp",getConstant((char *)"Kp"));
-			setConstant((char *)"Kp",getConstant((char *)"Kp") * 2);
-    		lv_label_set_text(Kp_Label, floatToChar(getConstant((char *)"Kp"))); //Set the label text
+			setConstant((char *)"Kp",getConstant((char *)"Kp") + PID_increment);
+    		lv_label_set_text(Kp_Label, floatToChar(getConstant((char *)"Kp")) ); //Set the label text
 			break;
 		case 12:
 			setConstant((char *)"prev_Ki",getConstant((char *)"Ki"));
-			setConstant((char *)"Ki",getConstant((char *)"Ki") * 2);
-    		lv_label_set_text(Ki_Label, floatToChar(getConstant((char *)"Ki"))); //Set the label text
+			setConstant((char *)"Ki",getConstant((char *)"Ki") + PID_increment);
+    		lv_label_set_text(Ki_Label, floatToChar(getConstant((char *)"Ki")) ); //Set the label text
 			break;
 		case 13:
 			setConstant((char *)"prev_Kd",getConstant((char *)"Kd"));
-			setConstant((char *)"Kd",getConstant((char *)"Kd") * 2);
-    		lv_label_set_text(Kd_Label, floatToChar(getConstant((char *)"Kd"))); //Set the label text
+			setConstant((char *)"Kd",getConstant((char *)"Kd") + PID_increment);
+    		lv_label_set_text(Kd_Label, floatToChar(getConstant((char *)"Kd")) ); //Set the label text
 			break;
 		case 14:
 			setConstant((char *)"prev_Kp",getConstant((char *)"Kp"));
-			setConstant((char *)"Kp",getConstant((char *)"Kp") / 2);
-    		lv_label_set_text(Kp_Label, floatToChar(getConstant((char *)"Kp"))); //Set the label text
+			setConstant((char *)"Kp",getConstant((char *)"Kp") - PID_increment);
+    		lv_label_set_text(Kp_Label, floatToChar(getConstant((char *)"Kp")) ); //Set the label text
 			break;
 		case 15:
 			setConstant((char *)"prev_Ki",getConstant((char *)"Ki"));
-			setConstant((char *)"Ki",getConstant((char *)"Ki") / 2);
-    		lv_label_set_text(Ki_Label, floatToChar(getConstant((char *)"Ki"))); //Set the label text
+			setConstant((char *)"Ki",getConstant((char *)"Ki") - PID_increment);
+    		lv_label_set_text(Ki_Label, floatToChar(getConstant((char *)"Ki")) ); //Set the label text
 			break;
 		case 16:
 			setConstant((char *)"prev_Kd",getConstant((char *)"Kd"));
-			setConstant((char *)"Kd",getConstant((char *)"Kd") / 2);
-    		lv_label_set_text(Kd_Label, floatToChar(getConstant((char *)"Kd"))); //Set the label text
+			setConstant((char *)"Kd",getConstant((char *)"Kd") - PID_increment);
+    		lv_label_set_text(Kd_Label, floatToChar(getConstant((char *)"Kd")) ); //Set the label text
+			break;
+		case 17:
+			PID_increment *= 10;
+    		lv_label_set_text(PID_incrementLabel, floatToChar(PID_increment) ); //Set the label text
+			break;
+		case 18:
+			PID_increment /= 10;
+    		lv_label_set_text(PID_incrementLabel, floatToChar(PID_increment) ); //Set the label text
 			break;
 	}
 	
@@ -168,27 +190,42 @@ void buildMainPage() {
 void buildPIDPage() {
 	createButton("Home",PIDPage,LV_ALIGN_IN_TOP_MID,0,-5,130,60,10,PID_buttonHome,PID_buttonHomeLabel);
 
-	createButton("* 2",PIDPage,LV_ALIGN_IN_TOP_MID,-100,115,80,40,11,PID_Kp_2xButton,PID_Kp_2xButtonLabel);
-	createButton("* 2",PIDPage,LV_ALIGN_IN_TOP_MID,0,115,80,40,12,PID_Ki_2xButton,PID_Ki_2xButtonLabel);
-	createButton("* 2",PIDPage,LV_ALIGN_IN_TOP_MID,100,115,80,40,13,PID_Ki_2xButton,PID_Kd_2xButtonLabel);
+	createButton("+",PIDPage,LV_ALIGN_IN_TOP_MID,-100,115,80,40,11,PID_Kp_p1Button,PID_Kp_p1ButtonLabel);
+	createButton("+",PIDPage,LV_ALIGN_IN_TOP_MID,0,115,80,40,12,   PID_Ki_p1Button,PID_Ki_p1ButtonLabel);
+	createButton("+",PIDPage,LV_ALIGN_IN_TOP_MID,100,115,80,40,13, PID_Ki_p1Button,PID_Kd_p1ButtonLabel);
 
-	createButton("/ 2",PIDPage,LV_ALIGN_IN_TOP_MID,-100,150,80,40,14,PID_Kp_HalfButton,PID_Kp_HalfButtonLabel);
-	createButton("/ 2",PIDPage,LV_ALIGN_IN_TOP_MID,0,150,80,40,15,PID_Kp_HalfButton,PID_Kp_HalfButtonLabel);
-	createButton("/ 2",PIDPage,LV_ALIGN_IN_TOP_MID,100,150,80,40,16,PID_Kp_HalfButton,PID_Kp_HalfButtonLabel);
+	createButton("-",PIDPage,LV_ALIGN_IN_TOP_MID,-100,150,80,40,14,PID_Kp_m1Button,PID_Kp_m1ButtonLabel);
+	createButton("-",PIDPage,LV_ALIGN_IN_TOP_MID,0,150,80,40,15,   PID_Ki_m1Button,PID_Ki_m1ButtonLabel);
+	createButton("-",PIDPage,LV_ALIGN_IN_TOP_MID,100,150,80,40,16, PID_Kd_m1Button,PID_Kd_m1ButtonLabel);
 
 	Kp_Label = lv_label_create(PIDPage, NULL); //Create the label text
 	Ki_Label = lv_label_create(PIDPage, NULL); //Create the label text
 	Kd_Label = lv_label_create(PIDPage, NULL); //Create the label text
-	char KpBuffer[20];
-	char KiBuffer[20];
-	char KdBuffer[20];
-	std::snprintf(KpBuffer, 20, "%.6f", getConstant((char *)"Kp"));
-	std::snprintf(KiBuffer, 20, "%.6f", getConstant((char *)"Ki"));
-	std::snprintf(KdBuffer, 20, "%.6f", getConstant((char *)"Kd"));
-    lv_label_set_text(Kp_Label, KpBuffer); //Set the label text
-    lv_label_set_text(Ki_Label, KiBuffer); //Set the label text
-    lv_label_set_text(Kd_Label, KdBuffer); //Set the label text
+	p_Label = lv_label_create(PIDPage, NULL); //Create the label text
+	i_Label = lv_label_create(PIDPage, NULL); //Create the label text
+	d_Label = lv_label_create(PIDPage, NULL); //Create the label text
+	char * Kp = floatToChar(getConstant((char *)"Kp"));
+    lv_label_set_text(Kp_Label, Kp); //Set the label text
+	char * Ki = floatToChar(getConstant((char *)"Ki"));
+    lv_label_set_text(Ki_Label, Ki); //Set the label text
+	char * Kd = floatToChar(getConstant((char *)"Kd"));
+    lv_label_set_text(Kd_Label, Kd); //Set the label text
 	lv_obj_align(Kp_Label,NULL,LV_ALIGN_IN_TOP_MID,-100,90); //Align and offset position
 	lv_obj_align(Ki_Label,NULL,LV_ALIGN_IN_TOP_MID,0,90); //Align and offset position
 	lv_obj_align(Kd_Label,NULL,LV_ALIGN_IN_TOP_MID,100,90); //Align and offset position
+
+    lv_label_set_text(p_Label, "Kp"); //Set the label text
+	lv_label_set_text(i_Label, "Ki"); //Set the label text
+	lv_label_set_text(d_Label, "Kd"); //Set the label text
+	lv_obj_align(p_Label,NULL,LV_ALIGN_IN_TOP_MID,-100,70);
+	lv_obj_align(i_Label,NULL,LV_ALIGN_IN_TOP_MID,0,70);
+	lv_obj_align(d_Label,NULL,LV_ALIGN_IN_TOP_MID,100,70);
+	
+
+	PID_incrementLabel = lv_label_create(PIDPage,NULL);
+    lv_label_set_text(PID_incrementLabel, floatToChar(PID_increment)); //Set the label text
+	lv_obj_align(PID_incrementLabel,NULL,LV_ALIGN_IN_TOP_LEFT,3,5);
+
+	createButton("+",PIDPage,LV_ALIGN_IN_TOP_LEFT,-5,30,80,40,17, PID_x10Increment,PID_x10IncrementLabel);
+	createButton("-",PIDPage,LV_ALIGN_IN_TOP_LEFT,-5,65,80,40,18,PID_div10Increment,PID_div10IncrementLabel);
 }
