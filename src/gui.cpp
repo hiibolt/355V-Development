@@ -1,5 +1,6 @@
 #include "main.h"
 #include "guifuncs.h"
+#include "teamlogo.c"
 #include <string.h>
 #include <math.h>
 
@@ -169,6 +170,21 @@ void buildStyles(){
     buttonInactive.text.color = LV_COLOR_MAKE(255,113,2);
 }
 void buildMainPage() {
+	static lv_style_t style;
+	lv_style_copy(&style,lv_obj_get_style(lv_scr_act()));
+    style.body.main_color = LV_COLOR_MAKE(0, 0, 0);
+    style.body.grad_color = LV_COLOR_MAKE(0, 0, 0);
+	lv_obj_set_style(mainPage, &style);
+
+	logo = lv_imgbtn_create(mainPage, NULL);
+    lv_imgbtn_set_src(logo, LV_BTN_STATE_REL, &teamlogo_50x50);
+    lv_imgbtn_set_src(logo, LV_BTN_STATE_PR, &teamlogo_50x50);
+    lv_imgbtn_set_src(logo, LV_BTN_STATE_TGL_REL, &teamlogo_50x50);
+    lv_imgbtn_set_src(logo, LV_BTN_STATE_TGL_PR, &teamlogo_50x50);
+	lv_obj_align(logo,NULL,LV_ALIGN_IN_LEFT_MID,20,0);
+	lv_obj_set_free_num(logo,9);
+	lv_btn_set_action(logo, LV_BTN_ACTION_CLICK, onClick); // Bind master onClick
+
 	createButton("Left",mainPage,LV_ALIGN_IN_TOP_RIGHT,5,-5,130,60,1,HOME_buttonLeft,HOME_buttonLeftLabel);
 
 	createButton("Right",mainPage,LV_ALIGN_IN_TOP_RIGHT,-128+5,-5,130,60,2,HOME_buttonRight,HOME_buttonRightLabel);
@@ -184,8 +200,6 @@ void buildMainPage() {
 	createButton("Drive",mainPage,LV_ALIGN_IN_TOP_RIGHT,-128+5,58+58+58+10,130,60,7,HOME_buttonDrive,HOME_buttonDriveLabel);
 
 	createButton("PID",mainPage,LV_ALIGN_IN_TOP_RIGHT,5,58+58+58+10,130,60,8,HOME_buttonPID,HOME_buttonPIDLabel);
-
-	createButton("Color",mainPage,LV_ALIGN_IN_BOTTOM_LEFT,65,10,130 * 0.75,60 * 0.75,9,HOME_buttonColor,HOME_buttonColorLabel);
 }
 void buildPIDPage() {
 	createButton("Home",PIDPage,LV_ALIGN_IN_TOP_MID,0,-5,130,60,10,PID_buttonHome,PID_buttonHomeLabel);
