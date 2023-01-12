@@ -53,7 +53,7 @@ ControllerButton driveForwardButton(ControllerDigital::X);
 int currentColor = 0;
 pros::ADIDigitalOut LED_strip_1_brightness({18,1},1);
 pros::ADILed LED_strip_1({18,1}, 44);
-void updateColor() {
+void cycleColor() {
 	currentColor ++;
 	switch(currentColor) {
 		case 0:
@@ -90,7 +90,7 @@ void initialize() {
 	buildStyles();
 	buildMainPage();
 	buildPIDPage();
-	swapPage(1);
+	swapPage(0);
 	LED_strip_1.clear_all();
 	for(int i = 0;i < 43;i++){
 		LED_strip_1[i] = 0xff6400;

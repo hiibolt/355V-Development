@@ -4,10 +4,10 @@
 #include <string.h>
 #include <math.h>
 
-lv_obj_t * mainPage = lv_obj_create(NULL,NULL);
-lv_obj_t * PIDPage = lv_obj_create (NULL,NULL);
 
 // Home Page
+lv_obj_t * mainPage = lv_obj_create(NULL,NULL);
+
 lv_obj_t * HOME_buttonLeft;
 lv_obj_t * HOME_buttonLeftLabel;
 lv_obj_t * HOME_buttonRight;
@@ -30,6 +30,10 @@ lv_obj_t * HOME_buttonColorLabel;
 lv_obj_t * logo;
 
 // PID Page
+float PID_increment = 1;
+
+lv_obj_t * PIDPage = lv_obj_create (NULL,NULL);
+
 lv_obj_t * Kp_Label;
 lv_obj_t * Ki_Label;
 lv_obj_t * Kd_Label;
@@ -54,16 +58,13 @@ lv_obj_t * PID_Ki_m1ButtonLabel;
 lv_obj_t * PID_Kd_m1Button;
 lv_obj_t * PID_Kd_m1ButtonLabel;
 
-
-
-float PID_increment = 1;
-
 lv_obj_t * PID_incrementLabel;
 lv_obj_t * PID_x10Increment;
 lv_obj_t * PID_x10IncrementLabel;
 lv_obj_t * PID_div10Increment;
 lv_obj_t * PID_div10IncrementLabel;
 
+// General
 lv_style_t buttonActive;
 lv_style_t buttonInactive;
 
@@ -74,56 +75,55 @@ char * floatToChar(float input){
 	return tempBuffer;
 }
 static lv_res_t onClick(lv_obj_t * btn)
-{
-    uint8_t id = lv_obj_get_free_num(btn);
+{/**
+		If you wish to add a new button, 
+		 1.) Create a new button and button label object
+		 2.) Use the createStandardButton or createImgButton function
+		 3.) Add a new constant for the button to the guifuncs.h enum
+		 4.) Add a new entry to the below switch
 
-    switch(id){
-		case 8://PID Button
-			// Switch to PID page
-			swapPage(1);
+		 PS: If you get stuck on step 2, you need to brush up on data types before you start working.
+		 	 I highly recommend reading up on structs and enums, they're used quite a lot.
+	*/
+    switch(lv_obj_get_free_num(btn)){
+		case PID_BTN_ID:
+			swapPage(PID_PAGE_ID);
 			break;
-		case 9://Color Selector Button
-			updateColor();
+		case COLOR_BTN_ID:
+			cycleColor();
 			break;
-		case 10:
-			// Return home
-			swapPage(0);
+		case PID_HOME_BTN_ID:
+			swapPage(HOME_PAGE_ID);
 			break;
-		case 11:
-			setConstant((char *)"prev_Kp",getConstant((char *)"Kp"));
+		case PID_KP_PLUS_BTN_ID:
 			setConstant((char *)"Kp",getConstant((char *)"Kp") + PID_increment);
     		lv_label_set_text(Kp_Label, floatToChar(getConstant((char *)"Kp")) ); //Set the label text
 			break;
-		case 12:
-			setConstant((char *)"prev_Ki",getConstant((char *)"Ki"));
+		case PID_KI_PLUS_BTN_ID:
 			setConstant((char *)"Ki",getConstant((char *)"Ki") + PID_increment);
     		lv_label_set_text(Ki_Label, floatToChar(getConstant((char *)"Ki")) ); //Set the label text
 			break;
-		case 13:
-			setConstant((char *)"prev_Kd",getConstant((char *)"Kd"));
+		case PID_KD_PLUS_BTN_ID:
 			setConstant((char *)"Kd",getConstant((char *)"Kd") + PID_increment);
     		lv_label_set_text(Kd_Label, floatToChar(getConstant((char *)"Kd")) ); //Set the label text
 			break;
-		case 14:
-			setConstant((char *)"prev_Kp",getConstant((char *)"Kp"));
+		case PID_KP_MINUS_BTN_ID:
 			setConstant((char *)"Kp",getConstant((char *)"Kp") - PID_increment);
     		lv_label_set_text(Kp_Label, floatToChar(getConstant((char *)"Kp")) ); //Set the label text
 			break;
-		case 15:
-			setConstant((char *)"prev_Ki",getConstant((char *)"Ki"));
+		case PID_KI_MINUS_BTN_ID:
 			setConstant((char *)"Ki",getConstant((char *)"Ki") - PID_increment);
     		lv_label_set_text(Ki_Label, floatToChar(getConstant((char *)"Ki")) ); //Set the label text
 			break;
-		case 16:
-			setConstant((char *)"prev_Kd",getConstant((char *)"Kd"));
+		case PID_KD_MINUS_BTN_ID:
 			setConstant((char *)"Kd",getConstant((char *)"Kd") - PID_increment);
     		lv_label_set_text(Kd_Label, floatToChar(getConstant((char *)"Kd")) ); //Set the label text
 			break;
-		case 17:
+		case PID_INCREMENT_PLUS_BTN_ID:
 			PID_increment *= 10;
     		lv_label_set_text(PID_incrementLabel, floatToChar(PID_increment) ); //Set the label text
 			break;
-		case 18:
+		case PID_INCREMENT_MINUS_BTN_ID:
 			PID_increment /= 10;
     		lv_label_set_text(PID_incrementLabel, floatToChar(PID_increment) ); //Set the label text
 			break;
@@ -141,16 +141,26 @@ void swapPage(int page){
 			break;
 	}
 }
-void createButton(const char * _text,lv_obj_t * _page, lv_align_t _alignto,int _x_offset, int _y_offset, int _width, int _height, int _id, lv_obj_t * _TEMPBUTTON, lv_obj_t * _TEMPBUTTONLABEL){
-	_TEMPBUTTON = lv_btn_create(_page, NULL);// Bind the button to specified _page
-	lv_btn_set_style(_TEMPBUTTON, LV_BTN_STYLE_PR,  &buttonActive); // Bind the PRESSED look
-	lv_btn_set_style(_TEMPBUTTON, LV_BTN_STYLE_REL, &buttonInactive);// Bind the RELEASED look
-    lv_obj_set_size(_TEMPBUTTON,_width,_height); // Set the button size
-	lv_obj_align(_TEMPBUTTON,NULL,_alignto,_x_offset,_y_offset); //Align and offset position
-	_TEMPBUTTONLABEL = lv_label_create(_TEMPBUTTON, NULL); //Create the label text
-    lv_label_set_text(_TEMPBUTTONLABEL, _text); //Set the label text
-	lv_obj_set_free_num(_TEMPBUTTON,_id); // Set the ID of the button
-	lv_btn_set_action(_TEMPBUTTON, LV_BTN_ACTION_CLICK, onClick); // Bind master onClick
+void createButton(standard_button_options options){
+	options.btn_obj = lv_btn_create(options.page, NULL);// Bind the button to specified _page
+	lv_btn_set_style(options.btn_obj, LV_BTN_STYLE_PR,  &buttonActive); // Bind the PRESSED look
+	lv_btn_set_style(options.btn_obj, LV_BTN_STYLE_REL, &buttonInactive);// Bind the RELEASED look
+    lv_obj_set_size(options.btn_obj, options.width, options.height); // Set the button size
+	lv_obj_align(options.btn_obj,NULL, options.alignto, options.x_offset, options.y_offset); //Align and offset position
+	options.btn_label_obj = lv_label_create(options.btn_obj, NULL); //Create the label text
+    lv_label_set_text(options.btn_label_obj, options.text); //Set the label text
+	lv_obj_set_free_num(options.btn_obj,options.id); // Set the ID of the button
+	lv_btn_set_action(options.btn_obj, LV_BTN_ACTION_CLICK, onClick); // Bind master onClick
+}
+void createImgButton(img_button_options options){
+	options.btn_obj = lv_imgbtn_create(options.page, NULL);
+    lv_imgbtn_set_src(options.btn_obj, LV_BTN_STATE_REL, options.src);
+    lv_imgbtn_set_src(options.btn_obj, LV_BTN_STATE_PR, options.src);
+    lv_imgbtn_set_src(options.btn_obj, LV_BTN_STATE_TGL_REL, options.src);
+    lv_imgbtn_set_src(options.btn_obj, LV_BTN_STATE_TGL_PR, options.src);
+	lv_obj_align(options.btn_obj,NULL,options.alignto,20,0);
+	lv_obj_set_free_num(options.btn_obj,options.id);
+	lv_btn_set_action(options.btn_obj, LV_BTN_ACTION_CLICK, onClick); // Bind master onClick
 }
 void buildStyles(){
 	lv_style_copy(&buttonActive, &lv_style_plain);
@@ -176,41 +186,201 @@ void buildMainPage() {
     style.body.grad_color = LV_COLOR_MAKE(0, 0, 0);
 	lv_obj_set_style(mainPage, &style);
 
-	logo = lv_imgbtn_create(mainPage, NULL);
-    lv_imgbtn_set_src(logo, LV_BTN_STATE_REL, &teamlogo_50x50);
-    lv_imgbtn_set_src(logo, LV_BTN_STATE_PR, &teamlogo_50x50);
-    lv_imgbtn_set_src(logo, LV_BTN_STATE_TGL_REL, &teamlogo_50x50);
-    lv_imgbtn_set_src(logo, LV_BTN_STATE_TGL_PR, &teamlogo_50x50);
-	lv_obj_align(logo,NULL,LV_ALIGN_IN_LEFT_MID,20,0);
-	lv_obj_set_free_num(logo,9);
-	lv_btn_set_action(logo, LV_BTN_ACTION_CLICK, onClick); // Bind master onClick
 
-	createButton("Left",mainPage,LV_ALIGN_IN_TOP_RIGHT,5,-5,130,60,1,HOME_buttonLeft,HOME_buttonLeftLabel);
+	createImgButton({
+		src: &teamlogo_50x50, 
+		page: mainPage, 
+		alignto: LV_ALIGN_IN_LEFT_MID, 
+		x_offset: 20, 
+		y_offset: 0, 
+		id: COLOR_BTN_ID, 
+		btn_obj: logo
+	});
 
-	createButton("Right",mainPage,LV_ALIGN_IN_TOP_RIGHT,-128+5,-5,130,60,2,HOME_buttonRight,HOME_buttonRightLabel);
+	createButton({
+		text: "Left",
+		page: mainPage,
+		alignto: LV_ALIGN_IN_TOP_RIGHT,
+		x_offset: 5,
+		y_offset: -5,
+		width: 130,
+		height: 60,
+		id: LEFT_BTN_ID,
+		btn_obj: HOME_buttonLeft,
+		btn_label_obj: HOME_buttonLeftLabel
+	});
+	createButton({
+		text: "Right",
+		page: mainPage,
+		alignto: LV_ALIGN_IN_TOP_RIGHT,
+		x_offset: -128+5,
+		y_offset: -5,
+		width: 130,
+		height: 60,
+		id: RIGHT_BTN_ID,
+		btn_obj: HOME_buttonRight,
+		btn_label_obj: HOME_buttonRightLabel
+	});
+	createButton({
+		text: "AWP",
+		page: mainPage,
+		alignto: LV_ALIGN_IN_TOP_RIGHT,
+		x_offset: -128+5,
+		y_offset: 58-5,
+		width: 130,
+		height: 60,
+		id: AWP_BTN_ID,
+		btn_obj: HOME_buttonAWP,
+		btn_label_obj: HOME_buttonAWPLabel
+	});
+	createButton({
+		text: "Shoot",
+		page: mainPage,
+		alignto: LV_ALIGN_IN_TOP_RIGHT,
+		x_offset: 5,
+		y_offset: 58-5,
+		width: 130,
+		height: 60,
+		id: SHOOT_BTN_ID,
+		btn_obj: HOME_buttonShoot,
+		btn_label_obj: HOME_buttonShootLabel
+	});
+	createButton({
+		text: "Skills",
+		page: mainPage,
+		alignto: LV_ALIGN_IN_TOP_RIGHT,
+		x_offset: -128+5,
+		y_offset: 58+58-5,
+		width: 130,
+		height: 60,
+		id: SKILLS_BTN_ID,
+		btn_obj: HOME_buttonSkills,
+		btn_label_obj: HOME_buttonSkillsLabel
+	});
+	createButton({
+		text: "Nothing",
+		page: mainPage,
+		alignto: LV_ALIGN_IN_TOP_RIGHT,
+		x_offset: 5,
+		y_offset: 58+58-5,
+		width: 130,
+		height: 60,
+		id: NOTHING_BTN_ID,
+		btn_obj: HOME_buttonNothing,
+		btn_label_obj: HOME_buttonNothingLabel
+	});
 
-	createButton("AWP",mainPage,LV_ALIGN_IN_TOP_RIGHT,-128+5,58-5,130,60,3,HOME_buttonAWP,HOME_buttonAWPLabel);
-
-	createButton("Shoot",mainPage,LV_ALIGN_IN_TOP_RIGHT,5,58-5,130,60,4,HOME_buttonShoot,HOME_buttonShootLabel);
-
-	createButton("Skills",mainPage,LV_ALIGN_IN_TOP_RIGHT,-128+5,58+58-5,130,60,5,HOME_buttonSkills,HOME_buttonSkillsLabel);
-
-	createButton("Nothing",mainPage,LV_ALIGN_IN_TOP_RIGHT,5,58+58-5,130,60,6,HOME_buttonNothing,HOME_buttonNothingLabel);
-
-	createButton("Drive",mainPage,LV_ALIGN_IN_TOP_RIGHT,-128+5,58+58+58+10,130,60,7,HOME_buttonDrive,HOME_buttonDriveLabel);
-
-	createButton("PID",mainPage,LV_ALIGN_IN_TOP_RIGHT,5,58+58+58+10,130,60,8,HOME_buttonPID,HOME_buttonPIDLabel);
+	createButton({
+		text: "Drive",
+		page: mainPage,
+		alignto: LV_ALIGN_IN_TOP_RIGHT,
+		x_offset: -128+5,
+		y_offset: 58+58+58+10,
+		width: 130,
+		height: 60,
+		id: DRIVE_BTN_ID,
+		btn_obj: HOME_buttonDrive,
+		btn_label_obj: HOME_buttonDriveLabel
+	});
+	createButton({
+		text: "PID",
+		page: mainPage,
+		alignto: LV_ALIGN_IN_TOP_RIGHT,
+		x_offset: 5,
+		y_offset: 58+58+58+10,
+		width: 130,
+		height: 60,
+		id: PID_BTN_ID,
+		btn_obj: HOME_buttonPID,
+		btn_label_obj: HOME_buttonPIDLabel
+	});
 }
-void buildPIDPage() {
-	createButton("Home",PIDPage,LV_ALIGN_IN_TOP_MID,0,-5,130,60,10,PID_buttonHome,PID_buttonHomeLabel);
+void buildPIDPage() {	
+	createButton({
+		text: "Home",
+		page: PIDPage,
+		alignto: LV_ALIGN_IN_TOP_MID,
+		x_offset: 0,
+		y_offset: -5,
+		width: 130,
+		height: 60,
+		id: PID_HOME_BTN_ID,
+		btn_obj: PID_buttonHome,
+		btn_label_obj: PID_buttonHomeLabel
+	});
 
-	createButton("+",PIDPage,LV_ALIGN_IN_TOP_MID,-100,115,80,40,11,PID_Kp_p1Button,PID_Kp_p1ButtonLabel);
-	createButton("+",PIDPage,LV_ALIGN_IN_TOP_MID,0,115,80,40,12,   PID_Ki_p1Button,PID_Ki_p1ButtonLabel);
-	createButton("+",PIDPage,LV_ALIGN_IN_TOP_MID,100,115,80,40,13, PID_Ki_p1Button,PID_Kd_p1ButtonLabel);
-
-	createButton("-",PIDPage,LV_ALIGN_IN_TOP_MID,-100,150,80,40,14,PID_Kp_m1Button,PID_Kp_m1ButtonLabel);
-	createButton("-",PIDPage,LV_ALIGN_IN_TOP_MID,0,150,80,40,15,   PID_Ki_m1Button,PID_Ki_m1ButtonLabel);
-	createButton("-",PIDPage,LV_ALIGN_IN_TOP_MID,100,150,80,40,16, PID_Kd_m1Button,PID_Kd_m1ButtonLabel);
+	createButton({
+		text: "+",
+		page: PIDPage,
+		alignto: LV_ALIGN_IN_TOP_MID,
+		x_offset: -100,
+		y_offset: 115,
+		width: 80,
+		height: 40,
+		id: PID_KP_PLUS_BTN_ID,
+		btn_obj: PID_Kp_p1Button,
+		btn_label_obj: PID_Kp_p1ButtonLabel
+	});
+	createButton({
+		text: "+",
+		page: PIDPage,
+		alignto: LV_ALIGN_IN_TOP_MID,
+		x_offset: 0,
+		y_offset: 115,
+		width: 80,
+		height: 40,
+		id: PID_KI_PLUS_BTN_ID,
+		btn_obj: PID_Ki_p1Button,
+		btn_label_obj: PID_Ki_p1ButtonLabel
+	});
+	createButton({
+		text: "+",
+		page: PIDPage,
+		alignto: LV_ALIGN_IN_TOP_MID,
+		x_offset: 100,
+		y_offset: 115,
+		width: 80,
+		height: 40,
+		id: PID_KD_PLUS_BTN_ID,
+		btn_obj: PID_Kd_p1Button,
+		btn_label_obj: PID_Kd_p1ButtonLabel
+	});
+	createButton({
+		text: "-",
+		page: PIDPage,
+		alignto: LV_ALIGN_IN_TOP_MID,
+		x_offset: -100,
+		y_offset: 150,
+		width: 80,
+		height: 40,
+		id: PID_KP_MINUS_BTN_ID,
+		btn_obj: PID_Kp_m1Button,
+		btn_label_obj: PID_Kp_m1ButtonLabel
+	});
+	createButton({
+		text: "-",
+		page: PIDPage,
+		alignto: LV_ALIGN_IN_TOP_MID,
+		x_offset: 0,
+		y_offset: 150,
+		width: 80,
+		height: 40,
+		id: PID_KI_MINUS_BTN_ID,
+		btn_obj: PID_Ki_m1Button,
+		btn_label_obj: PID_Ki_m1ButtonLabel
+	});
+	createButton({
+		text: "-",
+		page: PIDPage,
+		alignto: LV_ALIGN_IN_TOP_MID,
+		x_offset: 100,
+		y_offset: 150,
+		width: 80,
+		height: 40,
+		id: PID_KD_MINUS_BTN_ID,
+		btn_obj: PID_Kd_m1Button,
+		btn_label_obj: PID_Kd_m1ButtonLabel
+	});
 
 	Kp_Label = lv_label_create(PIDPage, NULL); //Create the label text
 	Ki_Label = lv_label_create(PIDPage, NULL); //Create the label text
@@ -240,6 +410,28 @@ void buildPIDPage() {
     lv_label_set_text(PID_incrementLabel, floatToChar(PID_increment)); //Set the label text
 	lv_obj_align(PID_incrementLabel,NULL,LV_ALIGN_IN_TOP_LEFT,3,5);
 
-	createButton("+",PIDPage,LV_ALIGN_IN_TOP_LEFT,-5,30,80,40,17, PID_x10Increment,PID_x10IncrementLabel);
-	createButton("-",PIDPage,LV_ALIGN_IN_TOP_LEFT,-5,65,80,40,18,PID_div10Increment,PID_div10IncrementLabel);
+	createButton({
+		text: "+",
+		page: PIDPage,
+		alignto: LV_ALIGN_IN_TOP_LEFT,
+		x_offset: -5,
+		y_offset: 30,
+		width: 80,
+		height: 40,
+		id: PID_INCREMENT_PLUS_BTN_ID,
+		btn_obj: PID_x10Increment,
+		btn_label_obj: PID_x10IncrementLabel,
+	});
+	createButton({
+		text: "-",
+		page: PIDPage,
+		alignto: LV_ALIGN_IN_TOP_LEFT,
+		x_offset: -5,
+		y_offset: 65,
+		width: 80,
+		height: 40,
+		id: PID_INCREMENT_MINUS_BTN_ID,
+		btn_obj: PID_div10Increment,
+		btn_label_obj: PID_div10IncrementLabel,
+	});
 }

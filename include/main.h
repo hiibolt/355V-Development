@@ -64,7 +64,7 @@ using namespace okapi;
 extern "C" {
 #endif
 void autonomous(void);
-void updateColor();
+void cycleColor();
 void initialize(void);
 void disabled(void);
 void competition_initialize(void);
