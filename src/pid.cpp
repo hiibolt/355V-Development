@@ -20,12 +20,12 @@ float getConstant(int constant){
             return Ki;
             break;
         case CONSTANT_KD:
-            return KD;
+            return Kd;
             break;
     }
     return -1;
 }
-void setConstant(int con, float val){
+void setConstant(int constant, float val){
     switch (constant){
         case CONSTANT_KP:
             Kp = val;
@@ -34,7 +34,7 @@ void setConstant(int con, float val){
             Ki = val;
             break;
         case CONSTANT_KD:
-            KD = val;
+            Kd = val;
             break;
     }
 }

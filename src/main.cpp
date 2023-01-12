@@ -69,6 +69,10 @@ void cycleColor() {
 			LED_strip_1.update();
 			break;
 		case 2:
+			for(int i = 0;i < 43;i++){
+				LED_strip_1[i] = 0xFF0000;
+			}
+			LED_strip_1.update();
 			break;
 		default:
 			for(int i = 0;i < 43;i++){
@@ -146,34 +150,6 @@ void turn(){
  */
 void opcontrol() {
 	while (true){
-		if(currentColor == 2){
-			for(int i = 0;i < 43;i+=3){
-				if(i % 2 == 0){
-					LED_strip_1[i] = 0xed5026;
-					LED_strip_1[i+1] = 0xed5026;
-					LED_strip_1[i+2] = 0xed5026;
-				}else{
-					LED_strip_1[i] = 0x22f02f;
-					LED_strip_1[i+1] = 0xed5026;
-					LED_strip_1[i+2] = 0xed5026;
-				}
-			}
-			LED_strip_1.update();
-			pros::delay(300);
-			for(int i = 0;i < 43;i+=3){
-				if(i % 2 != 0){
-					LED_strip_1[i] = 0xed5026;
-					LED_strip_1[i+1] = 0xed5026;
-					LED_strip_1[i+2] = 0xed5026;
-				}else{
-					LED_strip_1[i] = 0x22f02f;
-					LED_strip_1[i+1] = 0xed5026;
-					LED_strip_1[i+2] = 0xed5026;
-				}
-			}
-			LED_strip_1.update();
-			pros::delay(300);
-		}
 		// Cheesy Drive (for Oli)
     	drive->getModel()->curvature(controller.getAnalog(ControllerAnalog::leftY), controller.getAnalog(ControllerAnalog::rightX));
 		if(driveForwardButton.isPressed()){
