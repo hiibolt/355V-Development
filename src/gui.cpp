@@ -96,28 +96,28 @@ static lv_res_t onClick(lv_obj_t * btn)
 			swapPage(HOME_PAGE_ID);
 			break;
 		case PID_KP_PLUS_BTN_ID:
-			setConstant((char *)"Kp",getConstant((char *)"Kp") + PID_increment);
-    		lv_label_set_text(Kp_Label, floatToChar(getConstant((char *)"Kp")) ); //Set the label text
+			setConstant(CONSTANT_KP,getConstant(CONSTANT_KP) + PID_increment);
+    		lv_label_set_text(Kp_Label, floatToChar(getConstant(CONSTANT_KP)) ); //Set the label text
 			break;
 		case PID_KI_PLUS_BTN_ID:
-			setConstant((char *)"Ki",getConstant((char *)"Ki") + PID_increment);
-    		lv_label_set_text(Ki_Label, floatToChar(getConstant((char *)"Ki")) ); //Set the label text
+			setConstant(CONSTANT_KI,getConstant(CONSTANT_KI) + PID_increment);
+    		lv_label_set_text(Ki_Label, floatToChar(getConstant(CONSTANT_KI)) ); //Set the label text
 			break;
 		case PID_KD_PLUS_BTN_ID:
-			setConstant((char *)"Kd",getConstant((char *)"Kd") + PID_increment);
-    		lv_label_set_text(Kd_Label, floatToChar(getConstant((char *)"Kd")) ); //Set the label text
+			setConstant(CONSTANT_KD,getConstant(CONSTANT_KD) + PID_increment);
+    		lv_label_set_text(Kd_Label, floatToChar(getConstant(CONSTANT_KD)) ); //Set the label text
 			break;
 		case PID_KP_MINUS_BTN_ID:
-			setConstant((char *)"Kp",getConstant((char *)"Kp") - PID_increment);
-    		lv_label_set_text(Kp_Label, floatToChar(getConstant((char *)"Kp")) ); //Set the label text
+			setConstant(CONSTANT_KP,getConstant(CONSTANT_KP) - PID_increment);
+    		lv_label_set_text(Kp_Label, floatToChar(getConstant(CONSTANT_KP)) ); //Set the label text
 			break;
 		case PID_KI_MINUS_BTN_ID:
-			setConstant((char *)"Ki",getConstant((char *)"Ki") - PID_increment);
-    		lv_label_set_text(Ki_Label, floatToChar(getConstant((char *)"Ki")) ); //Set the label text
+			setConstant(CONSTANT_KI,getConstant(CONSTANT_KI) - PID_increment);
+    		lv_label_set_text(Ki_Label, floatToChar(getConstant(CONSTANT_KI)) ); //Set the label text
 			break;
 		case PID_KD_MINUS_BTN_ID:
-			setConstant((char *)"Kd",getConstant((char *)"Kd") - PID_increment);
-    		lv_label_set_text(Kd_Label, floatToChar(getConstant((char *)"Kd")) ); //Set the label text
+			setConstant(CONSTANT_KD,getConstant(CONSTANT_KD) - PID_increment);
+    		lv_label_set_text(Kd_Label, floatToChar(getConstant(CONSTANT_KD)) ); //Set the label text
 			break;
 		case PID_INCREMENT_PLUS_BTN_ID:
 			PID_increment *= 10;
@@ -388,11 +388,11 @@ void buildPIDPage() {
 	p_Label = lv_label_create(PIDPage, NULL); //Create the label text
 	i_Label = lv_label_create(PIDPage, NULL); //Create the label text
 	d_Label = lv_label_create(PIDPage, NULL); //Create the label text
-	char * Kp = floatToChar(getConstant((char *)"Kp"));
+	char * Kp = floatToChar(getConstant(CONSTANT_KP));
     lv_label_set_text(Kp_Label, Kp); //Set the label text
-	char * Ki = floatToChar(getConstant((char *)"Ki"));
+	char * Ki = floatToChar(getConstant(CONSTANT_KI));
     lv_label_set_text(Ki_Label, Ki); //Set the label text
-	char * Kd = floatToChar(getConstant((char *)"Kd"));
+	char * Kd = floatToChar(getConstant(CONSTANT_KD));
     lv_label_set_text(Kd_Label, Kd); //Set the label text
 	lv_obj_align(Kp_Label,NULL,LV_ALIGN_IN_TOP_MID,-100,90); //Align and offset position
 	lv_obj_align(Ki_Label,NULL,LV_ALIGN_IN_TOP_MID,0,90); //Align and offset position

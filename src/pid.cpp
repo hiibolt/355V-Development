@@ -4,22 +4,37 @@ float Kp = 0.0020;
 float Ki = 0;
 float Kd = 0.00008;
 
-float getConstant(char* con){
-    if(con == "Kp"){
-        return Kp;
-    }else if(con == "Ki"){
-        return Ki;
-    }else if(con == "Kd"){
-        return Kd;
+/** 
+    Returns any constant.
+
+    To create a new constant:
+        - Define the constant here
+        - Create a new ID enum in pid.h
+*/
+float getConstant(int constant){
+    switch (constant){
+        case CONSTANT_KP:
+            return Kp;
+            break;
+        case CONSTANT_KI:
+            return Ki;
+            break;
+        case CONSTANT_KD:
+            return KD;
+            break;
     }
     return -1;
 }
-void setConstant(char* con, float val){
-    if(con == "Kp"){
-        Kp = val;
-    }else if(con == "Ki"){
-        Ki = val;
-    }else if(con == "Kd"){
-        Kd = val;
+void setConstant(int con, float val){
+    switch (constant){
+        case CONSTANT_KP:
+            Kp = val;
+            break;
+        case CONSTANT_KI:
+            Ki = val;
+            break;
+        case CONSTANT_KD:
+            KD = val;
+            break;
     }
 }
