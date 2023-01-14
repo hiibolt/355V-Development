@@ -86,6 +86,18 @@ static lv_res_t onClick(lv_obj_t * btn)
 		 	 I highly recommend reading up on structs and enums, they're used quite a lot.
 	*/
     switch(lv_obj_get_free_num(btn)){
+		case DRIVE_BTN_ID:
+			rotateDrive();
+			switch(getCurrentDrive()){
+				case CHEESY_DRIVE_ID:
+					swapPage(PID_PAGE_ID);
+    		lv_label_set_text(PID_Kp_m1ButtonLabel, "test" ); //Set the label text
+					break;
+				case TANK_DRIVE_ID:
+					swapPage(PID_PAGE_ID);
+					break;
+			}
+			break;
 		case PID_BTN_ID:
 			swapPage(PID_PAGE_ID);
 			break;
@@ -204,7 +216,7 @@ void buildMainPage() {
 		x_offset: 5,
 		y_offset: -5,
 		width: 130,
-		height: 60,
+		height: 55,
 		id: LEFT_BTN_ID,
 		btn_obj: HOME_buttonLeft,
 		btn_label_obj: HOME_buttonLeftLabel
@@ -216,7 +228,7 @@ void buildMainPage() {
 		x_offset: -128+5,
 		y_offset: -5,
 		width: 130,
-		height: 60,
+		height: 55,
 		id: RIGHT_BTN_ID,
 		btn_obj: HOME_buttonRight,
 		btn_label_obj: HOME_buttonRightLabel
@@ -226,9 +238,9 @@ void buildMainPage() {
 		page: mainPage,
 		alignto: LV_ALIGN_IN_TOP_RIGHT,
 		x_offset: -128+5,
-		y_offset: 58-5,
+		y_offset: 48-5,
 		width: 130,
-		height: 60,
+		height: 55,
 		id: AWP_BTN_ID,
 		btn_obj: HOME_buttonAWP,
 		btn_label_obj: HOME_buttonAWPLabel
@@ -238,9 +250,9 @@ void buildMainPage() {
 		page: mainPage,
 		alignto: LV_ALIGN_IN_TOP_RIGHT,
 		x_offset: 5,
-		y_offset: 58-5,
+		y_offset: 48-5,
 		width: 130,
-		height: 60,
+		height: 55,
 		id: SHOOT_BTN_ID,
 		btn_obj: HOME_buttonShoot,
 		btn_label_obj: HOME_buttonShootLabel
@@ -250,9 +262,9 @@ void buildMainPage() {
 		page: mainPage,
 		alignto: LV_ALIGN_IN_TOP_RIGHT,
 		x_offset: -128+5,
-		y_offset: 58+58-5,
+		y_offset: 48+48-5,
 		width: 130,
-		height: 60,
+		height: 55,
 		id: SKILLS_BTN_ID,
 		btn_obj: HOME_buttonSkills,
 		btn_label_obj: HOME_buttonSkillsLabel
@@ -262,9 +274,9 @@ void buildMainPage() {
 		page: mainPage,
 		alignto: LV_ALIGN_IN_TOP_RIGHT,
 		x_offset: 5,
-		y_offset: 58+58-5,
+		y_offset: 48+48-5,
 		width: 130,
-		height: 60,
+		height: 55,
 		id: NOTHING_BTN_ID,
 		btn_obj: HOME_buttonNothing,
 		btn_label_obj: HOME_buttonNothingLabel
@@ -275,9 +287,9 @@ void buildMainPage() {
 		page: mainPage,
 		alignto: LV_ALIGN_IN_TOP_RIGHT,
 		x_offset: -128+5,
-		y_offset: 58+58+58+10,
+		y_offset: 58+58+58+15,
 		width: 130,
-		height: 60,
+		height: 55,
 		id: DRIVE_BTN_ID,
 		btn_obj: HOME_buttonDrive,
 		btn_label_obj: HOME_buttonDriveLabel
@@ -287,13 +299,14 @@ void buildMainPage() {
 		page: mainPage,
 		alignto: LV_ALIGN_IN_TOP_RIGHT,
 		x_offset: 5,
-		y_offset: 58+58+58+10,
+		y_offset: 58+58+58+15,
 		width: 130,
-		height: 60,
+		height: 55,
 		id: PID_BTN_ID,
 		btn_obj: HOME_buttonPID,
 		btn_label_obj: HOME_buttonPIDLabel
 	});
+	//lv_obj_align(HOME_buttonPID,NULL, LV_ALIGN_IN_LEFT_MID, 0, 0);
 }
 void buildPIDPage() {	
 	createButton({

@@ -1,6 +1,7 @@
 #include "guifuncs.h"
 #include "main.h"
 #include "pid.h"
+#include "led.h"
 #include <string.h>
 #include <math.h>
 
@@ -36,40 +37,18 @@ Controller controller;
 ControllerButton turnLeftButton(ControllerDigital::A);
 ControllerButton turnRightButton(ControllerDigital::B);
 ControllerButton driveForwardButton(ControllerDigital::X);
-
-int currentColor = ORANGE_ID;
-pros::ADIDigitalOut LED_strip_1_brightness({18,1},1);
-pros::ADILed LED_strip_1({18,1}, 44);
-void cycleColor() {
-	currentColor ++;
-	switch(currentColor) {
-		case ORANGE_ID:
-			for(int i = 0;i < 43;i++){
-				LED_strip_1[i] = 0xff6400;
-			}
-			LED_strip_1.update();
+int currentDrive = CHEESY_DRIVE_ID;
+void rotateDrive(){
+	currentDrive = currentDrive == DRIVE_COUNT - 1 ? currentDrive + 1 : 0;
+	switch(currentDrive){
+		case CHEESY_DRIVE_ID:
 			break;
-		case BLUE_ID:
-			for(int i = 0;i < 43;i++){
-				LED_strip_1[i] = 0x1745ff;
-			}
-			LED_strip_1.update();
-			break;
-		case RED_ID:
-			for(int i = 0;i < 43;i++){
-				LED_strip_1[i] = 0xFF0000;
-			}
-			LED_strip_1.update();
-			break;
-		default:
-			for(int i = 0;i < 43;i++){
-				LED_strip_1[i] = 0xff6400;
-			}
-			LED_strip_1.update();
-			// -1 because otherwise, next cycle it starts at 1 (Blue)
-			currentColor = -1;
+		case TANK_DRIVE_ID:
 			break;
 	}
+}
+int getCurrentDrive(){
+	return currentDrive;
 }
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -77,18 +56,12 @@ void cycleColor() {
  * All other competition modes are blocked by initialize; it is recommended
  * to keep execution time for this mode under a few seconds.
  */
-
 void initialize() {
 	buildStyles();
 	buildMainPage();
 	buildPIDPage();
-	swapPage(0);
-	LED_strip_1.clear_all();
-	for(int i = 0;i < 43;i++){
-		LED_strip_1[i] = 0xff6400;
-		LED_strip_1.update();
-		pros::delay(40);
-	}
+	swapPage(HOME_PAGE_ID);
+	startupColors();
 }
 
 /**
