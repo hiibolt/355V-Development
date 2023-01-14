@@ -69,6 +69,7 @@ void initialize(void);
 void disabled(void);
 void competition_initialize(void);
 void opcontrol(void);
+enum COLOR_IDS{ORANGE_ID,BLUE_ID,RED_ID};
 #ifdef __cplusplus
 }
 #endif

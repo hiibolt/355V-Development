@@ -29,7 +29,7 @@ std::shared_ptr<ChassisController> drive =
 		.withMaxVelocity(600)
 		.withGains(
 			{0.01, 0, 0},  // Distance PID
-			{getConstant(CONSTANT_KD), getConstant(CONSTANT_KI), getConstant(CONSTANT_KD)}   // Turn     PID
+			{getConstant(CONSTANT_KD), getConstant(CONSTANT_KI), getConstant(CONSTANT_KD)}   // Turn PID
 		)
 		.build();
 Controller controller;
@@ -37,38 +37,25 @@ ControllerButton turnLeftButton(ControllerDigital::A);
 ControllerButton turnRightButton(ControllerDigital::B);
 ControllerButton driveForwardButton(ControllerDigital::X);
 
-//UI
-/*
- - 0 = Home Page
- - 1 = Drive
- - 2 = PID
-*/
-
-/** LED Strips */
-/*
- 0 - Orange
- 1 - Blue 
- 2 - c h r i s t m a s
-*/
-int currentColor = 0;
+int currentColor = ORANGE_ID;
 pros::ADIDigitalOut LED_strip_1_brightness({18,1},1);
 pros::ADILed LED_strip_1({18,1}, 44);
 void cycleColor() {
 	currentColor ++;
 	switch(currentColor) {
-		case 0:
+		case ORANGE_ID:
 			for(int i = 0;i < 43;i++){
 				LED_strip_1[i] = 0xff6400;
 			}
 			LED_strip_1.update();
 			break;
-		case 1:
+		case BLUE_ID:
 			for(int i = 0;i < 43;i++){
 				LED_strip_1[i] = 0x1745ff;
 			}
 			LED_strip_1.update();
 			break;
-		case 2:
+		case RED_ID:
 			for(int i = 0;i < 43;i++){
 				LED_strip_1[i] = 0xFF0000;
 			}
@@ -79,6 +66,7 @@ void cycleColor() {
 				LED_strip_1[i] = 0xff6400;
 			}
 			LED_strip_1.update();
+			// -1 because otherwise, next cycle it starts at 1 (Blue)
 			currentColor = -1;
 			break;
 	}
