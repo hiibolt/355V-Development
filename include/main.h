@@ -59,7 +59,7 @@ using namespace okapi;
  * Prototypes for the competition control tasks are redefined here to ensure
  * that they can be called from user code (i.e. calling autonomous from a
  * button press in opcontrol() for testing purposes).
- */
+ */ 
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -70,8 +70,11 @@ void disabled(void);
 void competition_initialize(void);
 void opcontrol(void);
 enum DRIVE_IDS{CHEESY_DRIVE_ID,TANK_DRIVE_ID,DRIVE_COUNT};
+enum AUTON_IDS{NONE_AUTON_ID,SKILLS_AUTON_ID,SHOOT_AUTON_ID,AWP_AUTON_ID,LEFT_AUTON_ID,RIGHT_AUTON_ID,AUTON_COUNT};
 void rotateDrive();
 int getCurrentDrive();
+void setAuton(int auton_id);
+int getCurrentAuton();
 #ifdef __cplusplus
 }
 #endif

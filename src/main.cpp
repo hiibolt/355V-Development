@@ -38,17 +38,18 @@ ControllerButton turnLeftButton(ControllerDigital::A);
 ControllerButton turnRightButton(ControllerDigital::B);
 ControllerButton driveForwardButton(ControllerDigital::X);
 int currentDrive = CHEESY_DRIVE_ID;
+int currentAuton = NONE_AUTON_ID;
 void rotateDrive(){
-	currentDrive = currentDrive == DRIVE_COUNT - 1 ? currentDrive + 1 : 0;
-	switch(currentDrive){
-		case CHEESY_DRIVE_ID:
-			break;
-		case TANK_DRIVE_ID:
-			break;
-	}
+	currentDrive = currentDrive == DRIVE_COUNT - 1 ? 0 : currentDrive + 1;
 }
 int getCurrentDrive(){
 	return currentDrive;
+}
+void setAuton(int auton_id){
+	currentAuton = auton_id;
+}
+int getCurrentAuton(){
+	return currentAuton;
 }
 /**
  * Runs initialization code. This occurs as soon as the program is started.

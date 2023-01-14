@@ -27,6 +27,9 @@ lv_obj_t * HOME_buttonPIDLabel;
 lv_obj_t * HOME_buttonColor;
 lv_obj_t * HOME_buttonColorLabel;
 
+lv_obj_t * HOME_autonLabel;
+lv_obj_t * HOME_driveLabel;
+
 lv_obj_t * logo;
 
 // PID Page
@@ -67,6 +70,7 @@ lv_obj_t * PID_div10IncrementLabel;
 // General
 lv_style_t buttonActive;
 lv_style_t buttonInactive;
+lv_style_t plaintext;
 
 
 char tempBuffer[20];
@@ -86,15 +90,38 @@ static lv_res_t onClick(lv_obj_t * btn)
 		 	 I highly recommend reading up on structs and enums, they're used quite a lot.
 	*/
     switch(lv_obj_get_free_num(btn)){
+		case LEFT_BTN_ID:
+			setAuton(LEFT_AUTON_ID);
+    		lv_label_set_text(HOME_autonLabel, "Left");
+			break;
+		case RIGHT_BTN_ID:
+			setAuton(RIGHT_AUTON_ID);
+    		lv_label_set_text(HOME_autonLabel, "Right");
+			break;
+		case AWP_BTN_ID:
+			setAuton(AWP_AUTON_ID);
+    		lv_label_set_text(HOME_autonLabel, "AWP");
+			break;
+		case SHOOT_BTN_ID:
+			setAuton(SHOOT_AUTON_ID);
+    		lv_label_set_text(HOME_autonLabel, "Shoot");
+			break;
+		case SKILLS_BTN_ID:
+			setAuton(SKILLS_AUTON_ID);
+    		lv_label_set_text(HOME_autonLabel, "Skills");
+			break;
+		case NOTHING_BTN_ID:
+			setAuton(NONE_AUTON_ID);
+    		lv_label_set_text(HOME_autonLabel, "None");
+			break;
 		case DRIVE_BTN_ID:
 			rotateDrive();
 			switch(getCurrentDrive()){
 				case CHEESY_DRIVE_ID:
-					swapPage(PID_PAGE_ID);
-    		lv_label_set_text(PID_Kp_m1ButtonLabel, "test" ); //Set the label text
+    				lv_label_set_text(HOME_driveLabel, "Cheesy");
 					break;
 				case TANK_DRIVE_ID:
-					swapPage(PID_PAGE_ID);
+    				lv_label_set_text(HOME_driveLabel, " Tank");
 					break;
 			}
 			break;
@@ -190,6 +217,9 @@ void buildStyles(){
 	buttonInactive.body.border.color = LV_COLOR_MAKE(255,113,2);
 	buttonInactive.body.border.width = 3;
     buttonInactive.text.color = LV_COLOR_MAKE(255,113,2);
+
+	lv_style_copy(&plaintext, &lv_style_plain);
+    plaintext.text.color = LV_COLOR_MAKE(255,121,0);
 }
 void buildMainPage() {
 	static lv_style_t style;
@@ -306,7 +336,14 @@ void buildMainPage() {
 		btn_obj: HOME_buttonPID,
 		btn_label_obj: HOME_buttonPIDLabel
 	});
-	//lv_obj_align(HOME_buttonPID,NULL, LV_ALIGN_IN_LEFT_MID, 0, 0);
+	HOME_autonLabel = lv_label_create(mainPage, NULL);
+	HOME_driveLabel = lv_label_create(mainPage, NULL);
+    lv_label_set_text(HOME_autonLabel, "None");
+    lv_label_set_text(HOME_driveLabel, "Cheesy");
+	lv_obj_align(HOME_autonLabel,NULL,LV_ALIGN_IN_RIGHT_MID,-170,46.5);
+	lv_obj_align(HOME_driveLabel,NULL,LV_ALIGN_IN_RIGHT_MID,-28,46.5);
+	lv_label_set_style(HOME_autonLabel,&plaintext);
+	lv_label_set_style(HOME_driveLabel,&plaintext);
 }
 void buildPIDPage() {	
 	createButton({
