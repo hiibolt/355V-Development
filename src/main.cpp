@@ -94,9 +94,26 @@ void competition_initialize() {}
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
-void autonomous() {}
-void turn(){
+void autonomous() {
+	//NONE_AUTON_ID,SKILLS_AUTON_ID,SHOOT_AUTON_ID,AWP_AUTON_ID,LEFT_AUTON_ID,RIGHT_AUTON_ID,AUTON_COUNT};
+	switch(currentAuton){
+		case NONE_AUTON_ID:
+			// do absolutely nothing. nothing at all. do a thing? you die. a death. died. ead.
+			break;
+		case SKILLS_AUTON_ID:
+			drive->turnAngle(45_deg);
+			break;
+		case SHOOT_AUTON_ID:
+			break;
+		case AWP_AUTON_ID:
+			break;
+		case LEFT_AUTON_ID:
+			break;
+		case RIGHT_AUTON_ID:
+			break;
+	}
 }
+
 /**
  * Runs the operator control code. This function will be started in its own task
  * with the default priority and stack size whenever the robot is enabled via
@@ -112,9 +129,24 @@ void turn(){
  */
 void opcontrol() {
 	while (true){
+		switch (currentDrive){
+			case CHEESY_DRIVE_ID:
+				drive->getModel()->curvature(controller.getAnalog(ControllerAnalog::leftY), controller.getAnalog(ControllerAnalog::rightX),0.05);	
+				break;
+			case TANK_DRIVE_ID:
+				drive->getModel()->tank(controller.getAnalog(ControllerAnalog::leftY), controller.getAnalog(ControllerAnalog::rightY),0.05);	
+				break;
+			case EXPONENTIAL_DRIVE_ID:
+				float leftStick = controller.getAnalog(ControllerAnalog::leftY) * 127;
+				float rightStick = controller.getAnalog(ControllerAnalog::rightX) * 127;
+				auto exponential = [&](float input){return (input/127) * std::pow(1.039,std::abs(input));};
+				float velocity = exponential(leftStick) / 127;
+				float turn     = exponential(rightStick) / 127; 
+				drive->getModel()->arcade(velocity, turn, 0.05);	
+				break;
+		}
 		// Cheesy Drive (for Oli)
-    	drive->getModel()->curvature(controller.getAnalog(ControllerAnalog::leftY), controller.getAnalog(ControllerAnalog::rightX));
-		if(driveForwardButton.isPressed()){
+    	if(driveForwardButton.isPressed()){
 			drive->moveDistance(2_ft);
 		}
 		if(turnLeftButton.isPressed()){

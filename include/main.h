@@ -69,7 +69,7 @@ void initialize(void);
 void disabled(void);
 void competition_initialize(void);
 void opcontrol(void);
-enum DRIVE_IDS{CHEESY_DRIVE_ID,TANK_DRIVE_ID,DRIVE_COUNT};
+enum DRIVE_IDS{CHEESY_DRIVE_ID,TANK_DRIVE_ID,EXPONENTIAL_DRIVE_ID,DRIVE_COUNT};
 enum AUTON_IDS{NONE_AUTON_ID,SKILLS_AUTON_ID,SHOOT_AUTON_ID,AWP_AUTON_ID,LEFT_AUTON_ID,RIGHT_AUTON_ID,AUTON_COUNT};
 void rotateDrive();
 int getCurrentDrive();

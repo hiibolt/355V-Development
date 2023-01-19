@@ -123,6 +123,9 @@ static lv_res_t onClick(lv_obj_t * btn)
 				case TANK_DRIVE_ID:
     				lv_label_set_text(HOME_driveLabel, " Tank");
 					break;
+				case EXPONENTIAL_DRIVE_ID:
+					lv_label_set_text(HOME_driveLabel, " Expo");
+					break;
 			}
 			break;
 		case PID_BTN_ID:
