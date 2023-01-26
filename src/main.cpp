@@ -2,9 +2,12 @@
 #include "main.h"
 #include "pid.h"
 #include "led.h"
+#include "teamlogo.c"
 #include <string.h>
 #include <math.h>
 
+using namespace LED;
+using namespace GUI;
 /** 			Constants 			**/
 //Controller constructor
 /**
@@ -29,8 +32,8 @@ std::shared_ptr<ChassisController> drive =
         .withDimensions({AbstractMotor::gearset::blue, 60.0/36.0}, {{3.25_in, 11.9_in}, imev5BlueTPR})
 		.withMaxVelocity(600)
 		.withGains(
-			{0.01, 0, 0},  // Distance PID
-			{getConstant(CONSTANT_KD), getConstant(CONSTANT_KI), getConstant(CONSTANT_KD)}   // Turn PID
+			{PID::getConstant(PID::Distance,PID::Ki), PID::getConstant(PID::Distance,PID::Ki), PID::getConstant(PID::Distance,PID::Ki)},  // Distance PID
+			{PID::getConstant(PID::Distance,PID::Ki), PID::getConstant(PID::Distance,PID::Ki), PID::getConstant(PID::Distance,PID::Ki)}   // Turn PID
 		)
 		.build();
 Controller controller;
@@ -58,11 +61,11 @@ int getCurrentAuton(){
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-	buildStyles();
-	buildMainPage();
-	buildPIDPage();
-	swapPage(HOME_PAGE_ID);
-	startupColors();
+	GUI::buildStyles();
+	GUI::buildMainPage();
+	GUI::buildPIDPage();
+	GUI::swapPage(HOME_PAGE_ID);
+	LED::startupColors();
 }
 
 /**

@@ -1,8 +1,5 @@
 #include "pid.h"
 #include <string.h>
-float Kp = 0.0020;
-float Ki = 0;
-float Kd = 0.00008;
 
 /** 
     Returns any constant.
@@ -11,30 +8,34 @@ float Kd = 0.00008;
         - Define the constant here
         - Create a new ID enum in pid.h
 */
-float getConstant(int constant){
-    switch (constant){
-        case CONSTANT_KP:
-            return Kp;
-            break;
-        case CONSTANT_KI:
-            return Ki;
-            break;
-        case CONSTANT_KD:
-            return Kd;
-            break;
+namespace PID{ 
+    float AllPID[3][3] = {
+        {0.0020,0.0000,0.0800}, // Distance
+        {0.0010,0.0000,0.0400}, // Turn
+        {0.0005,0.0000,0.0200}, // Angle
+    };
+    char * DistanceName = (char *)"Distance";
+    char * TurnName = (char *)"  Turn  ";
+    char * AngleName = (char *)" Angle ";
+    char * getPIDTypeName(int index){
+        switch (index){
+            case 0:
+                return PID::DistanceName;
+                break;
+            case 1:
+                return PID::TurnName;
+                break;
+            case 2:
+                return PID::AngleName;
+                break;
+        }
+        return (char *)"wtf";
+    };
+    float getConstant(int type, int constant){
+        return PID::AllPID[type][constant];
+        return -1;
     }
-    return -1;
-}
-void setConstant(int constant, float val){
-    switch (constant){
-        case CONSTANT_KP:
-            Kp = val;
-            break;
-        case CONSTANT_KI:
-            Ki = val;
-            break;
-        case CONSTANT_KD:
-            Kd = val;
-            break;
+    void setConstant(int type, int constant, float val){
+        PID::AllPID[type][constant] = val;
     }
 }
