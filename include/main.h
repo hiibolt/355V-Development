@@ -36,11 +36,12 @@
 #define PROS_USE_LITERALS
 
 #include "api.h"
+#include "pros/apix.h"
 
 /**
  * You should add more #includes here
  */
-//#include "okapi/api.hpp"
+#include "okapi/api.hpp"
 //#include "pros/api_legacy.h"
 
 /**
@@ -53,21 +54,28 @@
  */
 // using namespace pros;
 // using namespace pros::literals;
-// using namespace okapi;
+using namespace okapi;
 
 /**
  * Prototypes for the competition control tasks are redefined here to ensure
  * that they can be called from user code (i.e. calling autonomous from a
  * button press in opcontrol() for testing purposes).
- */
+ */ 
 #ifdef __cplusplus
 extern "C" {
 #endif
 void autonomous(void);
+void cycleColor();
 void initialize(void);
 void disabled(void);
 void competition_initialize(void);
 void opcontrol(void);
+enum DRIVE_IDS{CHEESY_DRIVE_ID,TANK_DRIVE_ID,EXPONENTIAL_DRIVE_ID,DRIVE_COUNT};
+enum AUTON_IDS{NONE_AUTON_ID,SKILLS_AUTON_ID,SHOOT_AUTON_ID,AWP_AUTON_ID,LEFT_AUTON_ID,RIGHT_AUTON_ID,AUTON_COUNT};
+void rotateDrive();
+int getCurrentDrive();
+void setAuton(int auton_id);
+int getCurrentAuton();
 #ifdef __cplusplus
 }
 #endif
