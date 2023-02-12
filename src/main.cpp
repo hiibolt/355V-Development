@@ -138,7 +138,8 @@ void autonomous() {
 			//lined up for roller 
 			drive->moveDistance(12_in);
 			//spin roller
-
+			drive->moveDistance(-12_in);
+			// this is the first half of the skills auton
 
 			
 			
@@ -151,12 +152,91 @@ void autonomous() {
 
 			break;
 		case SHOOT_AUTON_ID:
+		//starting from left side
+			drive->moveDistance(3_in);
+			//spin roller
+			drive->turnAngle(-45_deg);
+			drive->moveDistance(6_in);
+			//intake disk
+			drive->moveDistance(-12_in);
+			drive->turnAngle(-90_deg);
+			drive->moveDistance(12_in);
+			drive->turnAngle(-75_deg);
+			//shoot the three disks
+			drive->turnAngle(75_deg);
+			//intake while moving
+			drive->moveDistance(24_in);
+			drive->turnAngle(-15_deg);
+			//shoot disks
+			drive->turnAngle(15_deg);
+			//intake while moving
+			drive->moveDistance(60_in);
+			drive->turnAngle(90_deg);
+			//shoot end auton
 			break;
 		case AWP_AUTON_ID:
+			//starting from left side
+			drive->moveDistance(3_in);
+			//spin roller
+			drive->turnAngle(-45_deg);
+			drive->moveDistance(6_in);
+			//intake disk
+			drive->moveDistance(-12_in);
+			drive->turnAngle(-90_deg);
+			drive->moveDistance(12_in);
+			drive->turnAngle(-75_deg);
+			//shoot the three disks
+			drive->turnAngle(75_deg);
+			//intake while moving
+			drive->moveDistance(24_in);
+			drive->turnAngle(-15_deg);
+			//shoot disks
+			drive->turnAngle(15_deg);
+			//intake while moving
+			drive->moveDistance(60_in);
+			//if we have time we can shoot idk if we would have time tho
+			drive->turnAngle(45_deg);
+			drive->moveDistance(12_in);
+			//spin  roller
 			break;
 		case LEFT_AUTON_ID:
+		//starting from left side
+			drive->moveDistance(3_in);
+			//spin roller
+			drive->turnAngle(-45_deg);
+			drive->moveDistance(6_in);
+			//intake disk
+			drive->moveDistance(-12_in);
+			drive->turnAngle(-90_deg);
+			drive->moveDistance(12_in);
+			drive->turnAngle(-75_deg);
+			//shoot the three disks
+			drive->turnAngle(75_deg);
+			//intake while moving
+			drive->moveDistance(24_in);
+			drive->turnAngle(-15_deg);
 			break;
 		case RIGHT_AUTON_ID:
+			drive->moveDistance(36_in);
+			//intake while moving
+			drive->turnAngle(170_deg);
+			//shoot three disks
+			drive->turnAngle(-160_deg);
+			drive->moveDistance(12_in);
+			//intake while driving
+			drive->moveDistance(12_in);
+			drive->turnAngle(90_deg);
+			//intake while moving
+			drive->moveDistance(48_in);
+			drive->turnAngle(270_deg);
+			//shoot
+			drive->turnAngle(-180_deg);
+			drive->moveDistance(60_in);
+			drive->turnAngle(45_deg);
+			//spin roller
+			
+
+
 			break;
 	}
 }
