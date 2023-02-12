@@ -30,7 +30,7 @@ MotorGroup rightMotors = MotorGroup({8, 9, 10});
 std::shared_ptr<ChassisController> drive =
     ChassisControllerBuilder()
         .withMotors(leftMotors, rightMotors)
-        .withDimensions({AbstractMotor::gearset::blue, 60.0/36.0}, {{3.25_in, 11.9_in}, imev5BlueTPR})
+        	.withDimensions({AbstractMotor::gearset::blue, 60.0/36.0}, {{3.25_in, 11.9_in}, imev5BlueTPR})
 		.withMaxVelocity(600)
 		.withGains(
 			{PID::getConstant(PID::Distance,PID::Ki), PID::getConstant(PID::Distance,PID::Ki), PID::getConstant(PID::Distance,PID::Ki)},  // Distance PID
@@ -106,7 +106,49 @@ void autonomous() {
 			// do absolutely nothing. nothing at all. do a thing? you die. a death. died. ead.
 			break;
 		case SKILLS_AUTON_ID:
+			drive->moveDistance(5_in);
+			drive->moveDistance(-8_in);
+			//spin rollers 
+			drive->turnAngle(-120_deg);
+			drive->moveDistance(14_in);
+			//turning to face disk on the line then intake it 
+			drive->turnAngle(30_deg);
+			drive->moveDistance(20_in);
+			//spin roller 
+			drive->moveDistance(12_in);
+			//shoot three disks
 			drive->turnAngle(45_deg);
+			//intake while moving
+			drive->moveDistance(62_in);
+			drive->turnAngle(-90_deg);\
+			//shoot
+			drive->turnAngle(90_deg);
+			//intake while moving
+			drive->moveDistance(50_in);
+			drive->turnAngle(-75_deg);
+			//shoot  disks
+			drive->turnAngle(50_deg);
+			drive->moveDistance(36_in);
+			drive->turnAngle(90_deg);
+			// get read for preloads
+			//shoot three times 
+			drive->turnAngle(180_deg);
+			drive->moveDistance(36_in);
+			drive->turnAngle(90_deg);
+			//lined up for roller 
+			drive->moveDistance(12_in);
+			//spin roller
+
+
+			
+			
+
+
+
+
+
+
+
 			break;
 		case SHOOT_AUTON_ID:
 			break;
