@@ -2,11 +2,9 @@
 #include "main.h"
 #include "pid.h"
 #include "led.h"
-#include "auton.h"
 #include "teamlogo.c"
 #include <string.h>
 #include <math.h>
-
 using namespace LED;
 using namespace GUI;
 /** 			Constants 			**/
