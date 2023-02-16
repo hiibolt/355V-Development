@@ -5,6 +5,8 @@
 #include <string.h>
 #include <math.h>
 
+int current_page = HOME_PAGE_ID;
+
 // Home Page
 lv_obj_t * mainPage = lv_obj_create(NULL,NULL);
 
@@ -208,11 +210,16 @@ namespace GUI{
 		switch(page){
 			case 0:
 				lv_scr_load(mainPage);
+				current_page = HOME_PAGE_ID;
 				break;
 			case 1:
 				lv_scr_load(PIDPage);
+				current_page = PID_PAGE_ID;
 				break;
 		}
+	}
+	int getPage(){
+		return current_page;
 	}
 	void buildStyles(){
 		lv_style_copy(&buttonActive, &lv_style_plain);

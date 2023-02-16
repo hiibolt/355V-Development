@@ -38,8 +38,9 @@ std::shared_ptr<ChassisController> drive =
 		)
 		.build();
 Controller controller;
-ControllerButton turnLeftButton(ControllerDigital::A);
-ControllerButton turnRightButton(ControllerDigital::B);
+ControllerButton turnLeftButton(ControllerDigital::Y);
+ControllerButton turnRightButton(ControllerDigital::A);
+ControllerButton turn180Button(ControllerDigital::B);
 ControllerButton driveForwardButton(ControllerDigital::X);
 int currentDrive = CHEESY_DRIVE_ID;
 int currentAuton = NONE_AUTON_ID;
@@ -149,18 +150,20 @@ void opcontrol() {
 				drive->getModel()->arcade(velocity, turn, 0.05);	
 				break;
 		}
-		// Cheesy Drive (for Oli)
-    	if(driveForwardButton.isPressed()){
-			drive->moveDistance(2_ft);
-		}
-		if(turnLeftButton.isPressed()){
-			//drive->setMaxVelocity(500);
-			drive->turnAngle(45_deg);
-			drive->setMaxVelocity(600);
-		}else if(turnRightButton.isPressed()){
-			//drive->setMaxVelocity(500);
-			drive->turnAngle(-45_deg);
-			drive->setMaxVelocity(600);
+		if(GUI::getPage()){
+			if(driveForwardButton.isPressed()){
+				drive->moveDistance(2_ft);
+			}
+			if(turnLeftButton.isPressed()){
+				//drive->setMaxVelocity(500);
+				drive->turnAngle(45_deg);
+			}else if(turnRightButton.isPressed()){
+				//drive->setMaxVelocity(500);
+				drive->turnAngle(-45_deg);
+			}else if(turn180Button.isPressed()){
+				//drive->setMaxVelocity(500);
+				drive->turnAngle(360_deg);
+			}
 		}
     	// Wait and give up the time we don't need to other tasks.
     	// Additionally, joystick values, motor telemetry, etc. all updates every 10 ms.
