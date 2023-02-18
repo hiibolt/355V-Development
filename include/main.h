@@ -76,6 +76,7 @@ void rotateDrive();
 int getCurrentDrive();
 void setAuton(int auton_id);
 int getCurrentAuton();
+Controller getControllerObj();
 #ifdef __cplusplus
 }
 #endif

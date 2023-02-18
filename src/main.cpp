@@ -8,24 +8,46 @@
 
 using namespace LED;
 using namespace GUI;
-/** 			Constants 			**/
-//Controller constructor
-/**
-pros::Controller master(pros::E_CONTROLLER_MASTER);
-//Inertial Sensor
-pros::Imu inertia(19);
-//Motor Array
-pros::Motor left_mtr1(1, true);
-pros::Motor left_mtr2(4, true);
-pros::Motor left_mtr3(5, true);
-pros::Motor right_mtr1(8, false);
-pros::Motor right_mtr2(9, false);
-pros::Motor right_mtr3(10, false);
-*/
 
-// Chassis Controller - lets us drive the robot around with open- or closed-loop control
-MotorGroup leftMotors = MotorGroup({-1, -4, -5});
-MotorGroup rightMotors = MotorGroup({8, 9, 10});
+/** 			Constants 			**/
+Controller controller;
+ADIButton stopSwitch('A');
+MotorGroup leftMotors({-1, -4, -5});
+MotorGroup rightMotors({8, 9, 10});
+ControllerButton turnLeftButton(ControllerDigital::Y);
+ControllerButton turnRightButton(ControllerDigital::A);
+ControllerButton turn180Button(ControllerDigital::B);
+ControllerButton driveForwardButton(ControllerDigital::X);
+
+ControllerButton shootButton(ControllerDigital::R1);
+ControllerButton intakeButton(ControllerDigital::L1);
+ControllerButton outtakeButton(ControllerDigital::L2);
+ControllerButton endgameButton(ControllerDigital::up);
+
+/**             Variables           **/
+int currentDrive = CHEESY_DRIVE_ID;
+int currentAuton = NONE_AUTON_ID;
+
+/**         Variable Modifiers      **/
+void rotateDrive(){
+	currentDrive = currentDrive == DRIVE_COUNT - 1 ? 0 : currentDrive + 1;
+	GUI::updateDriveInfo(currentDrive,getControllerObj());
+}
+int getCurrentDrive(){
+	return currentDrive;
+}
+void setAuton(int auton_id){
+	currentAuton = auton_id;
+	GUI::updateAutonInfo(currentAuton,getControllerObj());
+}
+int getCurrentAuton(){
+	return currentAuton;
+}
+Controller getControllerObj(){
+	return controller;
+}
+
+// Initiate drive definiton
 std::shared_ptr<ChassisController> drive =
     ChassisControllerBuilder()
         .withMotors(leftMotors, rightMotors)
@@ -37,25 +59,7 @@ std::shared_ptr<ChassisController> drive =
 			{PID::getConstant(PID::Angle,PID::Ki), PID::getConstant(PID::Angle,PID::Ki), PID::getConstant(PID::Angle,PID::Ki)}            // Turn PID
 		)
 		.build();
-Controller controller;
-ControllerButton turnLeftButton(ControllerDigital::Y);
-ControllerButton turnRightButton(ControllerDigital::A);
-ControllerButton turn180Button(ControllerDigital::B);
-ControllerButton driveForwardButton(ControllerDigital::X);
-int currentDrive = CHEESY_DRIVE_ID;
-int currentAuton = NONE_AUTON_ID;
-void rotateDrive(){
-	currentDrive = currentDrive == DRIVE_COUNT - 1 ? 0 : currentDrive + 1;
-}
-int getCurrentDrive(){
-	return currentDrive;
-}
-void setAuton(int auton_id){
-	currentAuton = auton_id;
-}
-int getCurrentAuton(){
-	return currentAuton;
-}
+
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
@@ -63,6 +67,10 @@ int getCurrentAuton(){
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
+	GUI::updateColorInfo(LED::getCurrentColorID(), controller);
+	GUI::updateDriveInfo(currentDrive, controller);
+	GUI::updateAutonInfo(currentAuton, controller);
+
 	GUI::buildStyles();
 	GUI::buildMainPage();
 	GUI::buildPIDPage();

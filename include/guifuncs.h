@@ -47,6 +47,9 @@ enum PAGE_NAMES{
 void createButton(const char * _text,lv_obj_t * _page, lv_align_t _alignto,int _x_offset, int _y_offset, int _width, int _height, int _id, lv_obj_t * _TEMPBUTTON, lv_obj_t * _TEMPBUTTONLABEL);
 void createButton(const char * _text,lv_obj_t * _page, lv_align_t _alignto,int _x_offset, int _y_offset, int _width, int _height, int _id, lv_obj_t * _TEMPBUTTON, lv_obj_t * _TEMPBUTTONLABEL);
 namespace GUI{
+    void updateDriveInfo(int driveID, Controller controller);
+    void updateAutonInfo(int PIDID, Controller controller);
+    void updateColorInfo(int colorID, Controller controller);
     void swapPage(int page);
     int  getPage();
     void buildStyles();
