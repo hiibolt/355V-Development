@@ -12,8 +12,8 @@ using namespace GUI;
 /** 			Constants 			**/
 Controller controller;
 ADIButton stopSwitch('A');
-MotorGroup leftMotors({-1, -4, -5});
-MotorGroup rightMotors({8, 9, 10});
+MotorGroup leftMotors({-8, 9, -10});
+MotorGroup rightMotors({3,-4,5});
 ControllerButton turnLeftButton(ControllerDigital::Y);
 ControllerButton turnRightButton(ControllerDigital::A);
 ControllerButton turn180Button(ControllerDigital::B);
@@ -48,10 +48,11 @@ Controller getControllerObj(){
 }
 
 // Initiate drive definiton
+// fix trash code
 std::shared_ptr<ChassisController> drive =
     ChassisControllerBuilder()
         .withMotors(leftMotors, rightMotors)
-        .withDimensions({AbstractMotor::gearset::blue, 60.0/36.0}, {{3.25_in, 11.9_in}, imev5BlueTPR})
+        .withDimensions({AbstractMotor::gearset::blue, 1.0/1.0}, {{2.75_in, 10.25_in}, imev5BlueTPR})
 		.withMaxVelocity(600)
 		.withGains(
 			{PID::getConstant(PID::Distance,PID::Ki), PID::getConstant(PID::Distance,PID::Ki), PID::getConstant(PID::Distance,PID::Ki)},  // Distance PID
@@ -76,6 +77,7 @@ void initialize() {
 	GUI::buildPIDPage();
 	GUI::swapPage(HOME_PAGE_ID);
 	LED::startupColors();
+	controller.rumble(".");
 }
 
 /**
