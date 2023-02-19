@@ -5,4 +5,5 @@
       gcc-arm-embedded
       git
     ];
+    shellHook = "source enviro/bin/activate";
   }

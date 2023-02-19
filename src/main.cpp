@@ -7,28 +7,51 @@
 #include <math.h>
 using namespace LED;
 using namespace GUI;
-/** 			Constants 			**/
-//Controller constructor
-/**
-pros::Controller master(pros::E_CONTROLLER_MASTER);
-//Inertial Sensor
-pros::Imu inertia(19);
-//Motor Array
-pros::Motor left_mtr1(1, true);
-pros::Motor left_mtr2(4, true);
-pros::Motor left_mtr3(5, true);
-pros::Motor right_mtr1(8, false);
-pros::Motor right_mtr2(9, false);
-pros::Motor right_mtr3(10, false);
-*/
 
-// Chassis Controller - lets us drive the robot around with open- or closed-loop control
-MotorGroup leftMotors = MotorGroup({-1, -4, -5});
-MotorGroup rightMotors = MotorGroup({8, 9, 10});
+/** 			Constants 			**/
+Controller controller;
+ADIButton stopSwitch('A');
+MotorGroup leftMotors({-8, 9, -10});
+MotorGroup rightMotors({3,-4,5});
+ControllerButton turnLeftButton(ControllerDigital::Y);
+ControllerButton turnRightButton(ControllerDigital::A);
+ControllerButton turn180Button(ControllerDigital::B);
+ControllerButton driveForwardButton(ControllerDigital::X);
+
+ControllerButton shootButton(ControllerDigital::R1);
+ControllerButton intakeButton(ControllerDigital::L1);
+ControllerButton outtakeButton(ControllerDigital::L2);
+ControllerButton endgameButton(ControllerDigital::up);
+
+/**             Variables           **/
+int currentDrive = CHEESY_DRIVE_ID;
+int currentAuton = NONE_AUTON_ID;
+
+/**         Variable Modifiers      **/
+void rotateDrive(){
+	currentDrive = currentDrive == DRIVE_COUNT - 1 ? 0 : currentDrive + 1;
+	GUI::updateDriveInfo(currentDrive,getControllerObj());
+}
+int getCurrentDrive(){
+	return currentDrive;
+}
+void setAuton(int auton_id){
+	currentAuton = auton_id;
+	GUI::updateAutonInfo(currentAuton,getControllerObj());
+}
+int getCurrentAuton(){
+	return currentAuton;
+}
+Controller getControllerObj(){
+	return controller;
+}
+
+// Initiate drive definiton
+// fix trash code
 std::shared_ptr<ChassisController> drive =
     ChassisControllerBuilder()
         .withMotors(leftMotors, rightMotors)
-        	.withDimensions({AbstractMotor::gearset::blue, 60.0/36.0}, {{3.25_in, 11.9_in}, imev5BlueTPR})
+        .withDimensions({AbstractMotor::gearset::blue, 1.0/1.0}, {{2.75_in, 10.25_in}, imev5BlueTPR})
 		.withMaxVelocity(600)
 		.withGains(
 			{PID::getConstant(PID::Distance,PID::Ki), PID::getConstant(PID::Distance,PID::Ki), PID::getConstant(PID::Distance,PID::Ki)},  // Distance PID
@@ -36,24 +59,7 @@ std::shared_ptr<ChassisController> drive =
 			{PID::getConstant(PID::Angle,PID::Ki), PID::getConstant(PID::Angle,PID::Ki), PID::getConstant(PID::Angle,PID::Ki)}            // Turn PID
 		)
 		.build();
-Controller controller;
-ControllerButton turnLeftButton(ControllerDigital::A);
-ControllerButton turnRightButton(ControllerDigital::B);
-ControllerButton driveForwardButton(ControllerDigital::X);
-int currentDrive = CHEESY_DRIVE_ID;
-int currentAuton = NONE_AUTON_ID;
-void rotateDrive(){
-	currentDrive = currentDrive == DRIVE_COUNT - 1 ? 0 : currentDrive + 1;
-}
-int getCurrentDrive(){
-	return currentDrive;
-}
-void setAuton(int auton_id){
-	currentAuton = auton_id;
-}
-int getCurrentAuton(){
-	return currentAuton;
-}
+
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
@@ -61,11 +67,16 @@ int getCurrentAuton(){
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
+	GUI::updateColorInfo(LED::getCurrentColorID(), controller);
+	GUI::updateDriveInfo(currentDrive, controller);
+	GUI::updateAutonInfo(currentAuton, controller);
+
 	GUI::buildStyles();
 	GUI::buildMainPage();
 	GUI::buildPIDPage();
 	GUI::swapPage(HOME_PAGE_ID);
 	LED::startupColors();
+	controller.rumble(".");
 }
 
 /**
@@ -270,18 +281,20 @@ void opcontrol() {
 				drive->getModel()->arcade(velocity, turn, 0.05);	
 				break;
 		}
-		// Cheesy Drive (for Oli)
-    	if(driveForwardButton.isPressed()){
-			drive->moveDistance(2_ft);
-		}
-		if(turnLeftButton.isPressed()){
-			//drive->setMaxVelocity(500);
-			drive->turnAngle(45_deg);
-			drive->setMaxVelocity(600);
-		}else if(turnRightButton.isPressed()){
-			//drive->setMaxVelocity(500);
-			drive->turnAngle(-45_deg);
-			drive->setMaxVelocity(600);
+		if(GUI::getPage()){
+			if(driveForwardButton.isPressed()){
+				drive->moveDistance(2_ft);
+			}
+			if(turnLeftButton.isPressed()){
+				//drive->setMaxVelocity(500);
+				drive->turnAngle(45_deg);
+			}else if(turnRightButton.isPressed()){
+				//drive->setMaxVelocity(500);
+				drive->turnAngle(-45_deg);
+			}else if(turn180Button.isPressed()){
+				//drive->setMaxVelocity(500);
+				drive->turnAngle(360_deg);
+			}
 		}
     	// Wait and give up the time we don't need to other tasks.
     	// Additionally, joystick values, motor telemetry, etc. all updates every 10 ms.

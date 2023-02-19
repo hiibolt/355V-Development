@@ -5,6 +5,8 @@
 #include <string.h>
 #include <math.h>
 
+int current_page = HOME_PAGE_ID;
+
 // Home Page
 lv_obj_t * mainPage = lv_obj_create(NULL,NULL);
 
@@ -204,15 +206,74 @@ void createImgButton(img_button_options options){
 	lv_btn_set_action(options.btn_obj, LV_BTN_ACTION_CLICK, onClick); // Bind master onClick
 }
 namespace GUI{
+	void updateDriveInfo(int driveID, Controller controller){
+		controller.clearLine(1);
+		pros::delay(50);
+		switch (driveID){
+			case CHEESY_DRIVE_ID:
+				controller.setText(1,0,"Drive  | CHEESY");
+				break;
+			case TANK_DRIVE_ID:
+				controller.setText(1,0,"Drive  | TANK");
+				break;
+			case EXPONENTIAL_DRIVE_ID:
+				controller.setText(1,0,"Drive  | EXPONENTIAL");
+				break;
+		}
+	};
+	void updateAutonInfo(int autonID, Controller controller){
+		controller.clearLine(2);
+		pros::delay(50);
+		switch(autonID){
+			case LEFT_AUTON_ID:
+				controller.setText(2,0,"Auton | LEFT");
+				break;
+			case RIGHT_AUTON_ID:
+				controller.setText(2,0,"Auton | RIGHT");
+				break;
+			case AWP_AUTON_ID:
+				controller.setText(2,0,"Auton | AWP");
+				break;
+			case SHOOT_AUTON_ID:
+				controller.setText(2,0,"Auton | SHOOT");
+				break;
+			case SKILLS_AUTON_ID:
+				controller.setText(2,0,"Auton | SKILLS");
+				break;
+			case NONE_AUTON_ID:
+				controller.setText(2,0,"Auton | NONE");
+				break;
+		}
+	};
+	void updateColorInfo(int colorID, Controller controller){
+		controller.clearLine(0);
+		pros::delay(50);
+		switch(colorID){
+			case LED::ORANGE_ID:
+				controller.setText(0,0,"Color  | ORANGE");
+				break;
+			case LED::BLUE_ID:
+				controller.setText(0,0,"Color  | BLUE");
+				break;
+			case LED::RED_ID:
+				controller.setText(0,0,"Color  | RED");
+				break;
+		}
+	};
 	void swapPage(int page){
 		switch(page){
 			case 0:
 				lv_scr_load(mainPage);
+				current_page = HOME_PAGE_ID;
 				break;
 			case 1:
 				lv_scr_load(PIDPage);
+				current_page = PID_PAGE_ID;
 				break;
 		}
+	}
+	int getPage(){
+		return current_page;
 	}
 	void buildStyles(){
 		lv_style_copy(&buttonActive, &lv_style_plain);

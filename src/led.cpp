@@ -9,44 +9,53 @@ namespace LED
 {
 
 	int currentColor = ORANGE_ID;
-	pros::ADIDigitalOut LED_strip_1_brightness({18,1},1);
-	pros::ADILed LED_strip_1({18,1}, 44);
+	// fix trash code
+	pros::ADIDigitalOut LEDStrip1Brightness({11,'H'}, HIGH);
+	pros::ADILed LEDStrip1({11,'H'}, 44);
+	pros::ADIDigitalOut LEDStrip2Brightness({12,8}, HIGH);
+	pros::ADILed LEDStrip2({12,8}, 44);
+	int getCurrentColorID(){
+		return currentColor;
+	}
 	void cycleColor() {
-		currentColor ++;
+		currentColor = currentColor == RED_ID ? 0 : currentColor + 1;
+		
 		switch(currentColor) {
 			case ORANGE_ID:
 				for(int i = 0;i < 43;i++){
-					LED_strip_1[i] = 0xff6400;
+					LEDStrip1[i] = 0xff6400;
+					LEDStrip2[i] = 0xff6400;
 				}
-				LED_strip_1.update();
+				LEDStrip1.update();
+				LEDStrip2.update();
 				break;
 			case BLUE_ID:
 				for(int i = 0;i < 43;i++){
-					LED_strip_1[i] = 0x1745ff;
+					LEDStrip1[i] = 0x1745ff;
+					LEDStrip2[i] = 0x1745ff;
 				}
-				LED_strip_1.update();
+				LEDStrip1.update();
+				LEDStrip2.update();
 				break;
 			case RED_ID:
 				for(int i = 0;i < 43;i++){
-					LED_strip_1[i] = 0xFF0000;
+					LEDStrip1[i] = 0xFF0000;
+					LEDStrip2[i] = 0xFF0000;
 				}
-				LED_strip_1.update();
-				break;
-			default:
-				for(int i = 0;i < 43;i++){
-					LED_strip_1[i] = 0xff6400;
-				}
-				LED_strip_1.update();
-				// -1 because otherwise, next cycle it starts at 1 (Blue)
-				currentColor = -1;
+				LEDStrip1.update();
+				LEDStrip2.update();
 				break;
 		}
+		GUI::updateColorInfo(currentColor,getControllerObj());
 	}
 	void startupColors(){
-		LED_strip_1.clear_all();
+		LEDStrip1.clear_all();
+		LEDStrip2.clear_all();
 		for(int i = 0;i < 43;i++){
-			LED_strip_1[i] = 0xff6400;
-			LED_strip_1.update();
+			LEDStrip1[i] = 0xff6400;
+			LEDStrip2[i] = 0xff6400;
+			LEDStrip1.update();
+			LEDStrip2.update();
 			pros::delay(40);
 		}
 	}

@@ -17,4 +17,9 @@ temp.errors
 .d/
 
 # Python
-enviro/
+.enviro
+.envir
+enviro
+
+# Git
+.gitignore
