@@ -11,16 +11,18 @@ using namespace GUI;
 /** 			Constants 			**/
 Controller controller;
 ADIButton stopSwitch('A');
-MotorGroup leftMotors({-8, 9, -10});
-MotorGroup rightMotors({3,-4,5});
+Motor intakeMotor(19);
+Motor catapultMotor(20);
+MotorGroup leftDriveMotors({-8, 9, -10});
+MotorGroup rightDriveMotors({3,-4,5});
 ControllerButton turnLeftButton(ControllerDigital::Y);
 ControllerButton turnRightButton(ControllerDigital::A);
 ControllerButton turn180Button(ControllerDigital::B);
 ControllerButton driveForwardButton(ControllerDigital::X);
 
 ControllerButton shootButton(ControllerDigital::R1);
-ControllerButton intakeButton(ControllerDigital::L1);
-ControllerButton outtakeButton(ControllerDigital::L2);
+ControllerButton outtakeButton(ControllerDigital::L1);
+ControllerButton intakeButton(ControllerDigital::L2);
 ControllerButton endgameButton(ControllerDigital::up);
 
 /**             Variables           **/
@@ -50,7 +52,7 @@ Controller getControllerObj(){
 // fix trash code
 std::shared_ptr<ChassisController> drive =
     ChassisControllerBuilder()
-        .withMotors(leftMotors, rightMotors)
+        .withMotors(leftDriveMotors, rightDriveMotors)
         .withDimensions({AbstractMotor::gearset::blue, 1.0/1.0}, {{2.75_in, 10.25_in}, imev5BlueTPR})
 		.withMaxVelocity(600)
 		.withGains(
@@ -280,6 +282,18 @@ void opcontrol() {
 				float turn     = exponential(rightStick) / 127; 
 				drive->getModel()->arcade(velocity, turn, 0.05);	
 				break;
+		}
+		if(shootButton.isPressed()){
+			catapultMotor.moveVoltage(-12000);
+		}else if(!stopSwitch.isPressed()){
+			catapultMotor.moveVoltage(-12000);
+		}
+		if(intakeButton.isPressed()){
+			intakeMotor.moveVoltage(12000);
+		}else if(outtakeButton.isPressed()){
+			intakeMotor.moveVoltage(-12000);
+		}else{
+			intakeMotor.moveVoltage(0);
 		}
 		if(GUI::getPage()){
 			if(driveForwardButton.isPressed()){
