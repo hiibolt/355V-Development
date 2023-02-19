@@ -25,6 +25,10 @@ ControllerButton outtakeButton(ControllerDigital::L1);
 ControllerButton intakeButton(ControllerDigital::L2);
 ControllerButton endgameButton(ControllerDigital::up);
 
+ControllerButton autonSwitchLeftButton(ControllerDigital::Y);
+ControllerButton autonSwitchRightButton(ControllerDigital::A);
+ControllerButton colorSwitchButton(ControllerDigital::X);
+
 /**             Variables           **/
 int currentDrive = CHEESY_DRIVE_ID;
 int currentAuton = NONE_AUTON_ID;
@@ -46,6 +50,23 @@ int getCurrentAuton(){
 }
 Controller getControllerObj(){
 	return controller;
+}
+
+/**          Multithreading         **/
+void catapultController(void* params){
+	while(true){
+	if(shootButton.isPressed()){
+		catapultMotor.moveVoltage(-11000);
+		while(stopSwitch.isPressed()){
+			pros::delay(10);
+		}
+		catapultMotor.moveVoltage(0);
+	}else if(!stopSwitch.isPressed()){
+		catapultMotor.moveVoltage(-12000);
+	}else{
+		catapultMotor.moveVoltage(0);
+	}
+	}
 }
 
 // Initiate drive definiton
@@ -111,7 +132,6 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
-	//NONE_AUTON_ID,SKILLS_AUTON_ID,SHOOT_AUTON_ID,AWP_AUTON_ID,LEFT_AUTON_ID,RIGHT_AUTON_ID,AUTON_COUNT};
 	switch(currentAuton){
 		case NONE_AUTON_ID:
 			// do absolutely nothing. nothing at all. do a thing? you die. a death. died. ead.
@@ -151,16 +171,6 @@ void autonomous() {
 			//spin roller
 			drive->moveDistance(-12_in);
 			// this is the first half of the skills auton
-
-			
-			
-
-
-
-
-
-
-
 			break;
 		case SHOOT_AUTON_ID:
 		//starting from left side
@@ -245,9 +255,6 @@ void autonomous() {
 			drive->moveDistance(60_in);
 			drive->turnAngle(45_deg);
 			//spin roller
-			
-
-
 			break;
 	}
 }
@@ -266,6 +273,7 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
+	pros::Task catapultThread(catapultController, (void*)"PROS", "catapultThread");
 	while (true){
 		switch (currentDrive){
 			case CHEESY_DRIVE_ID:
@@ -283,10 +291,13 @@ void opcontrol() {
 				drive->getModel()->arcade(velocity, turn, 0.05);	
 				break;
 		}
-		if(shootButton.isPressed()){
-			catapultMotor.moveVoltage(-12000);
-		}else if(!stopSwitch.isPressed()){
-			catapultMotor.moveVoltage(-12000);
+		if(autonSwitchLeftButton.isPressed()){
+			setAuton(currentDrive == 0 ? 5 : currentDrive - 1);
+		}else if(autonSwitchRightButton.isPressed()){
+			setAuton(currentDrive == 5 ? 0 : currentDrive + 1);
+		}
+		if(colorSwitchButton.isPressed()){
+			LED::cycleColor();
 		}
 		if(intakeButton.isPressed()){
 			intakeMotor.moveVoltage(12000);
