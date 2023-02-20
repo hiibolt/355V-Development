@@ -32,6 +32,7 @@ ControllerButton colorSwitchButton(ControllerDigital::X);
 /**             Variables           **/
 int currentDrive = CHEESY_DRIVE_ID;
 int currentAuton = NONE_AUTON_ID;
+bool shootingCata = false;
 
 /**         Variable Modifiers      **/
 void rotateDrive(){
@@ -52,29 +53,14 @@ Controller getControllerObj(){
 	return controller;
 }
 
-/**          Multithreading         **/
-void catapultController(void* params){
-	while(true){
-	if(shootButton.isPressed()){
-		catapultMotor.moveVoltage(-11000);
-		while(stopSwitch.isPressed()){
-			pros::delay(10);
-		}
-		catapultMotor.moveVoltage(0);
-	}else if(!stopSwitch.isPressed()){
-		catapultMotor.moveVoltage(-12000);
-	}else{
-		catapultMotor.moveVoltage(0);
-	}
-	}
-}
-
 // Initiate drive definiton
-// fix trash code
+float motorToWheelRatio = 1.0/1.0;
+okapi::QLength wheelDiameter = 2.75_in;
+okapi::QLength centerToCenterWheelTrack = 10.25_in;
 std::shared_ptr<ChassisController> drive =
     ChassisControllerBuilder()
         .withMotors(leftDriveMotors, rightDriveMotors)
-        .withDimensions({AbstractMotor::gearset::blue, 1.0/1.0}, {{2.75_in, 10.25_in}, imev5BlueTPR})
+        .withDimensions({AbstractMotor::gearset::blue, motorToWheelRatio}, {{wheelDiameter, centerToCenterWheelTrack}, imev5BlueTPR})
 		.withMaxVelocity(600)
 		.withGains(
 			{PID::getConstant(PID::Distance,PID::Ki), PID::getConstant(PID::Distance,PID::Ki), PID::getConstant(PID::Distance,PID::Ki)},  // Distance PID
@@ -90,6 +76,8 @@ std::shared_ptr<ChassisController> drive =
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
+	LED::startupColors();
+
 	GUI::updateColorInfo(LED::getCurrentColorID(), controller);
 	GUI::updateDriveInfo(currentDrive, controller);
 	GUI::updateAutonInfo(currentAuton, controller);
@@ -98,7 +86,16 @@ void initialize() {
 	GUI::buildMainPage();
 	GUI::buildPIDPage();
 	GUI::swapPage(HOME_PAGE_ID);
-	LED::startupColors();
+
+	LED::updateColorStrips({0,43}, 0x15ff00);
+	pros::delay(200);
+	LED::updateColorStrips({0,43}, 0x00000);
+	pros::delay(200);
+	LED::updateColorStrips({0,43}, 0x15ff00);
+	pros::delay(200);
+	LED::updateColorStrips({0,43}, 0x00000);
+	pros::delay(200);
+	LED::updateColorStrips({0,43}, 0xff6400);
 	controller.rumble(".");
 }
 
@@ -273,7 +270,6 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	pros::Task catapultThread(catapultController, (void*)"PROS", "catapultThread");
 	while (true){
 		switch (currentDrive){
 			case CHEESY_DRIVE_ID:
@@ -291,6 +287,27 @@ void opcontrol() {
 				drive->getModel()->arcade(velocity, turn, 0.05);	
 				break;
 		}
+
+		// Catapult Shooting/Winding
+		if(shootButton.isPressed() && !shootingCata && stopSwitch.isPressed()){
+			shootingCata = true;
+			LED::updateColorStrips({17,27}, 0x000dff);
+		}
+		if(!shootingCata && !stopSwitch.isPressed()){
+			catapultMotor.moveVoltage(-10000);
+		}else if(!shootingCata){
+			catapultMotor.moveVoltage(0);
+			LED::updateColorStrips({17,27}, 0x15ff00);
+		}
+		if(shootingCata && stopSwitch.isPressed()){
+			catapultMotor.moveVoltage(-12000);
+		}else if(shootingCata && !stopSwitch.isPressed()){
+			shootingCata = false;
+			catapultMotor.moveVoltage(0);
+		}
+		printf(shootingCata ? "0" : "1");
+
+		// Selector Buttons
 		if(autonSwitchLeftButton.isPressed()){
 			setAuton(currentDrive == 0 ? 5 : currentDrive - 1);
 		}else if(autonSwitchRightButton.isPressed()){
@@ -299,6 +316,8 @@ void opcontrol() {
 		if(colorSwitchButton.isPressed()){
 			LED::cycleColor();
 		}
+
+		// Intake/Outtake Handling
 		if(intakeButton.isPressed()){
 			intakeMotor.moveVoltage(12000);
 		}else if(outtakeButton.isPressed()){
@@ -306,7 +325,7 @@ void opcontrol() {
 		}else{
 			intakeMotor.moveVoltage(0);
 		}
-		if(GUI::getPage()){
+		if(GUI::getPage() == PID_PAGE_ID){
 			if(driveForwardButton.isPressed()){
 				drive->moveDistance(2_ft);
 			}

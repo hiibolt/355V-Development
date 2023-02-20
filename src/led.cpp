@@ -52,11 +52,21 @@ namespace LED
 		LEDStrip1.clear_all();
 		LEDStrip2.clear_all();
 		for(int i = 0;i < 43;i++){
-			LEDStrip1[i] = 0xff6400;
-			LEDStrip2[i] = 0xff6400;
+			LEDStrip1[43-i] = 0xff6400;
+			LEDStrip2[43-i] = 0xff6400;
 			LEDStrip1.update();
 			LEDStrip2.update();
 			pros::delay(40);
 		}
+	}
+	void updateColorStrips(std::pair<int, int> indexes, int color){
+		LEDStrip1.clear_all();
+		LEDStrip2.clear_all();
+		for(int i = indexes.first;i < indexes.second;i++){
+			LEDStrip1[i] = color;
+			LEDStrip2[i] = color;
+		}
+		LEDStrip1.update();
+		LEDStrip2.update();
 	}
 }
