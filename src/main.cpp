@@ -32,7 +32,10 @@ ControllerButton colorSwitchButton(ControllerDigital::X);
 /**             Variables           **/
 int currentDrive = CHEESY_DRIVE_ID;
 int currentAuton = NONE_AUTON_ID;
+bool cataWound = false;
 bool shootingCata = false;
+int desiredCataIndicator = 0xee00ff;
+int currentCataIndicator = 0x000000;
 
 /**         Variable Modifiers      **/
 void rotateDrive(){
@@ -87,15 +90,17 @@ void initialize() {
 	GUI::buildPIDPage();
 	GUI::swapPage(HOME_PAGE_ID);
 
+	catapultMotor.setBrakeMode(okapi::AbstractMotor::brakeMode::brake);
+
+	pros::delay(100);
 	LED::updateColorStrips({0,43}, 0x15ff00);
-	pros::delay(200);
+	pros::delay(100);
 	LED::updateColorStrips({0,43}, 0x00000);
-	pros::delay(200);
+	pros::delay(100);
 	LED::updateColorStrips({0,43}, 0x15ff00);
-	pros::delay(200);
+	pros::delay(100);
 	LED::updateColorStrips({0,43}, 0x00000);
-	pros::delay(200);
-	LED::updateColorStrips({0,43}, 0xff6400);
+	pros::delay(100);
 	controller.rumble(".");
 }
 
@@ -289,31 +294,41 @@ void opcontrol() {
 		}
 
 		// Catapult Shooting/Winding
-		if(shootButton.isPressed() && !shootingCata && stopSwitch.isPressed()){
+		if(shootButton.changedToPressed() && !shootingCata && cataWound){
 			shootingCata = true;
-			LED::updateColorStrips({17,27}, 0x000dff);
+			cataWound = false;
+			desiredCataIndicator = 0xee00ff;
 		}
-		if(!shootingCata && !stopSwitch.isPressed()){
+		if(stopSwitch.isPressed()){
+			if(shootingCata){
+				
+			}else{
+				cataWound = true;
+				catapultMotor.moveVoltage(0);
+				desiredCataIndicator = 0x15ff00;
+			}
+		}
+		if(!shootingCata && !cataWound){
 			catapultMotor.moveVoltage(-10000);
-		}else if(!shootingCata){
-			catapultMotor.moveVoltage(0);
-			LED::updateColorStrips({17,27}, 0x15ff00);
 		}
-		if(shootingCata && stopSwitch.isPressed()){
+		if(shootingCata ){
 			catapultMotor.moveVoltage(-12000);
-		}else if(shootingCata && !stopSwitch.isPressed()){
+		}else if(shootingCata ){
 			shootingCata = false;
 			catapultMotor.moveVoltage(0);
 		}
-		printf(shootingCata ? "0" : "1");
+		if(currentCataIndicator != desiredCataIndicator){
+			LED::updateColorStrips({0,43}, desiredCataIndicator);
+			currentCataIndicator = desiredCataIndicator;
+		}
 
 		// Selector Buttons
-		if(autonSwitchLeftButton.isPressed()){
+		if(autonSwitchLeftButton.changedToPressed()){
 			setAuton(currentDrive == 0 ? 5 : currentDrive - 1);
-		}else if(autonSwitchRightButton.isPressed()){
+		}else if(autonSwitchRightButton.changedToPressed()){
 			setAuton(currentDrive == 5 ? 0 : currentDrive + 1);
 		}
-		if(colorSwitchButton.isPressed()){
+		if(colorSwitchButton.changedToPressed()){
 			LED::cycleColor();
 		}
 
