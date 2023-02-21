@@ -32,7 +32,6 @@ ControllerButton colorSwitchButton(ControllerDigital::X);
 /**             Variables           **/
 int currentDrive = CHEESY_DRIVE_ID;
 int currentAuton = NONE_AUTON_ID;
-bool cataWound = false;
 bool shootingCata = false;
 int desiredCataIndicator = 0xee00ff;
 int currentCataIndicator = 0x000000;
@@ -292,28 +291,20 @@ void opcontrol() {
 				drive->getModel()->arcade(velocity, turn, 0.05);	
 				break;
 		}
-
 		// Catapult Shooting/Winding
-		if(shootButton.changedToPressed() && !shootingCata && cataWound){
+		if(shootButton.changedToPressed() && !shootingCata && stopSwitch.isPressed()){
 			shootingCata = true;
-			cataWound = false;
 			desiredCataIndicator = 0xee00ff;
 		}
-		if(stopSwitch.isPressed()){
-			if(shootingCata){
-				
-			}else{
-				cataWound = true;
-				catapultMotor.moveVoltage(0);
-				desiredCataIndicator = 0x15ff00;
-			}
-		}
-		if(!shootingCata && !cataWound){
+		if(!shootingCata && !stopSwitch.isPressed()){
 			catapultMotor.moveVoltage(-10000);
+		}else if(!shootingCata){
+			catapultMotor.moveVoltage(0);
+			desiredCataIndicator = 0x15ff00;
 		}
-		if(shootingCata ){
+		if(shootingCata && stopSwitch.isPressed()){
 			catapultMotor.moveVoltage(-12000);
-		}else if(shootingCata ){
+		}else if(shootingCata && !stopSwitch.isPressed()){
 			shootingCata = false;
 			catapultMotor.moveVoltage(0);
 		}

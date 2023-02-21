@@ -1,5 +1,6 @@
 namespace LED{
     int getCurrentColorID();
+    int getCurrentColorHex();
     void cycleColor();
     void startupColors();
     void updateColorStrips(std::pair<int, int> indexes, int color);
