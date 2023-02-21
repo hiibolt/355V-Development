@@ -5,8 +5,7 @@
 #include <string.h>
 #include <math.h>
 
-namespace LED
-{
+namespace LED{
 
 	int currentColor = ORANGE_ID;
 	// fix trash code
