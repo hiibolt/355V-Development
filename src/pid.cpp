@@ -11,7 +11,7 @@
 namespace PID{ 
     float AllPID[3][3] = {
         {0.0020,0.0000,0.0800}, // Distance
-        {0.0010,0.0000,0.0400}, // Turn
+        {0.0800,0.0000,0.0000}, // Turn
         {0.0005,0.0000,0.0200}, // Angle
     };
     char * DistanceName = (char *)"Distance";

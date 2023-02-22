@@ -19,7 +19,6 @@ MotorGroup leftDriveMotors({-8, 9, -10});
 MotorGroup rightDriveMotors({3,-4,5});
 ControllerButton turnLeftButton(ControllerDigital::Y);
 ControllerButton turnRightButton(ControllerDigital::A);
-ControllerButton turn180Button(ControllerDigital::B);
 ControllerButton driveForwardButton(ControllerDigital::X);
 
 ControllerButton shootButton(ControllerDigital::R1);
@@ -30,6 +29,8 @@ ControllerButton endgameButton(ControllerDigital::up);
 ControllerButton autonSwitchLeftButton(ControllerDigital::Y);
 ControllerButton autonSwitchRightButton(ControllerDigital::A);
 ControllerButton colorSwitchButton(ControllerDigital::X);
+
+ControllerButton autoPIDTuningButton(ControllerDigital::B);
 
 /**             Variables           **/
 int currentDrive = CHEESY_DRIVE_ID;
@@ -219,10 +220,13 @@ void opcontrol() {
 			}else if(turnRightButton.isPressed()){
 				//drive->setMaxVelocity(500);
 				drive->turnAngle(-45_deg);
-			}else if(turn180Button.isPressed()){
-				//drive->setMaxVelocity(500);
-				drive->turnAngle(360_deg);
 			}
+		}
+
+		// Auto PID Tuning/Diagnostics
+		if(autoPIDTuningButton.changedToPressed()){
+			printf("Starting PID Tuning...");
+			drive->turnAngleAsync(45_deg);
 		}
     	// Wait and give up the time we don't need to other tasks.
     	// Additionally, joystick values, motor telemetry, etc. all updates every 10 ms.
