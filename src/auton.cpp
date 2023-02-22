@@ -1,6 +1,27 @@
 #include "main.h"
 #include "auton.h"
 
+void windCatapult(Motor catapultMotor, ADIButton stopSwitch){
+    while(!stopSwitch.isPressed()){
+		catapultMotor.moveVoltage(-10000);
+        pros::delay(10);
+	}
+}
+void shootCatapult(Motor catapultMotor, ADIButton stopSwitch){
+    while(stopSwitch.isPressed()){
+		catapultMotor.moveVoltage(-10000);
+        pros::delay(10);
+	}
+}
+void runIntake(Motor intakeMotor){
+	intakeMotor.moveVoltage(12000);
+}
+void runIntakeReverse(Motor intakeMotor){
+	intakeMotor.moveVoltage(-12000);
+}
+void stopIntake(Motor intakeMotor){
+	intakeMotor.moveVoltage(0);
+}
 namespace AUTON{
     void runAuton(std::shared_ptr<ChassisController> drive, int autonID){
         switch(autonID){
