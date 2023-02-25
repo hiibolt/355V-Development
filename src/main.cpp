@@ -35,7 +35,7 @@ ControllerButton colorSwitchButton(ControllerDigital::X);
 int currentDrive = CHEESY_DRIVE_ID;
 int currentAuton = NONE_AUTON_ID;
 bool shootingCata = false;
-int desiredCataIndicator = 0xee00ff;
+int desiredCataIndicator = 0xBCB502;
 int currentCataIndicator = 0x000000;
 
 /**         Variable Modifiers      **/
@@ -172,13 +172,13 @@ void opcontrol() {
 		// Catapult Shooting/Winding
 		if(shootButton.changedToPressed() && !shootingCata && stopSwitch.isPressed()){
 			shootingCata = true;
-			desiredCataIndicator = 0xee00ff;
+			desiredCataIndicator = 0xBCB502;
 		}
 		if(!shootingCata && !stopSwitch.isPressed()){
 			catapultMotor.moveVoltage(-10000);
 		}else if(!shootingCata){
 			catapultMotor.moveVoltage(0);
-			desiredCataIndicator = 0x15ff00;
+			desiredCataIndicator = getCurrentColorHex();
 		}
 		if(shootingCata && stopSwitch.isPressed()){
 			catapultMotor.moveVoltage(-12000);
