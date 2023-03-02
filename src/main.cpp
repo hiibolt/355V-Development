@@ -38,6 +38,7 @@ int currentAuton = NONE_AUTON_ID;
 bool shootingCata = false;
 int desiredCataIndicator = 0xBCB502;
 int currentCataIndicator = 0x000000;
+int tick = 0;
 
 /**         Variable Modifiers      **/
 void rotateDrive(){
@@ -62,17 +63,17 @@ Controller getControllerObj(){
 float motorToWheelRatio = 1.0/1.0;
 okapi::QLength wheelDiameter = 2.75_in;
 okapi::QLength centerToCenterWheelTrack = 10.25_in;
-std::shared_ptr<ChassisController> drive =
+std::shared_ptr<ChassisController> drive = 
     ChassisControllerBuilder()
         .withMotors(leftDriveMotors, rightDriveMotors)
         .withDimensions({AbstractMotor::gearset::blue, motorToWheelRatio}, {{wheelDiameter, centerToCenterWheelTrack}, imev5BlueTPR})
 		.withMaxVelocity(600)
 		.withGains(
-			{PID::getConstant(PID::Distance,PID::Ki), PID::getConstant(PID::Distance,PID::Ki), PID::getConstant(PID::Distance,PID::Ki)},  // Distance PID
-			{PID::getConstant(PID::Turn,PID::Ki), PID::getConstant(PID::Turn,PID::Ki), PID::getConstant(PID::Turn,PID::Ki)},              // Turn PID
-			{PID::getConstant(PID::Angle,PID::Ki), PID::getConstant(PID::Angle,PID::Ki), PID::getConstant(PID::Angle,PID::Ki)}            // Turn PID
+			PID::distancePID,  // Distance PID
+			PID::turnPID              // Turn PID
 		)
 		.build();
+
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -106,6 +107,7 @@ void initialize() {
 	LED::updateColorStrips({0,43}, 0x00000);
 	pros::delay(100);
 	controller.rumble(".");
+	printf("Initialized");
 }
 
 /**
@@ -207,7 +209,8 @@ void opcontrol() {
 			unsigned int tick = 0;
 			float highValue = -1;
 
-			drive.setGains({0,0,0},{0.000000001,0,0},{0,0,0});
+			//drive.setGains({0,0,0},{0.000000001,0,0},{0,0,0});
+			/**
 			void searchPattern(){
 				drive->turnAngleAsync(45_deg);
 				std::tuple<IterativePosPIDController::Gains, IterativePosPIDController::Gains, IterativePosPIDController::Gains> current = drive->getGain();
@@ -218,11 +221,11 @@ void opcontrol() {
 					pros::delay(100);
 					if(tick > 50){
 						drive->stop();
-						searchPattern();
+						//searchPattern();
 					}
 				}
-			}
-			searchPattern();
+			}*/
+			//searchPattern();
 		}
 
 		// Intake/Outtake Handling
@@ -235,17 +238,29 @@ void opcontrol() {
 		}
 		if(GUI::getPage() == PID_PAGE_ID){
 			if(driveForwardButton.isPressed()){
-				drive->moveDistance(2_ft);
+				drive->moveDistanceAsync(2_ft);
+				printf("Movement");
 			}
 			if(turnLeftButton.isPressed()){
 				//drive->setMaxVelocity(500);
-				drive->turnAngle(45_deg);
+				drive->turnAngleAsync(45_deg);
+				tick = 0;
+				printf("Movement");
 			}else if(turnRightButton.isPressed()){
 				//drive->setMaxVelocity(500);
-				drive->turnAngle(-45_deg);
+				drive->turnAngleAsync(-45_deg);
+				tick = 0;
+				printf("Movement");
 			}else if(turn180Button.isPressed()){
 				//drive->setMaxVelocity(500);
-				drive->turnAngle(360_deg);
+				drive->turnAngleAsync(360_deg);
+				tick = 0;
+				printf("Movement");
+			}
+			tick += 1;
+			if (tick > 500 && !drive->isSettled()) {
+				drive->stop();
+				pros::delay(20);
 			}
 		}
     	// Wait and give up the time we don't need to other tasks.

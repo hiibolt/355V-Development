@@ -1,3 +1,4 @@
+#include "main.h"
 #include "pid.h"
 #include <string.h>
 
@@ -9,11 +10,9 @@
         - Create a new ID enum in pid.h
 */
 namespace PID{ 
-    float AllPID[3][3] = {
-        {0.0020,0.0000,0.0800}, // Distance
-        {0.0010,0.0000,0.0400}, // Turn
-        {0.0005,0.0000,0.0200}, // Angle
-    };
+    okapi::IterativePosPIDController::Gains distancePID = {0.0000,0.0000,0.0000}; // Distance
+    okapi::IterativePosPIDController::Gains turnPID = {0.00258,0.0000,0.0000}; // Turn
+    okapi::IterativePosPIDController::Gains anglePID = {0.0000,0.0000,0.0000}; // Forward
     char * DistanceName = (char *)"Distance";
     char * TurnName = (char *)"  Turn  ";
     char * AngleName = (char *)" Angle ";
@@ -31,11 +30,35 @@ namespace PID{
         }
         return (char *)"wtf";
     };
-    float getConstant(int type, int constant){
-        return PID::AllPID[type][constant];
-        return -1;
+    okapi::IterativePosPIDController::Gains getConstant(int id){
+        switch (id){
+            case 0:
+                return distancePID;
+                break;
+            case 1:
+                return turnPID;
+                break;
+            case 2:
+                return anglePID;
+                break;
+        }
     }
     void setConstant(int type, int constant, float val){
-        PID::AllPID[type][constant] = val;
+        switch (type) {
+            case 0:
+                switch (constant) {
+                    case
+                    distancePID.kP = val;
+                }
+                break;
+            case 1:
+                turnPID.kP = val;
+                break;
+            case 2:
+                anglePID.kP = val;
+                break;
+        }
+    
+        (std::dynamic_pointer_cast<ChassisControllerPID> (drive))->setGains(distancePID,turnPID,anglePID);
     }
 }

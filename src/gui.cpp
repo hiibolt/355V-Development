@@ -142,28 +142,28 @@ static lv_res_t onClick(lv_obj_t * btn)
 			GUI::swapPage(HOME_PAGE_ID);
 			break;
 		case PID_KP_PLUS_BTN_ID:
-			PID::setConstant(current_PID_type,PID::Kp,PID::getConstant(current_PID_type,PID::Kp) + PID_increment);
-    		lv_label_set_text(Kp_Label, floatToChar(PID::getConstant(current_PID_type,PID::Kp)) ); //Set the label text
+			PID::setConstant(current_PID_type,PID::Kp,PID::getConstant(current_PID_type).kP + PID_increment);
+    		lv_label_set_text(Kp_Label, floatToChar(PID::getConstant(current_PID_type).kP) ); //Set the label text
 			break;
 		case PID_KI_PLUS_BTN_ID:
-			setConstant(current_PID_type,PID::Ki,PID::getConstant(current_PID_type,PID::Ki) + PID_increment);
-    		lv_label_set_text(Ki_Label, floatToChar(PID::getConstant(current_PID_type,PID::Ki)) ); //Set the label text
+			setConstant(current_PID_type,PID::Ki,PID::getConstant(current_PID_type).kI + PID_increment);
+    		lv_label_set_text(Ki_Label, floatToChar(PID::getConstant(current_PID_type).kI) ); //Set the label text
 			break;
 		case PID_KD_PLUS_BTN_ID:
-			setConstant(current_PID_type,PID::Kd,PID::getConstant(current_PID_type,PID::Kd) + PID_increment);
-    		lv_label_set_text(Kd_Label, floatToChar(PID::getConstant(current_PID_type,PID::Kd)) ); //Set the label text
+			setConstant(current_PID_type,PID::Kd,PID::getConstant(current_PID_type).kD + PID_increment);
+    		lv_label_set_text(Kd_Label, floatToChar(PID::getConstant(current_PID_type).kD) ); //Set the label text
 			break;
 		case PID_KP_MINUS_BTN_ID:
-			setConstant(current_PID_type,PID::Kp,PID::getConstant(current_PID_type,PID::Kp) - PID_increment);
-    		lv_label_set_text(Kp_Label, floatToChar(PID::getConstant(current_PID_type,PID::Kp)) ); //Set the label text
+			setConstant(current_PID_type,PID::Kp,PID::getConstant(current_PID_type).kP - PID_increment);
+    		lv_label_set_text(Kp_Label, floatToChar(PID::getConstant(current_PID_type).kP) ); //Set the label text
 			break;
 		case PID_KI_MINUS_BTN_ID:
-			setConstant(current_PID_type,PID::Ki,PID::getConstant(current_PID_type,PID::Ki) - PID_increment);
-    		lv_label_set_text(Ki_Label, floatToChar(PID::getConstant(current_PID_type,PID::Ki)) ); //Set the label text
+			setConstant(current_PID_type,PID::Ki,PID::getConstant(current_PID_type).kI - PID_increment);
+    		lv_label_set_text(Ki_Label, floatToChar(PID::getConstant(current_PID_type).kI) ); //Set the label text
 			break;
 		case PID_KD_MINUS_BTN_ID:
-			setConstant(current_PID_type,PID::Kd,PID::getConstant(current_PID_type,PID::Kd) - PID_increment);
-    		lv_label_set_text(Kd_Label, floatToChar(PID::getConstant(current_PID_type,PID::Kd)) ); //Set the label text
+			setConstant(current_PID_type,PID::Kd,PID::getConstant(current_PID_type).kD - PID_increment);
+    		lv_label_set_text(Kd_Label, floatToChar(PID::getConstant(current_PID_type).kD) ); //Set the label text
 			break;
 		case PID_INCREMENT_PLUS_BTN_ID:
 			PID_increment *= 10;
@@ -175,9 +175,9 @@ static lv_res_t onClick(lv_obj_t * btn)
 			break;
 		case PID_TYPE_SWAP_BTN_ID:
 			current_PID_type = current_PID_type == 2 ? 0 : current_PID_type + 1;
-    		lv_label_set_text(Kp_Label, floatToChar(PID::getConstant(current_PID_type,PID::Kp)) ); //Set the label text
-    		lv_label_set_text(Ki_Label, floatToChar(PID::getConstant(current_PID_type,PID::Ki)) ); //Set the label text
-    		lv_label_set_text(Kd_Label, floatToChar(PID::getConstant(current_PID_type,PID::Kd)) ); //Set the label text
+    		lv_label_set_text(Kp_Label, floatToChar(PID::getConstant(current_PID_type).kP) ); //Set the label text
+    		lv_label_set_text(Ki_Label, floatToChar(PID::getConstant(current_PID_type).kI) ); //Set the label text
+    		lv_label_set_text(Kd_Label, floatToChar(PID::getConstant(current_PID_type).kD) ); //Set the label text
 			lv_label_set_text(PID_type_label, PID::getPIDTypeName(current_PID_type)); //Set the label text
 			break;
 	}
@@ -512,11 +512,11 @@ namespace GUI{
 		p_Label = lv_label_create(PIDPage, NULL); //Create the label text
 		i_Label = lv_label_create(PIDPage, NULL); //Create the label text
 		d_Label = lv_label_create(PIDPage, NULL); //Create the label text
-		char * Kp = floatToChar(PID::getConstant(current_PID_type,PID::Kp));
+		char * Kp = floatToChar(PID::getConstant(current_PID_type).kP);
 		lv_label_set_text(Kp_Label, Kp); //Set the label text
-		char * Ki = floatToChar(PID::getConstant(current_PID_type,PID::Ki));
+		char * Ki = floatToChar(PID::getConstant(current_PID_type).kI);
 		lv_label_set_text(Ki_Label, Ki); //Set the label text
-		char * Kd = floatToChar(PID::getConstant(current_PID_type,PID::Kd));
+		char * Kd = floatToChar(PID::getConstant(current_PID_type).kD);
 		lv_label_set_text(Kd_Label, Kd); //Set the label text
 		lv_obj_align(Kp_Label,NULL,LV_ALIGN_IN_TOP_MID,-100,90); //Align and offset position
 		lv_obj_align(Ki_Label,NULL,LV_ALIGN_IN_TOP_MID,0,90); //Align and offset position

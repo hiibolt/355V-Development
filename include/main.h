@@ -64,6 +64,7 @@ using namespace okapi;
 #ifdef __cplusplus
 extern "C" {
 #endif
+extern std::shared_ptr<ChassisController> drive;
 void autonomous(void);
 void cycleColor();
 void initialize(void);
