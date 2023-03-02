@@ -30,6 +30,7 @@ ControllerButton endgameButton(ControllerDigital::up);
 ControllerButton autonSwitchLeftButton(ControllerDigital::Y);
 ControllerButton autonSwitchRightButton(ControllerDigital::A);
 ControllerButton colorSwitchButton(ControllerDigital::X);
+ControllerButton autoPIDButton(ControllerDigital::B);
 
 /**             Variables           **/
 int currentDrive = CHEESY_DRIVE_ID;
@@ -92,6 +93,8 @@ void initialize() {
 	GUI::swapPage(HOME_PAGE_ID);
 
 	catapultMotor.setBrakeMode(okapi::AbstractMotor::brakeMode::brake);
+
+	//AUTON::windCatapult(catapultMotor, stopSwitch);
 
 	pros::delay(100);
 	LED::updateColorStrips({0,43}, 0x15ff00);
@@ -199,6 +202,27 @@ void opcontrol() {
 		}
 		if(colorSwitchButton.changedToPressed()){
 			LED::cycleColor();
+		}
+		if(autoPIDButton.changedToPressed()){
+			unsigned int tick = 0;
+			float highValue = -1;
+
+			drive.setGains({0,0,0},{0.000000001,0,0},{0,0,0});
+			void searchPattern(){
+				drive->turnAngleAsync(45_deg);
+				std::tuple<IterativePosPIDController::Gains, IterativePosPIDController::Gains, IterativePosPIDController::Gains> current = drive->getGain();
+				current[1][0] = current[1][0] * 10;
+				printf(std::to_string(current[1][0]));
+				while(!drive->isSettled()){
+					tick ++;
+					pros::delay(100);
+					if(tick > 50){
+						drive->stop();
+						searchPattern();
+					}
+				}
+			}
+			searchPattern();
 		}
 
 		// Intake/Outtake Handling
