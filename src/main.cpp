@@ -15,6 +15,7 @@ Controller controller;
 ADIButton stopSwitch('A');
 Motor intakeMotor(19);
 Motor catapultMotor(20);
+pros::ADIDigitalOut pneumatic ('B', LOW);
 //pros::MotorGroup lMotorsDebug({-8, 9, -10});
 //pros::MotorGroup rMotorsDebug({3,-4,5});
 MotorGroup leftDriveMotors({-8, 9, -10});
@@ -210,6 +211,11 @@ void opcontrol() {
 		if(currentCataIndicator != desiredCataIndicator){
 			LED::updateColorStrips({0,43}, desiredCataIndicator);
 			currentCataIndicator = desiredCataIndicator;
+		}
+
+		// Endgame
+		if(endgameButton.isPressed()){
+			pneumatic.set_value(HIGH);
 		}
 
 		// Selector Buttons
