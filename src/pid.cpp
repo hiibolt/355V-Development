@@ -11,7 +11,7 @@
 */
 namespace PID{ 
     okapi::IterativePosPIDController::Gains distancePID = {0.0000,0.0000,0.0000}; // Distance
-    okapi::IterativePosPIDController::Gains turnPID = {0.00258,0.0000,0.0000}; // Turn
+    okapi::IterativePosPIDController::Gains turnPID = {0.00340,0.0000,0.000210}; // Turn
     okapi::IterativePosPIDController::Gains anglePID = {0.0000,0.0000,0.0000}; // Forward
     char * DistanceName = (char *)"Distance";
     char * TurnName = (char *)"  Turn  ";
@@ -29,7 +29,7 @@ namespace PID{
                 break;
         }
         return (char *)"wtf";
-    };
+    }
     okapi::IterativePosPIDController::Gains getConstant(int id){
         switch (id){
             case 0:
@@ -47,15 +47,42 @@ namespace PID{
         switch (type) {
             case 0:
                 switch (constant) {
-                    case
-                    distancePID.kP = val;
+                    case 0:
+                        distancePID.kP = val;
+                        break;
+                    case 1:
+                        distancePID.kI = val;
+                        break;
+                    case 2:
+                        distancePID.kD = val;
+                        break;
                 }
                 break;
             case 1:
-                turnPID.kP = val;
+                switch (constant) {
+                    case 0:
+                        turnPID.kP = val;
+                        break;
+                    case 1:
+                        turnPID.kI = val;
+                        break;
+                    case 2:
+                        turnPID.kD = val;
+                        break;
+                }
                 break;
             case 2:
-                anglePID.kP = val;
+                switch (constant) {
+                    case 0:
+                        anglePID.kP = val;
+                        break;
+                    case 1:
+                        anglePID.kI = val;
+                        break;
+                    case 2:
+                        anglePID.kD = val;
+                        break;
+                }
                 break;
         }
     

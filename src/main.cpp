@@ -15,8 +15,11 @@ Controller controller;
 ADIButton stopSwitch('A');
 Motor intakeMotor(19);
 Motor catapultMotor(20);
+//pros::MotorGroup lMotorsDebug({-8, 9, -10});
+//pros::MotorGroup rMotorsDebug({3,-4,5});
 MotorGroup leftDriveMotors({-8, 9, -10});
 MotorGroup rightDriveMotors({3,-4,5});
+auto imu = IMU(13, IMUAxes::z);
 ControllerButton turnLeftButton(ControllerDigital::Y);
 ControllerButton turnRightButton(ControllerDigital::A);
 ControllerButton turn180Button(ControllerDigital::B);
@@ -38,7 +41,8 @@ int currentAuton = NONE_AUTON_ID;
 bool shootingCata = false;
 int desiredCataIndicator = 0xBCB502;
 int currentCataIndicator = 0x000000;
-int tick = 0;
+int tick = 500;
+int global_tick = 0;
 
 /**         Variable Modifiers      **/
 void rotateDrive(){
@@ -84,6 +88,10 @@ std::shared_ptr<ChassisController> drive =
 void initialize() {
 	LED::startupColors();
 
+	std::cout << "Calibrating IMU...";
+	imu.calibrate();
+	std::cout << "Done" << std::endl;
+
 	GUI::updateColorInfo(LED::getCurrentColorID(), controller);
 	GUI::updateDriveInfo(currentDrive, controller);
 	GUI::updateAutonInfo(currentAuton, controller);
@@ -107,7 +115,7 @@ void initialize() {
 	LED::updateColorStrips({0,43}, 0x00000);
 	pros::delay(100);
 	controller.rumble(".");
-	printf("Initialized");
+	std::cout << "Initialized" << std::endl;
 }
 
 /**
@@ -155,9 +163,17 @@ void autonomous() {
  * If the robot is disabled or communications is lost, the
  * operator control task will be stopped. Re-enabling the robot will restart the
  * task, not resume it from where it left off.
- */
+ */	
 void opcontrol() {
 	while (true){
+		global_tick ++;
+		/**
+		std::vector<std::int32_t> l_temps = lMotorsDebug.are_over_temp();
+		std::vector<std::int32_t> r_temps = rMotorsDebug.are_over_temp();
+		if ( (l_temps[0] == 1 || l_temps[1] == 1 || l_temps[2] == 1 || r_temps[0] == 1 || r_temps[1] == 1 || r_temps[2] == 1) && global_tick % 20 == 0){
+			controller.rumble(".");
+			std::cout << "OVERHEATING : " << global_tick << std::endl;
+		}*/
 		switch (currentDrive){
 			case CHEESY_DRIVE_ID:
 				drive->getModel()->curvature(controller.getAnalog(ControllerAnalog::leftY), controller.getAnalog(ControllerAnalog::rightX),0.05);	
@@ -229,39 +245,47 @@ void opcontrol() {
 		}
 
 		// Intake/Outtake Handling
-		if(intakeButton.isPressed()){
-			intakeMotor.moveVoltage(12000);
-		}else if(outtakeButton.isPressed()){
+		if(intakeButton.isPressed() && stopSwitch.isPressed()){
 			intakeMotor.moveVoltage(-12000);
+		}else if(outtakeButton.isPressed()){
+			intakeMotor.moveVoltage(12000);
 		}else{
 			intakeMotor.moveVoltage(0);
 		}
 		if(GUI::getPage() == PID_PAGE_ID){
-			if(driveForwardButton.isPressed()){
-				drive->moveDistanceAsync(2_ft);
-				printf("Movement");
-			}
-			if(turnLeftButton.isPressed()){
-				//drive->setMaxVelocity(500);
-				drive->turnAngleAsync(45_deg);
-				tick = 0;
-				printf("Movement");
-			}else if(turnRightButton.isPressed()){
-				//drive->setMaxVelocity(500);
-				drive->turnAngleAsync(-45_deg);
-				tick = 0;
-				printf("Movement");
-			}else if(turn180Button.isPressed()){
-				//drive->setMaxVelocity(500);
-				drive->turnAngleAsync(360_deg);
-				tick = 0;
-				printf("Movement");
-			}
 			tick += 1;
-			if (tick > 500 && !drive->isSettled()) {
-				drive->stop();
-				pros::delay(20);
+			
+			if(tick > 500){
+				if(tick < 550){
+					drive->stop();
+				}
+				if(driveForwardButton.isPressed()){
+					drive->moveDistanceAsync(2_ft);
+					drive->setMaxVelocity(450);
+					std::cout << "Forward" << std::endl;
+				}
+				if(turnLeftButton.isPressed()){
+					drive->setMaxVelocity(450);
+					drive->turnAngleAsync(90_deg);
+					tick = 0;
+					std::cout << "Turn" << std::endl;
+				}else if(turnRightButton.isPressed()){
+					drive->setMaxVelocity(450);
+					drive->turnAngleAsync(-90_deg);
+					tick = 0;
+					std::cout << "Turn" << std::endl;
+				}else if(turn180Button.isPressed()){
+					drive->setMaxVelocity(450);
+					drive->turnAngleAsync(360_deg);
+					tick = 0;
+					std::cout << "Turn" << std::endl;
+				}
 			}
+			// Logging
+			if (tick % 20 == 0) {
+				std::cout << imu.get() << std::endl;
+			}
+			
 		}
     	// Wait and give up the time we don't need to other tasks.
     	// Additionally, joystick values, motor telemetry, etc. all updates every 10 ms.
