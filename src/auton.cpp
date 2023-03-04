@@ -3,25 +3,25 @@
 
 
 namespace AUTON{
-    void windCatapult(Motor catapultMotor, ADIButton stopSwitch){
+    void windCatapult(){
         while(!stopSwitch.isPressed()){
             catapultMotor.moveVoltage(-10000);
             pros::delay(10);
         }
     }
-    void shootCatapult(Motor catapultMotor, ADIButton stopSwitch){
+    void shootCatapult(){
         while(stopSwitch.isPressed()){
             catapultMotor.moveVoltage(-10000);
             pros::delay(10);
         }
     }
-    void runIntake(Motor intakeMotor){
+    void runIntake(){
         intakeMotor.moveVoltage(12000);
     }
-    void runIntakeReverse(Motor intakeMotor){
+    void runIntakeReverse(){
         intakeMotor.moveVoltage(-12000);
     }
-    void stopIntake(Motor intakeMotor){
+    void stopIntake(){
         intakeMotor.moveVoltage(0);
     }
     void runAuton(std::shared_ptr<ChassisController> drive, int autonID){
@@ -50,12 +50,12 @@ namespace AUTON{
                 //intake while moving
                 drive->moveDistance(50_in);
                 drive->turnAngle(-75_deg);
-                //shoot  disks
+                //shoot disks
                 drive->turnAngle(50_deg);
                 drive->moveDistance(36_in);
                 drive->turnAngle(90_deg);
                 // get read for preloads
-                //shoot three times 
+                // shoot three times 
                 drive->turnAngle(180_deg);
                 drive->moveDistance(36_in);
                 drive->turnAngle(90_deg);

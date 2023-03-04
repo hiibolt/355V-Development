@@ -15,7 +15,7 @@ Controller controller;
 ADIButton stopSwitch('A');
 Motor intakeMotor(19);
 Motor catapultMotor(20);
-pros::ADIDigitalOut pneumatic ('B', LOW);
+pros::ADIDigitalOut pneumatic('B', HIGH);
 //pros::MotorGroup lMotorsDebug({-8, 9, -10});
 //pros::MotorGroup rMotorsDebug({3,-4,5});
 MotorGroup leftDriveMotors({-8, 9, -10});
@@ -29,7 +29,9 @@ ControllerButton driveForwardButton(ControllerDigital::X);
 ControllerButton shootButton(ControllerDigital::R1);
 ControllerButton outtakeButton(ControllerDigital::L1);
 ControllerButton intakeButton(ControllerDigital::L2);
+
 ControllerButton endgameButton(ControllerDigital::up);
+ControllerButton endgameCloseButton(ControllerDigital::down);
 
 ControllerButton autonSwitchLeftButton(ControllerDigital::Y);
 ControllerButton autonSwitchRightButton(ControllerDigital::A);
@@ -37,7 +39,7 @@ ControllerButton colorSwitchButton(ControllerDigital::X);
 ControllerButton autoPIDButton(ControllerDigital::B);
 
 /**             Variables           **/
-int currentDrive = CHEESY_DRIVE_ID;
+int currentDrive = EXPONENTIAL_DRIVE_ID;
 int currentAuton = NONE_AUTON_ID;
 bool shootingCata = false;
 int desiredCataIndicator = 0xBCB502;
@@ -73,10 +75,10 @@ std::shared_ptr<ChassisController> drive =
         .withMotors(leftDriveMotors, rightDriveMotors)
         .withDimensions({AbstractMotor::gearset::blue, motorToWheelRatio}, {{wheelDiameter, centerToCenterWheelTrack}, imev5BlueTPR})
 		.withMaxVelocity(600)
-		.withGains(
-			PID::distancePID,  // Distance PID
-			PID::turnPID              // Turn PID
-		)
+		//.withGains(
+		//	PID::distancePID,  // Distance PID
+		//	PID::turnPID              // Turn PID
+		//)
 		.build();
 
 
@@ -104,7 +106,7 @@ void initialize() {
 
 	catapultMotor.setBrakeMode(okapi::AbstractMotor::brakeMode::brake);
 
-	//AUTON::windCatapult(catapultMotor, stopSwitch);
+	AUTON::windCatapult();
 
 	pros::delay(100);
 	LED::updateColorStrips({0,43}, 0x15ff00);
@@ -191,6 +193,7 @@ void opcontrol() {
 				drive->getModel()->arcade(velocity, turn, 0.05);	
 				break;
 		}
+		
 		// Catapult Shooting/Winding
 		if(shootButton.changedToPressed() && !shootingCata && stopSwitch.isPressed()){
 			shootingCata = true;
@@ -215,14 +218,17 @@ void opcontrol() {
 
 		// Endgame
 		if(endgameButton.isPressed()){
+			pneumatic.set_value(LOW);
+		}
+		if(endgameCloseButton.isPressed()){
 			pneumatic.set_value(HIGH);
 		}
 
 		// Selector Buttons
 		if(autonSwitchLeftButton.changedToPressed()){
-			setAuton(currentDrive == 0 ? 5 : currentDrive - 1);
+			setAuton(currentAuton == 0 ? 5 : currentAuton - 1);
 		}else if(autonSwitchRightButton.changedToPressed()){
-			setAuton(currentDrive == 5 ? 0 : currentDrive + 1);
+			setAuton(currentAuton == 5 ? 0 : currentAuton + 1);
 		}
 		if(colorSwitchButton.changedToPressed()){
 			LED::cycleColor();
