@@ -212,12 +212,15 @@ namespace GUI{
 		switch (driveID){
 			case CHEESY_DRIVE_ID:
 				controller.setText(1,0,"Drive  | CHEESY");
+    			lv_label_set_text(HOME_driveLabel, "Cheesy");
 				break;
 			case TANK_DRIVE_ID:
 				controller.setText(1,0,"Drive  | TANK");
+    			lv_label_set_text(HOME_driveLabel, " Tank");
 				break;
 			case EXPONENTIAL_DRIVE_ID:
 				controller.setText(1,0,"Drive  | EXPONENTIAL");
+				lv_label_set_text(HOME_driveLabel, " Expo");
 				break;
 		}
 	};
@@ -227,21 +230,27 @@ namespace GUI{
 		switch(autonID){
 			case LEFT_AUTON_ID:
 				controller.setText(2,0,"Auton | LEFT");
+    			lv_label_set_text(HOME_autonLabel, "Left");
 				break;
 			case RIGHT_AUTON_ID:
 				controller.setText(2,0,"Auton | RIGHT");
+    			lv_label_set_text(HOME_autonLabel, "Right");
 				break;
 			case AWP_AUTON_ID:
 				controller.setText(2,0,"Auton | AWP");
+    			lv_label_set_text(HOME_autonLabel, "AWP");
 				break;
 			case SHOOT_AUTON_ID:
 				controller.setText(2,0,"Auton | SHOOT");
+    			lv_label_set_text(HOME_autonLabel, "Shoot");
 				break;
 			case SKILLS_AUTON_ID:
 				controller.setText(2,0,"Auton | SKILLS");
+    			lv_label_set_text(HOME_autonLabel, "Skills");
 				break;
 			case NONE_AUTON_ID:
 				controller.setText(2,0,"Auton | NONE");
+    			lv_label_set_text(HOME_autonLabel, "None");
 				break;
 		}
 	};

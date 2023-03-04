@@ -27,8 +27,8 @@ ControllerButton turn180Button(ControllerDigital::B);
 ControllerButton driveForwardButton(ControllerDigital::X);
 
 ControllerButton shootButton(ControllerDigital::R1);
-ControllerButton outtakeButton(ControllerDigital::L1);
-ControllerButton intakeButton(ControllerDigital::L2);
+ControllerButton outtakeButton(ControllerDigital::L2);
+ControllerButton intakeButton(ControllerDigital::L1);
 
 ControllerButton endgameButton(ControllerDigital::up);
 ControllerButton endgameCloseButton(ControllerDigital::down);
@@ -40,7 +40,7 @@ ControllerButton autoPIDButton(ControllerDigital::B);
 
 /**             Variables           **/
 int currentDrive = EXPONENTIAL_DRIVE_ID;
-int currentAuton = NONE_AUTON_ID;
+int currentAuton = LEFT_AUTON_ID;
 bool shootingCata = false;
 int desiredCataIndicator = 0xBCB502;
 int currentCataIndicator = 0x000000;
@@ -95,18 +95,18 @@ void initialize() {
 	imu.calibrate();
 	std::cout << "Done" << std::endl;
 
-	GUI::updateColorInfo(LED::getCurrentColorID(), controller);
-	GUI::updateDriveInfo(currentDrive, controller);
-	GUI::updateAutonInfo(currentAuton, controller);
-
 	GUI::buildStyles();
 	GUI::buildMainPage();
 	GUI::buildPIDPage();
 	GUI::swapPage(HOME_PAGE_ID);
 
+	GUI::updateColorInfo(LED::getCurrentColorID(), controller);
+	GUI::updateDriveInfo(currentDrive, controller);
+	GUI::updateAutonInfo(currentAuton, controller);
+
 	catapultMotor.setBrakeMode(okapi::AbstractMotor::brakeMode::brake);
 
-	AUTON::windCatapult();
+	// AUTON::windCatapult();
 
 	pros::delay(100);
 	LED::updateColorStrips({0,43}, 0x15ff00);
@@ -197,7 +197,7 @@ void opcontrol() {
 		// Catapult Shooting/Winding
 		if(shootButton.changedToPressed() && !shootingCata && stopSwitch.isPressed()){
 			shootingCata = true;
-			desiredCataIndicator = 0xBCB502;
+			desiredCataIndicator = 0xA637A9;
 		}
 		if(!shootingCata && !stopSwitch.isPressed()){
 			catapultMotor.moveVoltage(-10000);
@@ -236,24 +236,6 @@ void opcontrol() {
 		if(autoPIDButton.changedToPressed()){
 			unsigned int tick = 0;
 			float highValue = -1;
-
-			//drive.setGains({0,0,0},{0.000000001,0,0},{0,0,0});
-			/**
-			void searchPattern(){
-				drive->turnAngleAsync(45_deg);
-				std::tuple<IterativePosPIDController::Gains, IterativePosPIDController::Gains, IterativePosPIDController::Gains> current = drive->getGain();
-				current[1][0] = current[1][0] * 10;
-				printf(std::to_string(current[1][0]));
-				while(!drive->isSettled()){
-					tick ++;
-					pros::delay(100);
-					if(tick > 50){
-						drive->stop();
-						//searchPattern();
-					}
-				}
-			}*/
-			//searchPattern();
 		}
 
 		// Intake/Outtake Handling
