@@ -155,14 +155,32 @@ namespace AUTON{
                 //drive->moveDistance(6_in);
                 break;
             case RIGHT_AUTON_ID:
-                // Wall square
-                drive->model().forward(-30);
-                pros::delay(100);
-                drive->stop();
-                pros::delay(100);
+                // Drive to roller
+                drive->setMaxVelocity(125);
+                drive->moveDistance(24_in);
 
-                drive->moveDistance(2_in);
-                break;
+                drive->setMaxVelocity(100);
+                drive->turnAngle(90_deg);
+                // go foward to spin roller
+                runIntakeReverse();
+                drive->moveDistanceAsync(8_in);
+                int i = 0;
+                while(!drive->isSettled()) {
+                    if(i++ > 50) {
+                        break;
+                    }
+                    pros::delay(20);
+                }
+                pros::delay(100);
+                stopIntake();
+                drive->stop();
+                drive->moveDistance(-8_in);
+
+                // Turn and shoot
+                drive->turnAngle(11_deg);
+                shootCatapult();
+                windCatapult();
+               break;
 	    }
     }
 }
