@@ -68,7 +68,8 @@ extern "C" {
     extern ADIButton stopSwitch;
     extern Motor intakeMotor;
     extern Motor catapultMotor;
-    extern pros::ADIDigitalOut pneumatic;
+    extern pros::ADIDigitalOut endgamePneumatic;
+    extern pros::ADIDigitalOut bandsPneumatic;
     //pros::MotorGroup lMotorsDebug({-8, 9, -10});
     //pros::MotorGroup rMotorsDebug({3,-4,5});
     extern MotorGroup leftDriveMotors;

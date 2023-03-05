@@ -15,7 +15,10 @@ Controller controller;
 ADIButton stopSwitch('A');
 Motor intakeMotor(19);
 Motor catapultMotor(20);
-pros::ADIDigitalOut pneumatic('B', HIGH);
+pros::ADIDigitalOut endgamePneumatic('B', LOW);
+int endgamePneumaticState = LOW;
+pros::ADIDigitalOut bandsPneumatic('C', LOW);
+int bandsPneumaticState = LOW;
 //pros::MotorGroup lMotorsDebug({-8, 9, -10});
 //pros::MotorGroup rMotorsDebug({3,-4,5});
 MotorGroup leftDriveMotors({-8, 9, -10});
@@ -31,12 +34,12 @@ ControllerButton outtakeButton(ControllerDigital::L2);
 ControllerButton intakeButton(ControllerDigital::L1);
 
 ControllerButton endgameButton(ControllerDigital::up);
-ControllerButton endgameCloseButton(ControllerDigital::down);
+ControllerButton bandsButton(ControllerDigital::down);
 
 ControllerButton autonSwitchLeftButton(ControllerDigital::Y);
 ControllerButton autonSwitchRightButton(ControllerDigital::A);
 ControllerButton colorSwitchButton(ControllerDigital::X);
-ControllerButton autoPIDButton(ControllerDigital::B);
+//ControllerButton autoPIDButton(ControllerDigital::B);
 
 /**             Variables           **/
 int currentDrive = EXPONENTIAL_DRIVE_ID;
@@ -217,11 +220,15 @@ void opcontrol() {
 		}
 
 		// Endgame
-		if(endgameButton.isPressed()){
-			pneumatic.set_value(LOW);
+		if(endgameButton.changedToPressed()){
+			endgamePneumaticState = endgamePneumaticState == 1 ? 0 : 1;
+			endgamePneumatic.set_value(endgamePneumaticState);
 		}
-		if(endgameCloseButton.isPressed()){
-			pneumatic.set_value(HIGH);
+
+		// Bands
+		if(bandsButton.changedToPressed()){
+			bandsPneumaticState = bandsPneumaticState == 1 ? 0 : 1;
+			bandsPneumatic.set_value(bandsPneumaticState);
 		}
 
 		// Selector Buttons
@@ -232,10 +239,6 @@ void opcontrol() {
 		}
 		if(colorSwitchButton.changedToPressed()){
 			LED::cycleColor();
-		}
-		if(autoPIDButton.changedToPressed()){
-			unsigned int tick = 0;
-			float highValue = -1;
 		}
 
 		// Intake/Outtake Handling

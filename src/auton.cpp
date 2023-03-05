@@ -126,7 +126,7 @@ namespace AUTON{
                 stopIntake();
                 drive->stop();
 
-                drive->setMaxVelocity(200);
+                drive->setMaxVelocity(100);
                 drive->moveDistance(-10_in);
 
                 drive->setMaxVelocity(100);
@@ -135,19 +135,19 @@ namespace AUTON{
                 windCatapult();
 
                 drive->turnAngle(-115_deg);
-                drive->setMaxVelocity(200);
+                drive->setMaxVelocity(300);
                 drive->moveDistance(29_in);
 
                 runIntake();
-                drive->setMaxVelocity(70);
+                drive->setMaxVelocity(50);
                 drive->moveDistance(24_in);
-                stopIntake();
                 
                 drive->setMaxVelocity(100);
                 drive->turnAngle(85_deg);
 
                 drive->setMaxVelocity(200);
                 drive->moveDistance(-17_in);
+                stopIntake();
                 pros::delay(250);
                 shootCatapult();
                 windCatapult();
@@ -195,5 +195,8 @@ namespace AUTON{
                 windCatapult();
                break;
 	    }
+		bandsPneumatic.set_value(HIGH);
+        pros::delay(200);
+		bandsPneumatic.set_value(HIGH);
     }
 }
