@@ -157,7 +157,7 @@ namespace AUTON{
             case RIGHT_AUTON_ID:
                 // Drive to roller
                 drive->setMaxVelocity(125);
-                drive->moveDistance(24_in);
+                drive->moveDistance(22_in);
 
                 drive->setMaxVelocity(100);
                 drive->turnAngle(90_deg);
@@ -166,18 +166,31 @@ namespace AUTON{
                 drive->moveDistanceAsync(8_in);
                 int i = 0;
                 while(!drive->isSettled()) {
-                    if(i++ > 50) {
+                    if(i++ > 25) {
                         break;
                     }
                     pros::delay(20);
                 }
-                pros::delay(100);
+                pros::delay(50);
                 stopIntake();
                 drive->stop();
                 drive->moveDistance(-8_in);
 
                 // Turn and shoot
                 drive->turnAngle(11_deg);
+                shootCatapult();
+                windCatapult();
+                drive->moveDistance(4_in);
+                drive->turnAngle(132_deg);
+                pros::delay(100);
+                runIntake();
+                drive->setMaxVelocity(200);
+                drive->moveDistance(72_in);
+                drive->turnAngle(-80_deg);
+                stopIntake();
+                drive->setMaxVelocity(200);
+                drive->moveDistance(-12_in);
+                pros::delay(50);
                 shootCatapult();
                 windCatapult();
                break;
