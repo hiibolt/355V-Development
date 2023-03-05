@@ -8,18 +8,20 @@ namespace AUTON{
             catapultMotor.moveVoltage(-10000);
             pros::delay(10);
         }
+        catapultMotor.moveVoltage(0);
     }
     void shootCatapult(){
         while(stopSwitch.isPressed()){
             catapultMotor.moveVoltage(-10000);
             pros::delay(10);
         }
+        catapultMotor.moveVoltage(0);
     }
     void runIntake(){
-        intakeMotor.moveVoltage(12000);
+        intakeMotor.moveVoltage(-12000);
     }
     void runIntakeReverse(){
-        intakeMotor.moveVoltage(-12000);
+        intakeMotor.moveVoltage(12000);
     }
     void stopIntake(){
         intakeMotor.moveVoltage(0);
@@ -114,40 +116,46 @@ namespace AUTON{
                 //spin  roller
                 break;
             case LEFT_AUTON_ID:
-            //starting from left side
-                drive->moveDistance(3_in);
-                //spin roller
-                drive->turnAngle(-45_deg);
-                drive->moveDistance(6_in);
-                //intake disk
-                drive->moveDistance(-12_in);
-                drive->turnAngle(-90_deg);
-                drive->moveDistance(12_in);
-                drive->turnAngle(-75_deg);
-                //shoot the three disks
-                drive->turnAngle(75_deg);
-                //intake while moving
+                // Get to roller
+                drive->model().forward(0.1);
+                runIntakeReverse();
+                pros::delay(700);
+
+                // Spin roller
+                pros::delay(250);
+                stopIntake();
+                drive->stop();
+
+                drive->setMaxVelocity(200);
+                drive->moveDistance(-10_in);
+
+                drive->setMaxVelocity(100);
+                drive->turnAngle(-11_deg);
+                shootCatapult();
+                windCatapult();
+
+                drive->turnAngle(-115_deg);
+                drive->setMaxVelocity(200);
+                drive->moveDistance(29_in);
+
+                runIntake();
+                drive->setMaxVelocity(70);
                 drive->moveDistance(24_in);
-                drive->turnAngle(-15_deg);
+                stopIntake();
+                
+                drive->setMaxVelocity(100);
+                drive->turnAngle(85_deg);
+                //drive->turnAngle(-45_deg);
+                //drive->moveDistance(6_in);
                 break;
             case RIGHT_AUTON_ID:
-                drive->moveDistance(36_in);
-                //intake while moving
-                drive->turnAngle(170_deg);
-                //shoot three disks
-                drive->turnAngle(-160_deg);
-                drive->moveDistance(12_in);
-                //intake while driving
-                drive->moveDistance(12_in);
-                drive->turnAngle(90_deg);
-                //intake while moving
-                drive->moveDistance(48_in);
-                drive->turnAngle(270_deg);
-                //shoot
-                drive->turnAngle(-180_deg);
-                drive->moveDistance(60_in);
-                drive->turnAngle(45_deg);
-                //spin roller
+                // Wall square
+                drive->model().forward(-30);
+                pros::delay(100);
+                drive->stop();
+                pros::delay(100);
+
+                drive->moveDistance(2_in);
                 break;
 	    }
     }

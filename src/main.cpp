@@ -40,7 +40,7 @@ ControllerButton autoPIDButton(ControllerDigital::B);
 
 /**             Variables           **/
 int currentDrive = EXPONENTIAL_DRIVE_ID;
-int currentAuton = LEFT_AUTON_ID;
+int currentAuton = NONE_AUTON_ID;
 bool shootingCata = false;
 int desiredCataIndicator = 0xBCB502;
 int currentCataIndicator = 0x000000;
