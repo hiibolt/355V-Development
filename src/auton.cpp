@@ -145,18 +145,55 @@ namespace AUTON{
                 
                 drive->setMaxVelocity(100);
                 drive->turnAngle(85_deg);
+
+                drive->setMaxVelocity(200);
+                drive->moveDistance(-17_in);
+                pros::delay(250);
+                shootCatapult();
+                windCatapult();
                 //drive->turnAngle(-45_deg);
                 //drive->moveDistance(6_in);
                 break;
             case RIGHT_AUTON_ID:
-                // Wall square
-                drive->model().forward(-30);
-                pros::delay(100);
-                drive->stop();
-                pros::delay(100);
+                // Drive to roller
+                drive->setMaxVelocity(125);
+                drive->moveDistance(22_in);
 
-                drive->moveDistance(2_in);
-                break;
+                drive->setMaxVelocity(100);
+                drive->turnAngle(90_deg);
+                // go foward to spin roller
+                runIntakeReverse();
+                drive->moveDistanceAsync(8_in);
+                int i = 0;
+                while(!drive->isSettled()) {
+                    if(i++ > 25) {
+                        break;
+                    }
+                    pros::delay(20);
+                }
+                pros::delay(50);
+                stopIntake();
+                drive->stop();
+                drive->moveDistance(-8_in);
+
+                // Turn and shoot
+                drive->turnAngle(11_deg);
+                shootCatapult();
+                windCatapult();
+                drive->moveDistance(4_in);
+                drive->turnAngle(132_deg);
+                pros::delay(100);
+                runIntake();
+                drive->setMaxVelocity(200);
+                drive->moveDistance(72_in);
+                drive->turnAngle(-80_deg);
+                stopIntake();
+                drive->setMaxVelocity(200);
+                drive->moveDistance(-12_in);
+                pros::delay(50);
+                shootCatapult();
+                windCatapult();
+               break;
 	    }
     }
 }
