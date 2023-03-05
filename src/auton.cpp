@@ -197,6 +197,6 @@ namespace AUTON{
 	    }
 		bandsPneumatic.set_value(HIGH);
         pros::delay(200);
-		bandsPneumatic.set_value(HIGH);
+		bandsPneumatic.set_value(LOW);
     }
 }
