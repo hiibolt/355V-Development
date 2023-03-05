@@ -130,7 +130,7 @@ namespace AUTON{
                 drive->moveDistance(-10_in);
 
                 drive->setMaxVelocity(100);
-                drive->turnAngle(-11_deg);
+                drive->turnAngle(-13_deg);
                 shootCatapult();
                 windCatapult();
 
@@ -146,7 +146,7 @@ namespace AUTON{
                 drive->turnAngle(85_deg);
 
                 drive->setMaxVelocity(200);
-                drive->moveDistance(-17_in);
+                drive->moveDistance(-13_in);
                 stopIntake();
                 pros::delay(250);
                 shootCatapult();
