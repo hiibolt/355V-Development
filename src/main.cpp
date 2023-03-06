@@ -84,25 +84,38 @@ std::shared_ptr<ChassisController> drive =
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
+	// Lamborghini color startup
+	std::cout << "Starting color sequence...";
 	LED::startupColors();
+	std::cout << "Done" << std::endl;
 
+	// Calibrate IMU
 	std::cout << "Calibrating IMU...";
 	imu.calibrate();
 	std::cout << "Done" << std::endl;
 
+	// Build brain HUD
+	std::cout << "Initializing brain HUD...";
 	GUI::buildStyles();
 	GUI::buildMainPage();
 	GUI::buildPIDPage();
 	GUI::swapPage(HOME_PAGE_ID);
+	std::cout << "Done" << std::endl;
 
+	// Update controller HUD
+	std::cout << "Updating controller HUD...";
 	GUI::updateColorInfo(LED::getCurrentColorID(), controller);
 	GUI::updateDriveInfo(currentDrive, controller);
 	GUI::updateAutonInfo(currentAuton, controller);
+	std::cout << "Done" << std::endl;
 
+	// Enable catapult braking
+	std::cout << "Configuring catapult...";
 	catapultMotor.setBrakeMode(okapi::AbstractMotor::brakeMode::brake);
+	std::cout << "Done" << std::endl;
 
-	// AUTON::windCatapult();
-
+	// Flash green
+	std::cout << "Flashing complete...";
 	pros::delay(100);
 	LED::updateColorStrips({0,43}, 0x15ff00);
 	pros::delay(100);
@@ -112,8 +125,14 @@ void initialize() {
 	pros::delay(100);
 	LED::updateColorStrips({0,43}, 0x00000);
 	pros::delay(100);
+	std::cout << "Done" << std::endl;
+
+	// Alert Pilot
+	std::cout << "Calibrating IMU...";
 	controller.rumble(".");
-	std::cout << "Initialized" << std::endl;
+	std::cout << "Done" << std::endl;
+
+	std::cout << std::endl << "Initialized" << std::endl;
 }
 
 /**
@@ -165,13 +184,6 @@ void autonomous() {
 void opcontrol() {
 	while (true){
 		global_tick ++;
-		/**
-		std::vector<std::int32_t> l_temps = lMotorsDebug.are_over_temp();
-		std::vector<std::int32_t> r_temps = rMotorsDebug.are_over_temp();
-		if ( (l_temps[0] == 1 || l_temps[1] == 1 || l_temps[2] == 1 || r_temps[0] == 1 || r_temps[1] == 1 || r_temps[2] == 1) && global_tick % 20 == 0){
-			controller.rumble(".");
-			std::cout << "OVERHEATING : " << global_tick << std::endl;
-		}*/
 		switch (currentDrive){
 			case CHEESY_DRIVE_ID:
 				drive->getModel()->curvature(controller.getAnalog(ControllerAnalog::leftY), controller.getAnalog(ControllerAnalog::rightX),0.05);	
@@ -189,7 +201,7 @@ void opcontrol() {
 				break;
 		}
 		
-		// Catapult Shooting/Winding
+		// Catapult Shooting/Winding (Thread safe)
 		if(shootButton.changedToPressed() && !shootingCata && stopSwitch.isPressed()){
 			shootingCata = true;
 			desiredCataIndicator = 0xA637A9;
@@ -217,7 +229,7 @@ void opcontrol() {
 			endgamePneumatic.set_value(endgamePneumaticState);
 		}
 
-		// Bands
+		// Band Release
 		if(bandsButton.changedToPressed()){
 			bandsPneumaticState = bandsPneumaticState == 1 ? 0 : 1;
 			bandsPneumatic.set_value(bandsPneumaticState);
@@ -241,6 +253,9 @@ void opcontrol() {
 		}else{
 			intakeMotor.moveVoltage(0);
 		}
+
+		// PID Tuning - Functional, but not in usage
+		/**
 		if(GUI::getPage() == PID_PAGE_ID){
 			tick += 1;
 			
@@ -276,6 +291,8 @@ void opcontrol() {
 			}
 			
 		}
+		**/
+	
     	// Wait and give up the time we don't need to other tasks.
     	// Additionally, joystick values, motor telemetry, etc. all updates every 10 ms.
     	pros::delay(10);
