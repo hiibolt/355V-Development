@@ -12,18 +12,20 @@ using namespace AUTON;
 
 /** 			Constants 			**/
 Controller controller;
+auto imu = IMU(13, IMUAxes::z);
+
 ADIButton stopSwitch('A');
+
 Motor intakeMotor(19);
 Motor catapultMotor(20);
-pros::ADIDigitalOut endgamePneumatic('B', LOW);
-int endgamePneumaticState = LOW;
-pros::ADIDigitalOut bandsPneumatic('C', LOW);
-int bandsPneumaticState = LOW;
-//pros::MotorGroup lMotorsDebug({-8, 9, -10});
-//pros::MotorGroup rMotorsDebug({3,-4,5});
 MotorGroup leftDriveMotors({-8, 9, -10});
 MotorGroup rightDriveMotors({3,-4,5});
-auto imu = IMU(13, IMUAxes::z);
+
+int endgamePneumaticState = LOW;
+int bandsPneumaticState = LOW;
+pros::ADIDigitalOut endgamePneumatic('B', endgamePneumaticState);
+pros::ADIDigitalOut bandsPneumatic('C', bandsPneumaticState);
+
 ControllerButton turnLeftButton(ControllerDigital::Y);
 ControllerButton turnRightButton(ControllerDigital::A);
 ControllerButton turn180Button(ControllerDigital::B);
@@ -39,7 +41,6 @@ ControllerButton bandsButton(ControllerDigital::down);
 ControllerButton autonSwitchLeftButton(ControllerDigital::Y);
 ControllerButton autonSwitchRightButton(ControllerDigital::A);
 ControllerButton colorSwitchButton(ControllerDigital::X);
-//ControllerButton autoPIDButton(ControllerDigital::B);
 
 /**             Variables           **/
 int currentDrive = EXPONENTIAL_DRIVE_ID;
@@ -53,20 +54,11 @@ int global_tick = 0;
 /**         Variable Modifiers      **/
 void rotateDrive(){
 	currentDrive = currentDrive == DRIVE_COUNT - 1 ? 0 : currentDrive + 1;
-	GUI::updateDriveInfo(currentDrive,getControllerObj());
-}
-int getCurrentDrive(){
-	return currentDrive;
+	GUI::updateDriveInfo(currentDrive,controller);
 }
 void setAuton(int auton_id){
 	currentAuton = auton_id;
-	GUI::updateAutonInfo(currentAuton,getControllerObj());
-}
-int getCurrentAuton(){
-	return currentAuton;
-}
-Controller getControllerObj(){
-	return controller;
+	GUI::updateAutonInfo(currentAuton,controller);
 }
 
 // Initiate drive definiton

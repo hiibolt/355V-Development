@@ -120,7 +120,7 @@ static lv_res_t onClick(lv_obj_t * btn)
 			break;
 		case DRIVE_BTN_ID:
 			rotateDrive();
-			switch(getCurrentDrive()){
+			switch(currentDrive){
 				case CHEESY_DRIVE_ID:
     				lv_label_set_text(HOME_driveLabel, "Cheesy");
 					break;

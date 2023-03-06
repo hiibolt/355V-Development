@@ -53,18 +53,18 @@ namespace LED{
 			case RED_ID:
 				for(int i = 0;i < 43;i++){
 					LEDStrip1[i] = 0xFF0000;
-					LEDStrip2[i] = 0xFF0000;
+					LEDStrip2[i] = 0xFF0000; 
 				}
 				LEDStrip1.update();
 				LEDStrip2.update();
 				break;
 		}
-		GUI::updateColorInfo(currentColor,getControllerObj());
+		GUI::updateColorInfo(currentColor,controller);
 	}
 	void startupColors(){
 		LEDStrip1.clear_all();
 		LEDStrip2.clear_all();
-		for(int i = 0;i < 43;i++){
+		for(int i = 0;i < 43 + 0;i++){
 			LEDStrip1[43-i] = 0xff6400;
 			LEDStrip2[43-i] = 0xff6400;
 			LEDStrip1.update();

@@ -28,7 +28,7 @@ namespace PID{
                 return PID::AngleName;
                 break;
         }
-        return (char *)"wtf";
+        throw std::invalid_argument( "BAD CONSTANT INDEX" );
     }
     okapi::IterativePosPIDController::Gains getConstant(int id){
         switch (id){
@@ -42,6 +42,7 @@ namespace PID{
                 return anglePID;
                 break;
         }
+        throw std::invalid_argument( "BAD CONSTANT ID" );
     }
     void setConstant(int type, int constant, float val){
         switch (type) {
@@ -85,7 +86,6 @@ namespace PID{
                 }
                 break;
         }
-    
-        //(std::dynamic_pointer_cast<ChassisControllerPID> (drive))->setGains(distancePID,turnPID,anglePID);
+        throw std::invalid_argument( "BAD CONSTANT ID" );
     }
 }
