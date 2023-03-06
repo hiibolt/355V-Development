@@ -126,33 +126,46 @@ namespace AUTON{
                 stopIntake();
                 drive->stop();
 
+                // Move backwards
                 drive->setMaxVelocity(100);
                 drive->moveDistance(-10_in);
 
+                // Turn towards goal
                 drive->setMaxVelocity(100);
                 drive->turnAngle(-13_deg);
+
+                // Shoot and Reset
                 shootCatapult();
                 windCatapult();
 
+                // Turn towards 3-stack
+                drive->setMaxVelocity(100);
                 drive->turnAngle(-115_deg);
+
+                // Drive to 3-stack
                 drive->setMaxVelocity(300);
                 drive->moveDistance(29_in);
 
+                // Intake discs
                 runIntake();
                 drive->setMaxVelocity(50);
                 drive->moveDistance(24_in);
                 
+                // Turn towards goal
                 drive->setMaxVelocity(100);
                 drive->turnAngle(85_deg);
 
+                // Drive to half-court
                 drive->setMaxVelocity(200);
                 drive->moveDistance(-13_in);
+
+                // Stop intake and let inertia settle
                 stopIntake();
                 pros::delay(250);
+
+                // Shoot
                 shootCatapult();
                 windCatapult();
-                //drive->turnAngle(-45_deg);
-                //drive->moveDistance(6_in);
                 break;
             case RIGHT_AUTON_ID:
                 // Drive to roller
