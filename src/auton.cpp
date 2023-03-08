@@ -52,7 +52,7 @@ namespace AUTON{
 
                 // Grab disk
                 runIntake();
-                drive->setMaxVelocity(200);
+                drive->setMaxVelocity(150);
                 drive->moveDistance(22_in);
                 runIntakeReverse();
 
@@ -74,14 +74,28 @@ namespace AUTON{
                 pros::delay(50);
                 stopIntake();
                 drive->stop();
+                //driving back from the roller then turning to prepare the shooting
                 drive->moveDistance(-8_in);
                 drive->turnAngle(-92_deg);
+                //driving to shoot
                 drive->setMaxVelocity(300);
                 drive->moveDistance(-52_in);
+                //shoot
                 shootCatapult();
                 windCatapult();
-                
-
+                //turning to the diaganial disks
+                drive->turnAngle(-45_deg);
+                runIntake();
+                //driving to the diaganial disk
+                drive->setMaxVelocity(200);
+                drive->moveDistance(28_in);
+                drive->turnAngle(-95_deg);
+                //driving towards the other disks
+                drive->setMaxVelocity(200);
+                drive->moveDistance(30_in);
+                drive->turnAngle(90_deg);
+                shootCatapult();
+                windCatapult();
                 break;
             case SHOOT_AUTON_ID:
             //starting from left side
