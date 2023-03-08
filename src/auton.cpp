@@ -27,6 +27,7 @@ namespace AUTON{
         intakeMotor.moveVoltage(0);
     }
     void runAuton(std::shared_ptr<ChassisController> drive, int autonID){
+        int i=0;
         switch(autonID){
             case NONE_AUTON_ID:
                 // do absolutely nothing. nothing at all. do a thing? you die. a death. died. ead.
@@ -37,7 +38,7 @@ namespace AUTON{
                 runIntakeReverse();
                 pros::delay(700);
 
-                // Spin roller
+                // Spin first roller
                 pros::delay(350);
                 stopIntake();
                 drive->stop();
@@ -51,15 +52,50 @@ namespace AUTON{
 
                 // Grab disk
                 runIntake();
-                drive->setMaxVelocity(200);
-                drive->moveDistance(20.5_in);
-                stopIntake();
+                drive->setMaxVelocity(150);
+                drive->moveDistance(22_in);
+                runIntakeReverse();
 
-                // Turn towards code
+                // Turn towards 2nd roller
                 drive->setMaxVelocity(100);
-                drive->turnAngle(-58_deg);
-
-
+                drive->turnAngle(-60_deg);
+                pros::delay(200);
+                // driving towards roller
+                drive->setMaxVelocity(75);
+                drive->moveDistanceAsync(12_in);
+                //spining roller
+                i = 0;
+                while(!drive->isSettled()) {
+                    if(i++ > 100) {
+                        break;
+                    }
+                    pros::delay(20);
+                }
+                pros::delay(50);
+                stopIntake();
+                drive->stop();
+                //driving back from the roller then turning to prepare the shooting
+                drive->moveDistance(-8_in);
+                drive->turnAngle(-92_deg);
+                //driving to shoot
+                drive->setMaxVelocity(300);
+                drive->moveDistance(-52_in);
+                //shoot
+                shootCatapult();
+                windCatapult();
+                //turning to the diaganial disks
+                drive->turnAngle(-45_deg);
+                runIntake();
+                //driving to the diaganial disk
+                drive->setMaxVelocity(200);
+                drive->moveDistance(28_in);
+                drive->turnAngle(-95_deg);
+                //driving towards the other disks
+                drive->setMaxVelocity(200);
+                drive->moveDistance(30_in);
+                drive->turnAngle(90_deg);
+                shootCatapult();
+                windCatapult();
                 break;
             case SHOOT_AUTON_ID:
             //starting from left side
@@ -182,7 +218,7 @@ namespace AUTON{
                 runIntakeReverse();
                 drive->setMaxVelocity(50);
                 drive->moveDistanceAsync(8_in);
-                int i = 0;
+                i = 0;
                 while(!drive->isSettled()) {
                     if(i++ > 25) {
                         break;
