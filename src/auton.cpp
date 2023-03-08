@@ -56,14 +56,16 @@ namespace AUTON{
                 drive->moveDistance(22_in);
                 runIntakeReverse();
 
-                // Turn towards 2nd roller
+                // Turn to 2nd roller
                 drive->setMaxVelocity(100);
                 drive->turnAngle(-60_deg);
                 pros::delay(200);
-                // driving towards roller
+
+                // Drive to roller
                 drive->setMaxVelocity(75);
                 drive->moveDistanceAsync(12_in);
-                //spining roller
+
+                // Spin second roller
                 i = 0;
                 while(!drive->isSettled()) {
                     if(i++ > 100) {
@@ -74,28 +76,52 @@ namespace AUTON{
                 pros::delay(50);
                 stopIntake();
                 drive->stop();
+
                 //driving back from the roller then turning to prepare the shooting
                 drive->moveDistance(-8_in);
-                drive->turnAngle(-92_deg);
-                //driving to shoot
+                drive->turnAngle(-96_deg);
+
+                // Move to low goal
                 drive->setMaxVelocity(300);
                 drive->moveDistance(-52_in);
-                //shoot
+
+				// Let inertia settle
+                pros::delay(50);
+
+				// Shoot
                 shootCatapult();
                 windCatapult();
+
                 //turning to the diaganial disks
                 drive->turnAngle(-45_deg);
                 runIntake();
-                //driving to the diaganial disk
+				
+                // Drive to diaganial disk
                 drive->setMaxVelocity(200);
                 drive->moveDistance(28_in);
                 drive->turnAngle(-95_deg);
-                //driving towards the other disks
+
+                // Drive to other disks
                 drive->setMaxVelocity(200);
-                drive->moveDistance(30_in);
-                drive->turnAngle(90_deg);
+                drive->moveDistance(32_in);
+
+				// Aim at goal
+                drive->setMaxVelocity(100);
+                drive->turnAngle(88_deg);
+
+				// Get closer to goal and shoot
+                drive->setMaxVelocity(200);
+                drive->moveDistance(-3_in);
+
+				// Let inertia settle
+				stopIntake();
+				pros::delay(50);
+
+				// Shoot
                 shootCatapult();
                 windCatapult();
+
+
                 break;
             case SHOOT_AUTON_ID:
             //starting from left side

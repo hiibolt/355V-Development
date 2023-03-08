@@ -9,10 +9,8 @@ namespace LED{
 
 	int currentColor = ORANGE_ID;
 	// fix trash code
-	pros::ADIDigitalOut LEDStrip1Brightness({11,'H'}, HIGH);
 	pros::ADILed LEDStrip1({11,'H'}, 44);
-	pros::ADIDigitalOut LEDStrip2Brightness({12,8}, HIGH);
-	pros::ADILed LEDStrip2({12,8}, 44);
+	pros::ADILed LEDStrip2({12,'H'}, 44);
 	int getCurrentColorID(){
 		return currentColor;
 	}
