@@ -132,7 +132,7 @@ namespace AUTON{
 
                 // Turn towards goal
                 drive->setMaxVelocity(100);
-                drive->turnAngle(-13_deg);
+                drive->turnAngle(-11_deg);
 
                 // Shoot and Reset
                 shootCatapult();
@@ -140,11 +140,14 @@ namespace AUTON{
 
                 // Turn towards 3-stack
                 drive->setMaxVelocity(100);
-                drive->turnAngle(-115_deg);
+                drive->turnAngle(-119_deg);
 
                 // Drive to 3-stack
+                runIntakeReverse();
                 drive->setMaxVelocity(300);
                 drive->moveDistance(29_in);
+                stopIntake();
+                pros::delay(200);
 
                 // Intake discs
                 runIntake();
@@ -169,13 +172,15 @@ namespace AUTON{
                 break;
             case RIGHT_AUTON_ID:
                 // Drive to roller
-                drive->setMaxVelocity(125);
-                drive->moveDistance(22_in);
+                drive->setMaxVelocity(200);
+                drive->moveDistance(23_in);
 
                 drive->setMaxVelocity(100);
                 drive->turnAngle(90_deg);
+
                 // go foward to spin roller
                 runIntakeReverse();
+                drive->setMaxVelocity(50);
                 drive->moveDistanceAsync(8_in);
                 int i = 0;
                 while(!drive->isSettled()) {
@@ -187,22 +192,27 @@ namespace AUTON{
                 pros::delay(50);
                 stopIntake();
                 drive->stop();
-                drive->moveDistance(-8_in);
+
+                drive->setMaxVelocity(300);
+                drive->moveDistance(-10_in);
 
                 // Turn and shoot
-                drive->turnAngle(11_deg);
+                drive->setMaxVelocity(100);
+                drive->turnAngle(10_deg);
                 shootCatapult();
+
+                drive->moveDistanceAsync(6_in);
                 windCatapult();
-                drive->moveDistance(4_in);
                 drive->turnAngle(132_deg);
-                pros::delay(100);
+                pros::delay(50);
+
                 runIntake();
-                drive->setMaxVelocity(200);
+                drive->setMaxVelocity(250);
                 drive->moveDistance(72_in);
-                drive->turnAngle(-80_deg);
+                drive->turnAngle(-82_deg);
                 stopIntake();
-                drive->setMaxVelocity(200);
-                drive->moveDistance(-12_in);
+                drive->setMaxVelocity(400);
+                drive->moveDistance(-6_in);
                 pros::delay(50);
                 shootCatapult();
                 windCatapult();
@@ -211,5 +221,7 @@ namespace AUTON{
 		bandsPneumatic.set_value(HIGH);
         pros::delay(200);
 		bandsPneumatic.set_value(LOW);
+        drive->setMaxVelocity(600);
+        drive->turnAngle(180_deg);
     }
 }
