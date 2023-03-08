@@ -32,40 +32,34 @@ namespace AUTON{
                 // do absolutely nothing. nothing at all. do a thing? you die. a death. died. ead.
                 break;
             case SKILLS_AUTON_ID:
-                drive->moveDistance(5_in);
-                drive->moveDistance(-8_in);
-                //spin rollers 
-                drive->turnAngle(-120_deg);
-                drive->moveDistance(14_in);
-                //turning to face disk on the line then intake it 
-                drive->turnAngle(30_deg);
-                drive->moveDistance(20_in);
-                //spin roller 
-                drive->moveDistance(12_in);
-                //shoot three disks
-                drive->turnAngle(45_deg);
-                //intake while moving
-                drive->moveDistance(62_in);
-                drive->turnAngle(-90_deg);
-                //shoot
-                drive->turnAngle(90_deg);
-                //intake while moving
-                drive->moveDistance(50_in);
-                drive->turnAngle(-75_deg);
-                //shoot disks
-                drive->turnAngle(50_deg);
-                drive->moveDistance(36_in);
-                drive->turnAngle(90_deg);
-                // get read for preloads
-                // shoot three times 
-                drive->turnAngle(180_deg);
-                drive->moveDistance(36_in);
-                drive->turnAngle(90_deg);
-                //lined up for roller 
-                drive->moveDistance(12_in);
-                //spin roller
-                drive->moveDistance(-12_in);
-                // this is the first half of the skills auton
+                // Get to roller
+                drive->model().forward(0.1);
+                runIntakeReverse();
+                pros::delay(700);
+
+                // Spin roller
+                pros::delay(350);
+                stopIntake();
+                drive->stop();
+
+                // Move backwards
+                drive->setMaxVelocity(100);
+                drive->moveDistance(-5_in);
+
+                // Turn to first disk
+                drive->turnAngle(155_deg);
+
+                // Grab disk
+                runIntake();
+                drive->setMaxVelocity(200);
+                drive->moveDistance(20.5_in);
+                stopIntake();
+
+                // Turn towards code
+                drive->setMaxVelocity(100);
+                drive->turnAngle(-58_deg);
+
+
                 break;
             case SHOOT_AUTON_ID:
             //starting from left side
@@ -169,6 +163,12 @@ namespace AUTON{
                 // Shoot
                 shootCatapult();
                 windCatapult();
+
+                bandsPneumatic.set_value(HIGH);
+                pros::delay(200);
+                bandsPneumatic.set_value(LOW);
+                drive->setMaxVelocity(600);
+                drive->turnAngle(180_deg);
                 break;
             case RIGHT_AUTON_ID:
                 // Drive to roller
@@ -216,12 +216,13 @@ namespace AUTON{
                 pros::delay(50);
                 shootCatapult();
                 windCatapult();
+
+                bandsPneumatic.set_value(HIGH);
+                pros::delay(200);
+                bandsPneumatic.set_value(LOW);
+                drive->setMaxVelocity(600);
+                drive->turnAngle(180_deg);
                break;
 	    }
-		bandsPneumatic.set_value(HIGH);
-        pros::delay(200);
-		bandsPneumatic.set_value(LOW);
-        drive->setMaxVelocity(600);
-        drive->turnAngle(180_deg);
     }
 }
