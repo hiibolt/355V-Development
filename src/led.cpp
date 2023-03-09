@@ -3,10 +3,7 @@
 #include "teamlogo.c"
 #include "led.h"
 #include <string.h>
-#include <math.h>
-
 namespace LED{
-
 	int currentColor = ORANGE_ID;
 	// fix trash code
 	pros::ADILed LEDStrip1({11,'H'}, 44);
