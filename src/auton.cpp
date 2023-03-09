@@ -36,7 +36,6 @@ namespace AUTON{
                 // Get to roller
                 drive->model().forward(0.1);
                 runIntakeReverse();
-                pros::delay(700);
 
                 // Spin first roller
                 pros::delay(350);
@@ -79,7 +78,7 @@ namespace AUTON{
 
                 //driving back from the roller then turning to prepare the shooting
                 drive->moveDistance(-8_in);
-                drive->turnAngle(-96_deg);
+                drive->turnAngle(-98_deg);
 
                 // Move to low goal
                 drive->setMaxVelocity(300);
@@ -107,11 +106,11 @@ namespace AUTON{
 
 				// Aim at goal
                 drive->setMaxVelocity(100);
-                drive->turnAngle(88_deg);
+                drive->turnAngle(92_deg);
 
 				// Get closer to goal and shoot
                 drive->setMaxVelocity(200);
-                drive->moveDistance(-3_in);
+                drive->moveDistance(-6_in);
 
 				// Let inertia settle
 				stopIntake();
