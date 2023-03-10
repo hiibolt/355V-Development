@@ -126,7 +126,7 @@ namespace AUTON{
 
                 // Drive to and intake triple disks
                 runIntake();
-                drive->setMaxVelocity(200);
+                drive->setMaxVelocity(150);
                 drive->moveDistance(24_in);
                 stopIntake();
 
@@ -144,6 +144,35 @@ namespace AUTON{
                 // Shoot
                 shootCatapult();
                 windCatapult();
+
+                // Aim at alternative triple disk set
+                drive->setMaxVelocity(200);
+                drive->turnANgle(135_deg);
+
+                // Drive to and intake triple disks
+                runIntake();
+                drive->setMaxVelocity(150);
+                drive->moveDistance(24_in);
+                stopIntake();
+
+                // Let inertia settle
+                pros::delay(50);
+
+                // Drive back to shooting corner
+                drive->setMaxVelocity(300);
+                drive->moveDistance(-24_in);
+
+                // Aim at barrier goal
+                drive->setMaxVelocity(100);
+                drive->turnANgle(-135_deg);
+
+                // Let inertia settle
+                pros::delay(50);
+
+                // Shoot
+                shootCatapult();
+                windCatapult();
+
                 break;
             case SHOOT_AUTON_ID:
             //starting from left side
