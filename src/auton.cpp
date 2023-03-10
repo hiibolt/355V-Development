@@ -131,12 +131,12 @@ namespace AUTON{
                 stopIntake();
 
                 // Drive back to shooting corner
-                drive->setMaxVelocit(300);
+                drive->setMaxVelocity(300);
                 drive->moveDistance(-24_in);
 
                 // Aim at barrier goal
                 drive->setMaxVelocity(100);
-                drive->turnANgle(135_deg);
+                drive->turnAngle(135_deg);
 
                 // Let inertia settle
                 pros::delay(50);
@@ -147,7 +147,7 @@ namespace AUTON{
 
                 // Aim at alternative triple disk set
                 drive->setMaxVelocity(200);
-                drive->turnANgle(135_deg);
+                drive->turnAngle(135_deg);
 
                 // Drive to and intake triple disks
                 runIntake();
@@ -164,7 +164,7 @@ namespace AUTON{
 
                 // Aim at barrier goal
                 drive->setMaxVelocity(100);
-                drive->turnANgle(-135_deg);
+                drive->turnAngle(135_deg);
 
                 // Let inertia settle
                 pros::delay(50);
