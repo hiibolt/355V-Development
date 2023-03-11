@@ -247,16 +247,36 @@ namespace AUTON{
                 drive->stop();
 
                 // Square on roller
-                drive->model().forward(0.2);
+                drive->model().forward(0.5);
                 pros::delay(350);
                 drive->stop();
 
                 drive->setMaxVelocity(100);
-                drive->moveDistance(-10_in);
+                drive->moveDistance(-9_in);
 
                 // Turn and shoot
                 drive->setMaxVelocity(100);
                 drive->turnAngle(10_deg);
+                shootCatapult();
+                windCatapult();
+
+                // Go back to 1 disk
+                drive->setMaxVelocity(200);
+                drive->moveDistance(3_in);
+
+                // Turn to disk
+                drive->setMaxVelocity(100);
+                drive->turnAngle(135_deg);
+
+                // Grab disk
+                runIntake();
+                drive->setMaxVelocity(200);
+                drive->moveDistance(40_in);
+                stopIntake();
+
+                // Turn and shoot
+                drive->setMaxVelocity(100);
+                drive->turnAngle(-115_deg);
                 shootCatapult();
                 windCatapult();
                 break;
