@@ -193,23 +193,23 @@ namespace AUTON{
 
                 // Cross field and get first disk
                 runIntake();
-                drive->setMaxVelocity(300);
-                drive->moveDistance(42_in);
+                drive->setMaxVelocity(400);
+                drive->moveDistance(30_in);
 
                 // Turn to other disks
-                drive->setMaxVelocity(200);
+                drive->setMaxVelocity(300);
                 drive->turnAngle(-90_deg);
 
                 // Get other two disks
-                drive->setMaxVelocity(90);
+                drive->setMaxVelocity(400);
                 drive->moveDistance(68_in);
 
                 // Turn to other disks
                 stopIntake();
-                drive->setMaxVelocity(200);
-                drive->turnAngle(-180_deg);
-
                 fireEndgame();
+                //drive->setMaxVelocity(200);
+                //drive->turnAngle(-45_deg);
+
 
                 /**
                 // Grab roller
