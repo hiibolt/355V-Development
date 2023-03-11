@@ -380,14 +380,14 @@ namespace AUTON{
                 drive->stop();
 
                 drive->setMaxVelocity(100);
-                drive->moveDistance(-10_in);
+                drive->moveDistance(-8_in);
 
                 // Turn and shoot
                 drive->setMaxVelocity(100);
                 drive->turnAngle(10_deg);
                 shootCatapult();
 
-                drive->moveDistanceAsync(6_in);
+                drive->moveDistanceAsync(4_in);
                 windCatapult();
                 drive->turnAngle(132_deg);
                 pros::delay(50);
