@@ -28,7 +28,7 @@ namespace AUTON{
     void stopIntake(){
         intakeMotor.moveVoltage(0);
     }
-    void fireEngame(){
+    void fireEndgame(){
 		endgamePneumatic.set_value(HIGH);
     }
     void runAuton(std::shared_ptr<ChassisController> drive, int autonID){
