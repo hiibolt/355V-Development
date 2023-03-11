@@ -28,7 +28,11 @@ namespace AUTON{
     void stopIntake(){
         intakeMotor.moveVoltage(0);
     }
+    void fireEngame(){
+		endgamePneumatic.set_value(HIGH);
+    }
     void runAuton(std::shared_ptr<ChassisController> drive, int autonID){
+        intakeMotor.moveVoltage(0);
         int i=0;
         switch(autonID){
             case NONE_AUTON_ID:
@@ -79,12 +83,12 @@ namespace AUTON{
                 drive->stop();
 
                 //driving back from the roller then turning to prepare the shooting
-                drive->moveDistance(-8_in);
-                drive->turnAngle(-98_deg);
+                drive->moveDistance(-12_in);
+                drive->turnAngle(-95_deg);
 
                 // Move to low goal
                 drive->setMaxVelocity(300);
-                drive->moveDistance(-52_in);
+                drive->moveDistance(-48_in);
 
 				// Let inertia settle
                 pros::delay(50);
@@ -94,7 +98,7 @@ namespace AUTON{
                 windCatapult();
 
                 //turning to the diaganial disks
-                drive->turnAngle(-45_deg);
+                drive->turnAngle(-42_deg);
                 runIntake();
 				
                 // Drive to diaganial disk
@@ -103,11 +107,11 @@ namespace AUTON{
                 drive->turnAngle(-95_deg);
 
                 // Drive to other disks
-                drive->setMaxVelocity(200);
-                drive->moveDistance(32_in);
+                drive->setMaxVelocity(100);
+                drive->moveDistance(30_in);
 
 				// Aim at goal
-                drive->setMaxVelocity(100);
+                drive->setMaxVelocity(150);
                 drive->turnAngle(92_deg);
 
 				// Get closer to goal and shoot
@@ -122,13 +126,53 @@ namespace AUTON{
                 shootCatapult();
                 windCatapult();
 
+				// Back off to avoid clipping on the turn
+                drive->setMaxVelocity(200);
+                drive->moveDistance(2_in);
+
+                // Aim at triple disk set
+                drive->setMaxVelocity(200);
+                drive->turnAngle(143_deg);
+
+                // Drive to and intake triple disks
+                runIntake();
+                drive->setMaxVelocity(30);
+                drive->moveDistance(26_in);
+                stopIntake();
+
+                // Let inertia settle
+                pros::delay(50);
+
+                // Drive back to shooting corner
+                drive->setMaxVelocity(300);
+                drive->moveDistance(-26_in);
+
+                // Aim at barrier goal
+                drive->setMaxVelocity(100);
+                drive->turnAngle(-145_deg);
+
+                // Move at shooting corner
+                drive->setMaxVelocity(200);
+                drive->moveDistance(-3_in);
+
+                // Let inertia settle
+                pros::delay(50);
+
+                // Shoot
+                shootCatapult();
+                windCatapult();
+
+                // Return to corner
+                drive->setMaxVelocity(200);
+                drive->moveDistance(3_in);
+
                 // Turn to triple disc at barrier
                 drive->setMaxVelocity(100);
-                drive->turnAngle(-135_deg);
+                drive->turnAngle(-149_deg);
 
                 // Drive to and intake triple disks
                 runIntake();
-                drive->setMaxVelocity(150);
+                drive->setMaxVelocity(30);
                 drive->moveDistance(24_in);
                 stopIntake();
 
@@ -147,34 +191,36 @@ namespace AUTON{
                 shootCatapult();
                 windCatapult();
 
-                // Aim at alternative triple disk set
+                // Cross field and get first disk
+                runIntake();
+                drive->setMaxVelocity(300);
+                drive->moveDistance(42_in);
+
+                // Turn to other disks
                 drive->setMaxVelocity(200);
-                drive->turnAngle(135_deg);
+                drive->turnAngle(-90_deg);
 
-                // Drive to and intake triple disks
-                runIntake();
-                drive->setMaxVelocity(150);
-                drive->moveDistance(24_in);
+                // Get other two disks
+                drive->setMaxVelocity(90);
+                drive->moveDistance(68_in);
+
+                // Turn to other disks
                 stopIntake();
+                drive->setMaxVelocity(200);
+                drive->turnAngle(-180_deg);
 
-                // Let inertia settle
-                pros::delay(50);
+                fireEndgame();
 
-                // Drive back to shooting corner
-                drive->setMaxVelocity(300);
-                drive->moveDistance(-24_in);
+                /**
+                // Grab roller
+                drive->model().forward(0.1);
+                runIntakeReverse();
 
-                // Aim at barrier goal
-                drive->setMaxVelocity(100);
-                drive->turnAngle(135_deg);
-
-                // Let inertia settle
-                pros::delay(50);
-
-                // Shoot
-                shootCatapult();
-                windCatapult();
-
+                // Spin first roller
+                pros::delay(350);
+                stopIntake();
+                drive->stop();
+                **/
                 break;
             case SHOOT_AUTON_ID:
             //starting from left side

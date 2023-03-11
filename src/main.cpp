@@ -218,7 +218,17 @@ void opcontrol() {
 			shootingCata = false;
 			catapultMotor.moveVoltage(0);
 		}
-		if(currentCataIndicator != desiredCataIndicator){
+
+		// Catapult and endgame Notifications
+		if(global_tick > 10500){
+			if(global_tick % 75 == 0){
+				LED::updateColorStrips({0,43}, desiredCataIndicator);
+				pros::delay(10);
+			}else if(global_tick % 25 == 0){
+				LED::updateColorStrips({0,43}, 0x32CD32);
+				pros::delay(10);
+			}
+		}else if(currentCataIndicator != desiredCataIndicator){
 			LED::updateColorStrips({0,43}, desiredCataIndicator);
 			currentCataIndicator = desiredCataIndicator;
 		}
@@ -252,17 +262,6 @@ void opcontrol() {
 			intakeMotor.moveVoltage(12000);
 		}else{
 			intakeMotor.moveVoltage(0);
-		}
-
-		// Endgame Notification
-		if(global_tick > 10500){
-			if(global_tick % 75 == 0){
-				LED::updateColorStrips({0,43}, desiredCataIndicator);
-				pros::delay(10);
-			}else if(global_tick % 25 == 0){
-				LED::updateColorStrips({0,43}, 0x32CD32);
-				pros::delay(10);
-			}
 		}
 
 		// PID Tuning - Functional, but not in usage
