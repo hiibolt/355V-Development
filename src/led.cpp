@@ -5,9 +5,9 @@
 #include <string.h>
 namespace LED{
 	int currentColor = ORANGE_ID;
-	// fix trash code
 	pros::ADILed LEDStrip1({11,'H'}, 44);
 	pros::ADILed LEDStrip2({12,'H'}, 44);
+	
 	int getCurrentColorID(){
 		return currentColor;
 	}
