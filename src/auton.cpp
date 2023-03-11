@@ -298,10 +298,10 @@ namespace AUTON{
                 drive->turnAngle(-119_deg);
 
                 // Drive to 3-stack
-                runIntakeReverse();
+                //runIntakeReverse();
                 drive->setMaxVelocity(300);
                 drive->moveDistance(29_in);
-                stopIntake();
+                //stopIntake();
                 pros::delay(200);
 
                 // Intake discs
@@ -315,7 +315,7 @@ namespace AUTON{
 
                 // Drive to half-court
                 drive->setMaxVelocity(200);
-                drive->moveDistance(-13_in);
+                drive->moveDistance(-17_in);
 
                 // Stop intake and let inertia settle
                 stopIntake();
@@ -370,7 +370,7 @@ namespace AUTON{
                 runIntake();
                 drive->setMaxVelocity(250);
                 drive->moveDistance(72_in);
-                drive->turnAngle(-82_deg);
+                drive->turnAngle(-84_deg);
                 stopIntake();
                 drive->setMaxVelocity(400);
                 drive->moveDistance(-6_in);
