@@ -254,6 +254,17 @@ void opcontrol() {
 			intakeMotor.moveVoltage(0);
 		}
 
+		// Endgame Notification
+		if(global_tick > 10500){
+			if(global_tick % 75 == 0){
+				LED::updateColorStrips({0,43}, desiredCataIndicator);
+				pros::delay(10);
+			}else if(global_tick % 25 == 0){
+				LED::updateColorStrips({0,43}, 0x32CD32);
+				pros::delay(10);
+			}
+		}
+
 		// PID Tuning - Functional, but not in usage
 		/**
 		if(GUI::getPage() == PID_PAGE_ID){

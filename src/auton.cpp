@@ -7,6 +7,7 @@ namespace AUTON{
         while(!stopSwitch.isPressed()){
             catapultMotor.moveVoltage(-10000);
             pros::delay(10);
+            global_tick++;
         }
         catapultMotor.moveVoltage(0);
     }
@@ -14,6 +15,7 @@ namespace AUTON{
         while(stopSwitch.isPressed()){
             catapultMotor.moveVoltage(-10000);
             pros::delay(10);
+            global_tick++;
         }
         catapultMotor.moveVoltage(0);
     }

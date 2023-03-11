@@ -74,6 +74,7 @@ extern "C" {
     extern MotorGroup rightDriveMotors;
     extern Controller controller;
     extern int currentDrive;
+    extern int global_tick;
     void autonomous(void);
     void cycleColor();
     void initialize(void);

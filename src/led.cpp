@@ -79,7 +79,8 @@ namespace LED{
 				LEDStrip2[i] = getCurrentColorHex();
 			}
 		}
-		pros::delay(15);
+		pros::delay(20);
+		global_tick += 2; 
 		LEDStrip1.update();
 		LEDStrip2.update();
 	}
