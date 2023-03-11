@@ -182,6 +182,7 @@ void autonomous() {
  * task, not resume it from where it left off.
  */	
 void opcontrol() {
+	global_tick = 0;
 	while (true){
 		global_tick ++;
 		switch (currentDrive){
