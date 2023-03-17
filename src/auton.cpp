@@ -277,6 +277,10 @@ namespace AUTON{
                 // Turn and shoot
                 drive->setMaxVelocity(100);
                 drive->turnAngle(-115_deg);
+
+                // Get closer
+                drive->setMaxVelocity(200);
+                drive->moveDistance(14_in);
                 shootCatapult();
                 windCatapult();
                 break;
