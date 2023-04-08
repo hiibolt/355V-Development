@@ -67,6 +67,7 @@ extern "C" {
     extern std::shared_ptr<ChassisController> drive;
     extern ADIButton stopSwitch;
     extern Motor intakeMotor;
+    extern pros::Rotation cataRotation;
     extern Motor catapultMotor;
     extern pros::ADIDigitalOut endgamePneumatic;
     extern pros::ADIDigitalOut bandsPneumatic;
