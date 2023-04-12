@@ -44,7 +44,7 @@ ControllerButton colorSwitchButton(ControllerDigital::X);
 
 /**             Variables           **/
 int currentDrive = EXPONENTIAL_DRIVE_ID;
-int currentAuton = NONE_AUTON_ID;
+int currentAuton = LEFT_AUTON_ID;
 bool shootingCata = false;
 int desiredCataIndicator = 0xBCB502;
 int currentCataIndicator = 0x000000;
@@ -64,7 +64,7 @@ void setAuton(int auton_id){
 // Initiate drive definiton
 float motorToWheelRatio = 1.0/1.0;
 okapi::QLength wheelDiameter = 2.75_in;
-okapi::QLength centerToCenterWheelTrack = 17_in;
+okapi::QLength centerToCenterWheelTrack = 12.5_in;
 std::shared_ptr<ChassisController> drive = 
     ChassisControllerBuilder()
         .withMotors(leftDriveMotors, rightDriveMotors)
@@ -171,12 +171,12 @@ void competition_initialize() {}
 void autonomous() {
 	profileController->generatePath({
 		{0_ft, 0_ft, 0_deg},  // Profile starting position, this will normally be (0, 0, 0)
-		{3_ft, 0_ft, 180_deg}}, // The next point in the profile, 3 feet forward
+		{3_ft, 0_ft, 90_deg}}, // The next point in the profile, 3 feet forward
 		"A" // Profile name
 	);
   	profileController->setTarget("A");
   	profileController->waitUntilSettled();
-	//AUTON::runAuton(drive, currentAuton);
+	AUTON::runAuton(drive, currentAuton);
 }
 
 /**
