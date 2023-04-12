@@ -64,18 +64,22 @@ void setAuton(int auton_id){
 // Initiate drive definiton
 float motorToWheelRatio = 1.0/1.0;
 okapi::QLength wheelDiameter = 2.75_in;
-okapi::QLength centerToCenterWheelTrack = 10.25_in;
+okapi::QLength centerToCenterWheelTrack = 17_in;
 std::shared_ptr<ChassisController> drive = 
     ChassisControllerBuilder()
         .withMotors(leftDriveMotors, rightDriveMotors)
         .withDimensions({AbstractMotor::gearset::blue, motorToWheelRatio}, {{wheelDiameter, centerToCenterWheelTrack}, imev5BlueTPR})
-		.withMaxVelocity(600)
-		//.withGains(
-		//	PID::distancePID,  // Distance PID
-		//	PID::turnPID              // Turn PID
-		//)
 		.build();
 
+std::shared_ptr<AsyncMotionProfileController> profileController =
+  AsyncMotionProfileControllerBuilder()
+    .withLimits({
+      2.2, // Maximum linear velocity of the Chassis in m/s
+      1.95, // Maximum linear acceleration of the Chassis in m/s/s
+      10.0 // Maximum linear jerk of the Chassis in m/s/s/s
+    })
+    .withOutput(drive)
+    .buildMotionProfileController();
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -165,7 +169,14 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
-	AUTON::runAuton(drive, currentAuton);
+	profileController->generatePath({
+		{0_ft, 0_ft, 0_deg},  // Profile starting position, this will normally be (0, 0, 0)
+		{3_ft, 0_ft, 180_deg}}, // The next point in the profile, 3 feet forward
+		"A" // Profile name
+	);
+  	profileController->setTarget("A");
+  	profileController->waitUntilSettled();
+	//AUTON::runAuton(drive, currentAuton);
 }
 
 /**
