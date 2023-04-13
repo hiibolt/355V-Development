@@ -24,8 +24,8 @@ lv_obj_t * HOME_buttonNothing;
 lv_obj_t * HOME_buttonNothingLabel;
 lv_obj_t * HOME_buttonDrive;
 lv_obj_t * HOME_buttonDriveLabel;
-lv_obj_t * HOME_buttonPID;
-lv_obj_t * HOME_buttonPIDLabel;
+lv_obj_t * HOME_buttonAlt;
+lv_obj_t * HOME_buttonAltLabel;
 lv_obj_t * HOME_buttonColor;
 lv_obj_t * HOME_buttonColorLabel;
 
@@ -33,43 +33,15 @@ lv_obj_t * HOME_autonLabel;
 lv_obj_t * HOME_driveLabel;
 
 lv_obj_t * logo;
+lv_obj_t * waltuh;
 
-// PID Page
-float PID_increment = 1;
-int current_PID_type = 0;
+lv_obj_t * altPage = lv_obj_create (NULL,NULL);
 
-lv_obj_t * PIDPage = lv_obj_create (NULL,NULL);
+lv_obj_t * ALT_buttonHome;
+lv_obj_t * ALT_buttonHomeLabel;
 
-lv_obj_t * Kp_Label;
-lv_obj_t * Ki_Label;
-lv_obj_t * Kd_Label;
-lv_obj_t * p_Label;
-lv_obj_t * i_Label;
-lv_obj_t * d_Label;
-lv_obj_t * PID_type_label;
-
-lv_obj_t * PID_buttonHome;
-lv_obj_t * PID_buttonHomeLabel;
-
-lv_obj_t * PID_Kp_p1Button;
-lv_obj_t * PID_Kp_p1ButtonLabel;
-lv_obj_t * PID_Ki_p1Button;
-lv_obj_t * PID_Ki_p1ButtonLabel;
-lv_obj_t * PID_Kd_p1Button;
-lv_obj_t * PID_Kd_p1ButtonLabel;
-
-lv_obj_t * PID_Kp_m1Button;
-lv_obj_t * PID_Kp_m1ButtonLabel;
-lv_obj_t * PID_Ki_m1Button;
-lv_obj_t * PID_Ki_m1ButtonLabel;
-lv_obj_t * PID_Kd_m1Button;
-lv_obj_t * PID_Kd_m1ButtonLabel;
-
-lv_obj_t * PID_incrementLabel;
-lv_obj_t * PID_x10Increment;
-lv_obj_t * PID_x10IncrementLabel;
-lv_obj_t * PID_div10Increment;
-lv_obj_t * PID_div10IncrementLabel;
+lv_obj_t * ALT_buttonWaltuh;
+lv_obj_t * ALT_buttonWaltuhLabel;
 
 // General
 lv_style_t buttonActive;
@@ -132,53 +104,25 @@ static lv_res_t onClick(lv_obj_t * btn)
 					break;
 			}
 			break;
-		case PID_BTN_ID:
-			GUI::swapPage(PID_PAGE_ID);
+		case ALT_BTN_ID:
+			GUI::swapPage(ALT_PAGE_ID);
 			break;
 		case COLOR_BTN_ID:
 			LED::cycleColor();
 			break;
-		case PID_HOME_BTN_ID:
+		case ALT_HOME_BTN_ID:
 			GUI::swapPage(HOME_PAGE_ID);
 			break;
-		case PID_KP_PLUS_BTN_ID:
-			PID::setConstant(current_PID_type,PID::Kp,PID::getConstant(current_PID_type).kP + PID_increment);
-    		lv_label_set_text(Kp_Label, floatToChar(PID::getConstant(current_PID_type).kP) ); //Set the label text
-			break;
-		case PID_KI_PLUS_BTN_ID:
-			setConstant(current_PID_type,PID::Ki,PID::getConstant(current_PID_type).kI + PID_increment);
-    		lv_label_set_text(Ki_Label, floatToChar(PID::getConstant(current_PID_type).kI) ); //Set the label text
-			break;
-		case PID_KD_PLUS_BTN_ID:
-			setConstant(current_PID_type,PID::Kd,PID::getConstant(current_PID_type).kD + PID_increment);
-    		lv_label_set_text(Kd_Label, floatToChar(PID::getConstant(current_PID_type).kD) ); //Set the label text
-			break;
-		case PID_KP_MINUS_BTN_ID:
-			setConstant(current_PID_type,PID::Kp,PID::getConstant(current_PID_type).kP - PID_increment);
-    		lv_label_set_text(Kp_Label, floatToChar(PID::getConstant(current_PID_type).kP) ); //Set the label text
-			break;
-		case PID_KI_MINUS_BTN_ID:
-			setConstant(current_PID_type,PID::Ki,PID::getConstant(current_PID_type).kI - PID_increment);
-    		lv_label_set_text(Ki_Label, floatToChar(PID::getConstant(current_PID_type).kI) ); //Set the label text
-			break;
-		case PID_KD_MINUS_BTN_ID:
-			setConstant(current_PID_type,PID::Kd,PID::getConstant(current_PID_type).kD - PID_increment);
-    		lv_label_set_text(Kd_Label, floatToChar(PID::getConstant(current_PID_type).kD) ); //Set the label text
-			break;
-		case PID_INCREMENT_PLUS_BTN_ID:
-			PID_increment *= 10;
-    		lv_label_set_text(PID_incrementLabel, floatToChar(PID_increment) ); //Set the label text
-			break;
-		case PID_INCREMENT_MINUS_BTN_ID:
-			PID_increment /= 10;
-    		lv_label_set_text(PID_incrementLabel, floatToChar(PID_increment) ); //Set the label text
-			break;
-		case PID_TYPE_SWAP_BTN_ID:
-			current_PID_type = current_PID_type == 2 ? 0 : current_PID_type + 1;
-    		lv_label_set_text(Kp_Label, floatToChar(PID::getConstant(current_PID_type).kP) ); //Set the label text
-    		lv_label_set_text(Ki_Label, floatToChar(PID::getConstant(current_PID_type).kI) ); //Set the label text
-    		lv_label_set_text(Kd_Label, floatToChar(PID::getConstant(current_PID_type).kD) ); //Set the label text
-			lv_label_set_text(PID_type_label, PID::getPIDTypeName(current_PID_type)); //Set the label text
+		case ALT_WALTUH_BTN_ID:
+			createImgButton({
+				src: &teamlogo_50x50, 
+				page: mainPage, 
+				alignto: LV_ALIGN_IN_TOP_LEFT, 
+				x_offset: 0, 
+				y_offset: 0, 
+				id: COLOR_BTN_ID, 
+				btn_obj: waltuh
+			});
 			break;
 	}
 	
@@ -276,8 +220,8 @@ namespace GUI{
 				current_page = HOME_PAGE_ID;
 				break;
 			case 1:
-				lv_scr_load(PIDPage);
-				current_page = PID_PAGE_ID;
+				lv_scr_load(altPage);
+				current_page = ALT_PAGE_ID;
 				break;
 		}
 	}
@@ -408,16 +352,16 @@ namespace GUI{
 			btn_label_obj: HOME_buttonDriveLabel
 		});
 		createButton({
-			text: "PID",
+			text: "Other",
 			page: mainPage,
 			alignto: LV_ALIGN_IN_TOP_RIGHT,
 			x_offset: 5,
 			y_offset: 58+58+58+15,
 			width: 130,
 			height: 55,
-			id: PID_BTN_ID,
-			btn_obj: HOME_buttonPID,
-			btn_label_obj: HOME_buttonPIDLabel
+			id: ALT_BTN_ID,
+			btn_obj: HOME_buttonAlt,
+			btn_label_obj: HOME_buttonAltLabel
 		});
 		HOME_autonLabel = lv_label_create(mainPage, NULL);
 		HOME_driveLabel = lv_label_create(mainPage, NULL);
@@ -428,159 +372,37 @@ namespace GUI{
 		lv_label_set_style(HOME_autonLabel,&plaintext);
 		lv_label_set_style(HOME_driveLabel,&plaintext);
 	}
-	void buildPIDPage() {
+	void buildAltPage() {
+		static lv_style_t style;
+		lv_style_copy(&style,lv_obj_get_style(lv_scr_act()));
+		style.body.main_color = LV_COLOR_MAKE(0, 0, 0);
+		style.body.grad_color = LV_COLOR_MAKE(0, 0, 0);
+		lv_obj_set_style(altPage, &style);
+
 		createButton({
 			text: "Home",
-			page: PIDPage,
+			page: altPage,
 			alignto: LV_ALIGN_IN_TOP_MID,
 			x_offset: 0,
 			y_offset: -5,
 			width: 130,
 			height: 60,
-			id: PID_HOME_BTN_ID,
-			btn_obj: PID_buttonHome,
-			btn_label_obj: PID_buttonHomeLabel
+			id: ALT_HOME_BTN_ID,
+			btn_obj: ALT_buttonHome,
+			btn_label_obj: ALT_buttonHomeLabel
 		});
 
 		createButton({
-			text: "+",
-			page: PIDPage,
-			alignto: LV_ALIGN_IN_TOP_MID,
-			x_offset: -100,
-			y_offset: 115,
-			width: 80,
-			height: 40,
-			id: PID_KP_PLUS_BTN_ID,
-			btn_obj: PID_Kp_p1Button,
-			btn_label_obj: PID_Kp_p1ButtonLabel
-		});
-		createButton({
-			text: "+",
-			page: PIDPage,
-			alignto: LV_ALIGN_IN_TOP_MID,
+			text: "waltuh",
+			page: altPage,
+			alignto: LV_ALIGN_CENTER,
 			x_offset: 0,
-			y_offset: 115,
-			width: 80,
-			height: 40,
-			id: PID_KI_PLUS_BTN_ID,
-			btn_obj: PID_Ki_p1Button,
-			btn_label_obj: PID_Ki_p1ButtonLabel
+			y_offset: 0,
+			width: 300,
+			height: 150,
+			id: ALT_WALTUH_BTN_ID,
+			btn_obj: ALT_buttonWaltuh,
+			btn_label_obj: ALT_buttonWaltuhLabel
 		});
-		createButton({
-			text: "+",
-			page: PIDPage,
-			alignto: LV_ALIGN_IN_TOP_MID,
-			x_offset: 100,
-			y_offset: 115,
-			width: 80,
-			height: 40,
-			id: PID_KD_PLUS_BTN_ID,
-			btn_obj: PID_Kd_p1Button,
-			btn_label_obj: PID_Kd_p1ButtonLabel
-		});
-		createButton({
-			text: "-",
-			page: PIDPage,
-			alignto: LV_ALIGN_IN_TOP_MID,
-			x_offset: -100,
-			y_offset: 150,
-			width: 80,
-			height: 40,
-			id: PID_KP_MINUS_BTN_ID,
-			btn_obj: PID_Kp_m1Button,
-			btn_label_obj: PID_Kp_m1ButtonLabel
-		});
-		createButton({
-			text: "-",
-			page: PIDPage,
-			alignto: LV_ALIGN_IN_TOP_MID,
-			x_offset: 0,
-			y_offset: 150,
-			width: 80,
-			height: 40,
-			id: PID_KI_MINUS_BTN_ID,
-			btn_obj: PID_Ki_m1Button,
-			btn_label_obj: PID_Ki_m1ButtonLabel
-		});
-		createButton({
-			text: "-",
-			page: PIDPage,
-			alignto: LV_ALIGN_IN_TOP_MID,
-			x_offset: 100,
-			y_offset: 150,
-			width: 80,
-			height: 40,
-			id: PID_KD_MINUS_BTN_ID,
-			btn_obj: PID_Kd_m1Button,
-			btn_label_obj: PID_Kd_m1ButtonLabel
-		});
-
-		Kp_Label = lv_label_create(PIDPage, NULL); //Create the label text
-		Ki_Label = lv_label_create(PIDPage, NULL); //Create the label text
-		Kd_Label = lv_label_create(PIDPage, NULL); //Create the label text
-		p_Label = lv_label_create(PIDPage, NULL); //Create the label text
-		i_Label = lv_label_create(PIDPage, NULL); //Create the label text
-		d_Label = lv_label_create(PIDPage, NULL); //Create the label text
-		char * Kp = floatToChar(PID::getConstant(current_PID_type).kP);
-		lv_label_set_text(Kp_Label, Kp); //Set the label text
-		char * Ki = floatToChar(PID::getConstant(current_PID_type).kI);
-		lv_label_set_text(Ki_Label, Ki); //Set the label text
-		char * Kd = floatToChar(PID::getConstant(current_PID_type).kD);
-		lv_label_set_text(Kd_Label, Kd); //Set the label text
-		lv_obj_align(Kp_Label,NULL,LV_ALIGN_IN_TOP_MID,-100,90); //Align and offset position
-		lv_obj_align(Ki_Label,NULL,LV_ALIGN_IN_TOP_MID,0,90); //Align and offset position
-		lv_obj_align(Kd_Label,NULL,LV_ALIGN_IN_TOP_MID,100,90); //Align and offset position
-		lv_label_set_text(p_Label, "Kp"); //Set the label text
-		lv_label_set_text(i_Label, "Ki"); //Set the label text
-		lv_label_set_text(d_Label, "Kd"); //Set the label text
-		lv_obj_align(p_Label,NULL,LV_ALIGN_IN_TOP_MID,-100,70);
-		lv_obj_align(i_Label,NULL,LV_ALIGN_IN_TOP_MID,0,70);
-		lv_obj_align(d_Label,NULL,LV_ALIGN_IN_TOP_MID,100,70);
-
-		PID_incrementLabel = lv_label_create(PIDPage,NULL);
-		lv_label_set_text(PID_incrementLabel, floatToChar(PID_increment)); //Set the label text
-		lv_obj_align(PID_incrementLabel,NULL,LV_ALIGN_IN_TOP_LEFT,3,5);
-
-		createButton({
-			text: "+",
-			page: PIDPage,
-			alignto: LV_ALIGN_IN_TOP_LEFT,
-			x_offset: -5,
-			y_offset: 30,
-			width: 80,
-			height: 40,
-			id: PID_INCREMENT_PLUS_BTN_ID,
-			btn_obj: PID_x10Increment,
-			btn_label_obj: PID_x10IncrementLabel,
-		});
-		createButton({
-			text: "-",
-			page: PIDPage,
-			alignto: LV_ALIGN_IN_TOP_LEFT,
-			x_offset: -5,
-			y_offset: 65,
-			width: 80,
-			height: 40,
-			id: PID_INCREMENT_MINUS_BTN_ID,
-			btn_obj: PID_div10Increment,
-			btn_label_obj: PID_div10IncrementLabel,
-		});
-		
-		createButton({
-			text: "",
-			page: PIDPage,
-			alignto: LV_ALIGN_IN_TOP_RIGHT,
-			x_offset: 5,
-			y_offset: 30,
-			width: 100,
-			height: 40,
-			id: PID_TYPE_SWAP_BTN_ID,
-			btn_obj: PID_x10Increment,
-			btn_label_obj: PID_x10IncrementLabel,
-		});
-
-		PID_type_label = lv_label_create(PIDPage, NULL);//Create the label text
-		lv_label_set_text(PID_type_label, PID::getPIDTypeName(current_PID_type)); //Set the label text
-		lv_obj_align(PID_type_label,NULL,LV_ALIGN_IN_TOP_RIGHT,-8,40);
 	}
 }

@@ -1,6 +1,5 @@
 #include "guifuncs.h"
 #include "main.h"
-#include "pid.h"
 #include "led.h"
 #include "auton.h"
 #include "teamlogo.c"
@@ -118,7 +117,7 @@ void initialize() {
 	std::cout << "Initializing brain HUD...";
 	GUI::buildStyles();
 	GUI::buildMainPage();
-	GUI::buildPIDPage();
+	GUI::buildAltPage();
 	GUI::swapPage(HOME_PAGE_ID);
 	std::cout << "Done" << std::endl;
 
