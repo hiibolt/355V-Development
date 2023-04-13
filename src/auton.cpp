@@ -383,9 +383,13 @@ namespace AUTON{
                 drive->turnAngle(-119_deg);
 
                 // Drive to 3-stack
-                drive->setMaxVelocity(300);
-                drive->moveDistance(29_in);
-                pros::delay(200);
+                profileController->generatePath({
+                    {0_ft, 0_ft, 0_deg},  // Profile starting position, this will normally be (0, 0, 0)
+                    {29_ft, 0_ft, 0_deg}}, // The next point in the profile, 3 feet forward
+                    "LEFT | 1 | Hit stack" // Profile name
+                );
+                profileController->setTarget("LEFT | 1 | Hit stack");
+                profileController->waitUntilSettled();
 
                 // Intake discs
                 runIntake();

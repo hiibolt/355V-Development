@@ -44,7 +44,7 @@ ControllerButton colorSwitchButton(ControllerDigital::X);
 
 /**             Variables           **/
 int currentDrive = EXPONENTIAL_DRIVE_ID;
-int currentAuton = NONE_AUTON_ID;
+int currentAuton = LEFT_AUTON_ID;
 bool shootingCata = false;
 int desiredCataIndicator = 0xBCB502;
 int currentCataIndicator = 0x000000;
@@ -76,6 +76,15 @@ std::shared_ptr<ChassisController> drive =
 		//)
 		.build();
 
+std::shared_ptr<AsyncMotionProfileController> profileController =
+  AsyncMotionProfileControllerBuilder()
+    .withLimits({
+      2.2, // Maximum linear velocity of the Chassis in m/s
+      1.95, // Maximum linear acceleration of the Chassis in m/s/s
+      10.0 // Maximum linear jerk of the Chassis in m/s/s/s
+    })
+    .withOutput(drive)
+    .buildMotionProfileController();
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
