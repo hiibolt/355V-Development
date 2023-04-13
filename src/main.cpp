@@ -266,45 +266,6 @@ void opcontrol() {
 		}else{
 			intakeMotor.moveVoltage(0);
 		}
-
-		// PID Tuning - Functional, but not in usage
-		/**
-		if(GUI::getPage() == PID_PAGE_ID){
-			tick += 1;
-			
-			if(tick > 500){
-				if(tick < 550){
-					drive->stop();
-				}
-				if(driveForwardButton.isPressed()){
-					drive->moveDistanceAsync(2_ft);
-					drive->setMaxVelocity(450);
-					std::cout << "Forward" << std::endl;
-				}
-				if(turnLeftButton.isPressed()){
-					drive->setMaxVelocity(450);
-					drive->turnAngleAsync(90_deg);
-					tick = 0;
-					std::cout << "Turn" << std::endl;
-				}else if(turnRightButton.isPressed()){
-					drive->setMaxVelocity(450);
-					drive->turnAngleAsync(-90_deg);
-					tick = 0;
-					std::cout << "Turn" << std::endl;
-				}else if(turn180Button.isPressed()){
-					drive->setMaxVelocity(450);
-					drive->turnAngleAsync(360_deg);
-					tick = 0;
-					std::cout << "Turn" << std::endl;
-				}
-			}
-			// Logging
-			if (tick % 20 == 0) {
-				std::cout << imu.get() << std::endl;
-			}
-			
-		}
-		**/
 	
     	// Wait and give up the time we don't need to other tasks.
     	// Additionally, joystick values, motor telemetry, etc. all updates every 10 ms.
