@@ -44,7 +44,7 @@ ControllerButton colorSwitchButton(ControllerDigital::X);
 
 /**             Variables           **/
 int currentDrive = EXPONENTIAL_DRIVE_ID;
-int currentAuton = LEFT_AUTON_ID;
+int currentAuton = NONE_AUTON_ID;
 bool shootingCata = false;
 int desiredCataIndicator = 0xBCB502;
 int currentCataIndicator = 0x000000;
@@ -64,22 +64,18 @@ void setAuton(int auton_id){
 // Initiate drive definiton
 float motorToWheelRatio = 1.0/1.0;
 okapi::QLength wheelDiameter = 2.75_in;
-okapi::QLength centerToCenterWheelTrack = 12.5_in;
+okapi::QLength centerToCenterWheelTrack = 10.25_in;
 std::shared_ptr<ChassisController> drive = 
     ChassisControllerBuilder()
         .withMotors(leftDriveMotors, rightDriveMotors)
         .withDimensions({AbstractMotor::gearset::blue, motorToWheelRatio}, {{wheelDiameter, centerToCenterWheelTrack}, imev5BlueTPR})
+		.withMaxVelocity(600)
+		//.withGains(
+		//	PID::distancePID,  // Distance PID
+		//	PID::turnPID              // Turn PID
+		//)
 		.build();
 
-std::shared_ptr<AsyncMotionProfileController> profileController =
-  AsyncMotionProfileControllerBuilder()
-    .withLimits({
-      2.2, // Maximum linear velocity of the Chassis in m/s
-      1.95, // Maximum linear acceleration of the Chassis in m/s/s
-      10.0 // Maximum linear jerk of the Chassis in m/s/s/s
-    })
-    .withOutput(drive)
-    .buildMotionProfileController();
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -169,13 +165,6 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
-	profileController->generatePath({
-		{0_ft, 0_ft, 0_deg},  // Profile starting position, this will normally be (0, 0, 0)
-		{3_ft, 0_ft, 90_deg}}, // The next point in the profile, 3 feet forward
-		"A" // Profile name
-	);
-  	profileController->setTarget("A");
-  	profileController->waitUntilSettled();
 	AUTON::runAuton(drive, currentAuton);
 }
 
@@ -215,20 +204,20 @@ void opcontrol() {
 		
 		// Catapult Shooting/Winding (Thread safe)
 		//if(shootButton.changedToPressed() && !shootingCata && stopSwitch.isPressed()){
-		if(shootButton.changedToPressed() && !shootingCata && cataRotation.get_angle() >= 31600){;
+		if(shootButton.changedToPressed() && !shootingCata && cataRotation.get_angle() >= 24400){;
 			shootingCata = true;
 			desiredCataIndicator = 0xA637A9;
 		}
 		//if(!shootingCata && !stopSwitch.isPressed()){
-		if(!shootingCata && cataRotation.get_angle() < 31600){	
+		if(!shootingCata && cataRotation.get_angle() < 24400){	
 			catapultMotor.moveVoltage(-10000);
 		}else if(!shootingCata){
 			catapultMotor.moveVoltage(0);
 			desiredCataIndicator = getCurrentColorHex();
 		}
-		if(shootingCata && cataRotation.get_angle() >= 31600){
+		if(shootingCata && cataRotation.get_angle() >= 24400){
 			catapultMotor.moveVoltage(-12000);
-		}else if(shootingCata && cataRotation.get_angle() < 31600){
+		}else if(shootingCata && cataRotation.get_angle() < 24400){
 			shootingCata = false;
 			catapultMotor.moveVoltage(0);
 		}

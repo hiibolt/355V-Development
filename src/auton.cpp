@@ -4,7 +4,7 @@
 
 namespace AUTON{
     void windCatapult(){
-        while (cataRotation.get_angle() < 31600){
+        while (cataRotation.get_angle() < 24400){
             catapultMotor.moveVoltage(-10000);
             pros::delay(10);
             global_tick++;
@@ -12,7 +12,7 @@ namespace AUTON{
         catapultMotor.moveVoltage(0);
     }
     void shootCatapult(){
-        while(stopSwitch.isPressed()){
+        while (cataRotation.get_angle() >= 24400){
             catapultMotor.moveVoltage(-10000);
             pros::delay(10);
             global_tick++;
