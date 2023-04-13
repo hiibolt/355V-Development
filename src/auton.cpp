@@ -351,6 +351,8 @@ namespace AUTON{
                 //spin  roller
                 break;
             case LEFT_AUTON_ID:
+                std::cout << "Running LEFT auton...";
+
                 // Get to roller
                 runIntakeReverse();
                 drive->setMaxVelocity(50);
@@ -366,57 +368,54 @@ namespace AUTON{
                 stopIntake();
                 drive->stop();
 
-                // Move backwards
+                // Move and aim at towards goal
                 drive->setMaxVelocity(100);
                 drive->moveDistance(-10_in);
-
-                // Turn towards goal
-                drive->setMaxVelocity(100);
-                drive->turnAngle(-11_deg);
+                drive->turnAngleAsync(-11_deg);
+                drive->waitUntilSettled();
 
                 // Shoot and Reset
                 shootCatapult();
-                windCatapult();
 
                 // Turn towards 3-stack
                 drive->setMaxVelocity(100);
-                drive->turnAngle(-119_deg);
+                drive->turnAngleAsync(-119_deg);
+                drive->waitUntilSettled();
 
                 // Drive to 3-stack
-                profileController->generatePath({
-                    {0_ft, 0_ft, 0_deg},  // Profile starting position, this will normally be (0, 0, 0)
-                    {29_ft, 0_ft, 0_deg}}, // The next point in the profile, 3 feet forward
-                    "LEFT | 1 | Hit stack" // Profile name
-                );
+                drive->setMaxVelocity(600);
                 profileController->setTarget("LEFT | 1 | Hit stack");
+                windCatapult();
                 profileController->waitUntilSettled();
 
                 // Intake discs
                 runIntake();
-                drive->setMaxVelocity(50);
-                drive->moveDistance(24_in);
+                drive->setMaxVelocity(600);
+                profileController->setTarget("LEFT | 2 | Intake stack");
+                profileController->waitUntilSettled();
                 
                 // Turn towards goal
                 drive->setMaxVelocity(100);
-                drive->turnAngle(85_deg);
+                drive->turnAngleAsync(85_deg);
+                drive->waitUntilSettled();
 
-                // Drive to half-court
-                drive->setMaxVelocity(200);
-                drive->moveDistance(-15_in);
-
-                // Stop intake and let inertia settle
+                // Drive to half-court and let inertia settle
+                drive->setMaxVelocity(100);
+                drive->moveDistanceAsync(-17_in);
                 stopIntake();
-                pros::delay(250);
+                drive->waitUntilSettled();
 
                 // Shoot
                 shootCatapult();
+
+                //bandsPneumatic.set_value(HIGH);
+                pros::delay(200);
+                //bandsPneumatic.set_value(LOW);
+                drive->setMaxVelocity(600);
+                drive->turnAngleAsync(180_deg);
                 windCatapult();
 
-                bandsPneumatic.set_value(HIGH);
-                pros::delay(200);
-                bandsPneumatic.set_value(LOW);
-                drive->setMaxVelocity(600);
-                drive->turnAngle(180_deg);
+                std::cout << "Done" << std::endl;
                 break;
             case RIGHT_AUTON_ID:
                 // Drive to roller

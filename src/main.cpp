@@ -20,6 +20,8 @@ Motor intakeMotor(19);
 Motor catapultMotor(20);
 MotorGroup leftDriveMotors({-8, 9, -10});
 MotorGroup rightDriveMotors({3,-4,5});
+MotorGroup leftDriveMotorsFlipped({8, -9, 10});
+MotorGroup rightDriveMotorsFlipped({-3, 4, -5});
 pros::Rotation cataRotation(18);
 int endgamePneumaticState = LOW;
 int bandsPneumaticState = LOW;
@@ -69,11 +71,11 @@ std::shared_ptr<ChassisController> drive =
     ChassisControllerBuilder()
         .withMotors(leftDriveMotors, rightDriveMotors)
         .withDimensions({AbstractMotor::gearset::blue, motorToWheelRatio}, {{wheelDiameter, centerToCenterWheelTrack}, imev5BlueTPR})
-		.withMaxVelocity(600)
-		//.withGains(
-		//	PID::distancePID,  // Distance PID
-		//	PID::turnPID              // Turn PID
-		//)
+		.build();
+std::shared_ptr<ChassisController> drive_flipped = 
+    ChassisControllerBuilder()
+        .withMotors(leftDriveMotorsFlipped, rightDriveMotorsFlipped)
+        .withDimensions({AbstractMotor::gearset::blue, motorToWheelRatio}, {{wheelDiameter, centerToCenterWheelTrack}, imev5BlueTPR})
 		.build();
 
 std::shared_ptr<AsyncMotionProfileController> profileController =
@@ -84,6 +86,15 @@ std::shared_ptr<AsyncMotionProfileController> profileController =
       10.0 // Maximum linear jerk of the Chassis in m/s/s/s
     })
     .withOutput(drive)
+    .buildMotionProfileController();
+std::shared_ptr<AsyncMotionProfileController> profileControllerFlipped =
+  AsyncMotionProfileControllerBuilder()
+    .withLimits({
+      2.2, // Maximum linear velocity of the Chassis in m/s
+      1.95, // Maximum linear acceleration of the Chassis in m/s/s
+      10.0 // Maximum linear jerk of the Chassis in m/s/s/s
+    })
+    .withOutput(drive_flipped)
     .buildMotionProfileController();
 
 /**
@@ -121,6 +132,25 @@ void initialize() {
 	// Enable catapult braking
 	std::cout << "Configuring catapult...";
 	catapultMotor.setBrakeMode(okapi::AbstractMotor::brakeMode::brake);
+	std::cout << "Done" << std::endl;
+
+	// Build auton pathing
+	std::cout << "Building Auton Paths [1/6]...";
+	profileController->generatePath({
+		{0_ft, 0_ft, 0_deg},  // Profile starting position, this will normally be (0, 0, 0)
+		{29_in, 0_ft, 0_deg}}, // The next point in the profile, 3 feet forward
+		"LEFT | 1 | Hit stack" // Profile name
+	);
+	profileController->generatePath({
+		{0_ft, 0_ft, 0_deg},  // Profile starting position, this will normally be (0, 0, 0)
+		{32_in, 0_ft, 0_deg}}, // The next point in the profile, 3 feet forward
+		"LEFT | 2 | Intake stack", // Profile name
+		{
+			0.45, // Maximum linear velocity of the Chassis in m/s
+			1.95, // Maximum linear acceleration of the Chassis in m/s/s
+			10.0 // Maximum linear jerk of the Chassis in m/s/s/s
+		}
+	);
 	std::cout << "Done" << std::endl;
 
 	// Flash green
