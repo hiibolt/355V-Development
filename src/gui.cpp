@@ -1,6 +1,7 @@
 #include "main.h"
 #include "guifuncs.h"
 #include "teamlogo.c"
+#include "waltuh.c"
 #include "led.h"
 #include <string.h>
 #include <math.h>
@@ -53,6 +54,28 @@ char tempBuffer[20];
 char * floatToChar(float input){
 	std::snprintf(tempBuffer, 20, "%.6f", input);
 	return tempBuffer;
+}
+static lv_res_t onClick();
+void createButton(standard_button_options options){
+	options.btn_obj = lv_btn_create(options.page, NULL);// Bind the button to specified _page
+	lv_btn_set_style(options.btn_obj, LV_BTN_STYLE_PR,  &buttonActive); // Bind the PRESSED look
+	lv_btn_set_style(options.btn_obj, LV_BTN_STYLE_REL, &buttonInactive);// Bind the RELEASED look
+    lv_obj_set_size(options.btn_obj, options.width, options.height); // Set the button size
+	lv_obj_align(options.btn_obj,NULL, options.alignto, options.x_offset, options.y_offset); //Align and offset position
+	options.btn_label_obj = lv_label_create(options.btn_obj, NULL); //Create the label text
+    lv_label_set_text(options.btn_label_obj, options.text); //Set the label text
+	lv_obj_set_free_num(options.btn_obj,options.id); // Set the ID of the button
+	lv_btn_set_action(options.btn_obj, LV_BTN_ACTION_CLICK, onClick); // Bind master onClick
+}
+void createImgButton(img_button_options options){
+	options.btn_obj = lv_imgbtn_create(options.page, NULL);
+    lv_imgbtn_set_src(options.btn_obj, LV_BTN_STATE_REL, options.src);
+    lv_imgbtn_set_src(options.btn_obj, LV_BTN_STATE_PR, options.src);
+    lv_imgbtn_set_src(options.btn_obj, LV_BTN_STATE_TGL_REL, options.src);
+    lv_imgbtn_set_src(options.btn_obj, LV_BTN_STATE_TGL_PR, options.src);
+	lv_obj_align(options.btn_obj,NULL,options.alignto,20,0);
+	lv_obj_set_free_num(options.btn_obj,options.id);
+	lv_btn_set_action(options.btn_obj, LV_BTN_ACTION_CLICK, onClick); // Bind master onClick
 }
 static lv_res_t onClick(lv_obj_t * btn)
 {/**
@@ -115,8 +138,8 @@ static lv_res_t onClick(lv_obj_t * btn)
 			break;
 		case ALT_WALTUH_BTN_ID:
 			createImgButton({
-				src: &teamlogo_50x50, 
-				page: mainPage, 
+				src: &waltuh_logo, 
+				page: altPage, 
 				alignto: LV_ALIGN_IN_TOP_LEFT, 
 				x_offset: 0, 
 				y_offset: 0, 
@@ -127,27 +150,6 @@ static lv_res_t onClick(lv_obj_t * btn)
 	}
 	
     return LV_RES_OK;
-}
-void createButton(standard_button_options options){
-	options.btn_obj = lv_btn_create(options.page, NULL);// Bind the button to specified _page
-	lv_btn_set_style(options.btn_obj, LV_BTN_STYLE_PR,  &buttonActive); // Bind the PRESSED look
-	lv_btn_set_style(options.btn_obj, LV_BTN_STYLE_REL, &buttonInactive);// Bind the RELEASED look
-    lv_obj_set_size(options.btn_obj, options.width, options.height); // Set the button size
-	lv_obj_align(options.btn_obj,NULL, options.alignto, options.x_offset, options.y_offset); //Align and offset position
-	options.btn_label_obj = lv_label_create(options.btn_obj, NULL); //Create the label text
-    lv_label_set_text(options.btn_label_obj, options.text); //Set the label text
-	lv_obj_set_free_num(options.btn_obj,options.id); // Set the ID of the button
-	lv_btn_set_action(options.btn_obj, LV_BTN_ACTION_CLICK, onClick); // Bind master onClick
-}
-void createImgButton(img_button_options options){
-	options.btn_obj = lv_imgbtn_create(options.page, NULL);
-    lv_imgbtn_set_src(options.btn_obj, LV_BTN_STATE_REL, options.src);
-    lv_imgbtn_set_src(options.btn_obj, LV_BTN_STATE_PR, options.src);
-    lv_imgbtn_set_src(options.btn_obj, LV_BTN_STATE_TGL_REL, options.src);
-    lv_imgbtn_set_src(options.btn_obj, LV_BTN_STATE_TGL_PR, options.src);
-	lv_obj_align(options.btn_obj,NULL,options.alignto,20,0);
-	lv_obj_set_free_num(options.btn_obj,options.id);
-	lv_btn_set_action(options.btn_obj, LV_BTN_ACTION_CLICK, onClick); // Bind master onClick
 }
 namespace GUI{
 	void updateDriveInfo(int driveID, Controller controller){

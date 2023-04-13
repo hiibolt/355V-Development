@@ -7,6 +7,8 @@ struct img_button_options{
     lv_align_t alignto;
     int x_offset;
     int y_offset; 
+    int width;
+    int height;
     int id;
     lv_obj_t * btn_obj;
 };
