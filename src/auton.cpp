@@ -384,15 +384,15 @@ namespace AUTON{
 
                 // Drive to 3-stack
                 drive->setMaxVelocity(600);
-                profileController->setTarget("LEFT | 1 | Hit stack");
+                //profileController->setTarget("LEFT | 1 | Hit stack");
                 windCatapult();
-                profileController->waitUntilSettled();
+                //profileController->waitUntilSettled();
 
                 // Intake discs
                 runIntake();
                 drive->setMaxVelocity(600);
-                profileController->setTarget("LEFT | 2 | Intake stack");
-                profileController->waitUntilSettled();
+                //profileController->setTarget("LEFT | 2 | Intake stack");
+                //profileController->waitUntilSettled();
                 
                 // Turn towards goal
                 drive->setMaxVelocity(100);

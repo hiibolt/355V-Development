@@ -65,9 +65,6 @@ using namespace okapi;
 extern "C" {
 #endif
     extern std::shared_ptr<ChassisController> drive;
-    extern std::shared_ptr<ChassisController> drive_flipped;
-    extern std::shared_ptr<AsyncMotionProfileController> profileController;
-    extern std::shared_ptr<AsyncMotionProfileController> profileControllerFlipped;
     extern ADIButton stopSwitch;
     extern Motor intakeMotor;
     extern pros::Rotation cataRotation;
