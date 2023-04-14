@@ -12,17 +12,15 @@ using namespace AUTON;
 
 /** 			Constants 			**/
 Controller controller;
-auto imu = IMU(13, IMUAxes::z);
 
 ADIButton stopSwitch('A');
 
 Motor intakeMotor(19);
 Motor catapultMotor(20);
-MotorGroup leftDriveMotors({-8, 9, -10});
-MotorGroup rightDriveMotors({3,-4,5});
-MotorGroup leftDriveMotorsFlipped({8, -9, 10});
-MotorGroup rightDriveMotorsFlipped({-3, 4, -5});
+pros::MotorGroup left_side_motors({-8, 9, -10});
+pros::MotorGroup right_side_motors({3, -4, 5});
 pros::Rotation cataRotation(18);
+pros::IMU imu(13);
 int endgamePneumaticState = LOW;
 int bandsPneumaticState = LOW;
 pros::ADIDigitalOut endgamePneumatic('B', endgamePneumaticState);
@@ -63,23 +61,39 @@ void setAuton(int auton_id){
 	GUI::updateAutonInfo(currentAuton,controller);
 }
 
-// Initiate drive definiton
-float motorToWheelRatio = 1.0/1.0;
-okapi::QLength wheelDiameter = 2.75_in;
-okapi::QLength centerToCenterWheelTrack = 10.25_in;
-std::shared_ptr<ChassisController> drive = 
-    ChassisControllerBuilder()
-        .withMotors(leftDriveMotors, rightDriveMotors)
-        .withDimensions({AbstractMotor::gearset::blue, motorToWheelRatio}, {{wheelDiameter, centerToCenterWheelTrack}, imev5BlueTPR})
-		.build();
-
 lemlib::Drivetrain_t drivetrain {
-    &leftDriveMotors, // left drivetrain motors
-    &rightDriveMotors, // right drivetrain motors
+    &left_side_motors, // left drivetrain motors
+    &right_side_motors, // right drivetrain motors
     10.25, // track width
     2.75, // wheel diameter
     600 // wheel rpm
 };
+lemlib::OdomSensors_t sensors {
+    nullptr, // vertical tracking wheel 1
+    nullptr, // vertical tracking wheel 2
+    nullptr, // horizontal tracking wheel 1
+    nullptr, // we don't have a second tracking wheel, so we set it to nullptr
+    &imu // inertial sensor
+};
+lemlib::ChassisController_t lateral_controller {
+    8, // kP
+    30, // kD
+    1, // smallErrorRange
+    100, // smallErrorTimeout
+    3, // largeErrorRange
+    500, // largeErrorTimeout
+    5 // slew rate
+};
+lemlib::ChassisController_t angular_controller {
+    4, // kP
+    40, // kD
+    1, // smallErrorRange
+    100, // smallErrorTimeout
+    3, // largeErrorRange
+    500, // largeErrorTimeout
+    40 // slew rate
+};
+lemlib::Chassis chassis(drivetrain, lateral_controller, angular_controller, sensors);
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
@@ -92,9 +106,9 @@ void initialize() {
 	LED::startupColors();
 	std::cout << "Done" << std::endl;
 
-	// Calibrate IMU
-	std::cout << "Calibrating IMU...";
-	imu.calibrate();
+	// Calibrate chassis
+	std::cout << "Calibrating chassis...";
+	chassis.calibrate();
 	std::cout << "Done" << std::endl;
 
 	// Build brain HUD
@@ -168,7 +182,7 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
-	AUTON::runAuton(drive, currentAuton);
+	//AUTON::runAuton(drive, currentAuton);
 }
 
 /**
@@ -189,19 +203,21 @@ void opcontrol() {
 	while (true){
 		global_tick ++;
 		switch (currentDrive){
-			case CHEESY_DRIVE_ID:
-				drive->getModel()->curvature(controller.getAnalog(ControllerAnalog::leftY), controller.getAnalog(ControllerAnalog::rightX),0.05);	
-				break;
 			case TANK_DRIVE_ID:
-				drive->getModel()->tank(controller.getAnalog(ControllerAnalog::leftY), controller.getAnalog(ControllerAnalog::rightY),0.05);	
+				left_side_motors.move(controller.getAnalog(ControllerAnalog::leftY) * 127);
+				right_side_motors.move(controller.getAnalog(ControllerAnalog::rightX) * 127);
 				break;
 			case EXPONENTIAL_DRIVE_ID:
 				float leftStick = controller.getAnalog(ControllerAnalog::leftY) * 127;
 				float rightStick = controller.getAnalog(ControllerAnalog::rightX) * 127;
 				auto exponential = [&](float input){return (input/127) * std::pow(1.039,std::abs(input));};
-				float velocity = exponential(leftStick) / 127;
-				float turn     = exponential(rightStick) / 127; 
-				drive->getModel()->arcade(velocity, turn, 0.05);	
+				float velocity = exponential(leftStick);
+				float turn     = exponential(rightStick); 
+
+    			int left = velocity + turn;
+    			int right = velocity - turn;
+				left_side_motors.move(left);
+				right_side_motors.move(right);
 				break;
 		}
 		

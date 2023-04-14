@@ -64,7 +64,6 @@ using namespace okapi;
 #ifdef __cplusplus
 extern "C" {
 #endif
-    extern std::shared_ptr<ChassisController> drive;
     extern ADIButton stopSwitch;
     extern Motor intakeMotor;
     extern pros::Rotation cataRotation;
