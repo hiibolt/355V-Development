@@ -76,22 +76,21 @@ lemlib::OdomSensors_t sensors {
     &imu // inertial sensor
 };
 lemlib::ChassisController_t lateral_controller {
-    8, // kP
-    30, // kD
+    1500, // kP
+    0, // kD
     1, // smallErrorRange
     100, // smallErrorTimeout
     3, // largeErrorRange
-    500, // largeErrorTimeout
-    5 // slew rate
+    500 // largeErrorTimeout
 };
 lemlib::ChassisController_t angular_controller {
     4, // kP
-    40, // kD
+    0, // kD
     1, // smallErrorRange
     100, // smallErrorTimeout
     3, // largeErrorRange
     500, // largeErrorTimeout
-    40 // slew rate
+    0 // slew rate
 };
 lemlib::Chassis chassis(drivetrain, lateral_controller, angular_controller, sensors);
 /**
@@ -182,6 +181,8 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
+	chassis.setPose(0, 0, 0);
+	chassis.turnTo(10, 10, 8000);
 	//AUTON::runAuton(drive, currentAuton);
 }
 
@@ -200,8 +201,16 @@ void autonomous() {
  */	
 void opcontrol() {
 	global_tick = 0;
+	chassis.setPose(0, 0, 0); 
 	while (true){
 		global_tick ++;
+		if(global_tick % 100 == 0){
+			lemlib::Pose pose = chassis.getPose(); // get the current position of the robot
+        	std::cout << pose.x << std::endl; // print the x position
+        	std::cout << pose.y << std::endl; // print the x position
+        	std::cout << pose.theta << std::endl; // print the x position
+            std::cout << std::endl;
+		}
 		switch (currentDrive){
 			case TANK_DRIVE_ID:
 				left_side_motors.move(controller.getAnalog(ControllerAnalog::leftY) * 127);
