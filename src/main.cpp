@@ -76,12 +76,12 @@ lemlib::OdomSensors_t sensors {
     &imu // inertial sensor
 };
 lemlib::ChassisController_t lateral_controller {
-    1500, // kP
-    0, // kD
+    11, // kP
+    65, // kD
     1, // smallErrorRange
-    100, // smallErrorTimeout
+    5000, // smallErrorTimeout
     3, // largeErrorRange
-    500 // largeErrorTimeout
+    5000, // largeErrorTimeout
 };
 lemlib::ChassisController_t angular_controller {
     16, // kP
@@ -182,7 +182,7 @@ void competition_initialize() {}
  */
 void autonomous() {
 	chassis.setPose(0, 0, 0);
-	chassis.turnTo(10, 10, 8000);
+	chassis.moveTo(0, -10, 8000);
 	//AUTON::runAuton(drive, currentAuton);
 }
 
