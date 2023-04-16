@@ -1,7 +1,6 @@
 #include "main.h"
 #include "guifuncs.h"
 #include "teamlogo.c"
-#include "waltuh.c"
 #include "led.h"
 #include <string.h>
 #include <math.h>
@@ -34,15 +33,8 @@ lv_obj_t * HOME_autonLabel;
 lv_obj_t * HOME_driveLabel;
 
 lv_obj_t * logo;
-lv_obj_t * waltuh;
 
 lv_obj_t * altPage = lv_obj_create (NULL,NULL);
-
-lv_obj_t * ALT_buttonHome;
-lv_obj_t * ALT_buttonHomeLabel;
-
-lv_obj_t * ALT_buttonWaltuh;
-lv_obj_t * ALT_buttonWaltuhLabel;
 
 // General
 lv_style_t buttonActive;
@@ -135,17 +127,6 @@ static lv_res_t onClick(lv_obj_t * btn)
 			break;
 		case ALT_HOME_BTN_ID:
 			GUI::swapPage(HOME_PAGE_ID);
-			break;
-		case ALT_WALTUH_BTN_ID:
-			createImgButton({
-				src: &waltuh_logo, 
-				page: altPage, 
-				alignto: LV_ALIGN_IN_TOP_LEFT, 
-				x_offset: 0, 
-				y_offset: 0, 
-				id: COLOR_BTN_ID, 
-				btn_obj: waltuh
-			});
 			break;
 	}
 	
@@ -392,19 +373,6 @@ namespace GUI{
 			id: ALT_HOME_BTN_ID,
 			btn_obj: ALT_buttonHome,
 			btn_label_obj: ALT_buttonHomeLabel
-		});
-
-		createButton({
-			text: "waltuh",
-			page: altPage,
-			alignto: LV_ALIGN_CENTER,
-			x_offset: 0,
-			y_offset: 0,
-			width: 300,
-			height: 150,
-			id: ALT_WALTUH_BTN_ID,
-			btn_obj: ALT_buttonWaltuh,
-			btn_label_obj: ALT_buttonWaltuhLabel
 		});
 	}
 }
