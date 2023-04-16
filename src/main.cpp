@@ -201,8 +201,8 @@ void autonomous() {
 	right_side_motors.move(0); */
 
 	// Move and aim at towards goal
-	chassis.setPose(-65.59901302705627, 41.27937892922078, 17.620809843384);
-	chassis.follow("left_aimgoal.txt",2000,15,true);
+	chassis.setPose(0,0,90);
+	chassis.moveTo(10,2,8000,true);
 	// Shoot and Reset
 	shootCatapult();
 	//AUTON::runAuton(drive, currentAuton);
