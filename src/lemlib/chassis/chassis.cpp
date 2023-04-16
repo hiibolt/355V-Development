@@ -9,6 +9,7 @@
  *
  */
 #include <math.h>
+#include <iostream>
 #include "pros/motors.hpp"
 #include "pros/misc.hpp"
 #include "lemlib/util.hpp"
@@ -170,22 +171,29 @@ void lemlib::Chassis::moveTo(float x, float y, int timeout, bool reversed, float
         Pose pose = getPose();
         pose.theta = std::fmod(pose.theta, 360);
         if( reversed ){
-            pose.theta -= M_PI;
+            pose.theta -= 180;
         }
 
         // update error
         float deltaX = x - pose.x;
         float deltaY = y - pose.y;
         float targetTheta = fmod(radToDeg(M_PI_2 - atan2(deltaY, deltaX)), 360);
+        if( reversed ){
+            targetTheta -= 180;
+        }
         float hypot = std::hypot(deltaX, deltaY);
         float diffTheta1 = angleError(pose.theta, targetTheta);
         float diffTheta2 = angleError(pose.theta, targetTheta + 180);
         float angularError = (std::fabs(diffTheta1) < std::fabs(diffTheta2)) ? diffTheta1 : diffTheta2;
         float lateralError = hypot * cos(degToRad(std::fabs(diffTheta1)));
 
+        std::cout << pose.x << " " << pose.y << " " << hypot << " " <<  pose.theta << " " << targetTheta << "\n";
         // calculate speed
         float lateralPower = lateralPID.update(lateralError, 0, log);
         float angularPower = -angularPID.update(angularError, 0, log);
+        //if( reversed ){
+        //    angularPower *= -1;
+        //}
 
         // if the robot is close to the target
         if (pose.distance(lemlib::Pose(x, y)) < 7.5) {
@@ -217,13 +225,8 @@ void lemlib::Chassis::moveTo(float x, float y, int timeout, bool reversed, float
         }
 
         // move the motors
-        if( reversed ){
-            drivetrain.leftMotors->move(-leftPower);
-            drivetrain.rightMotors->move(-rightPower);
-        }else {
-            drivetrain.leftMotors->move(leftPower);
-            drivetrain.rightMotors->move(rightPower);
-        }
+        drivetrain.leftMotors->move(leftPower);
+        drivetrain.rightMotors->move(rightPower);
 
         pros::delay(10);
     }

@@ -202,7 +202,7 @@ void autonomous() {
 
 	// Move and aim at towards goal
 	chassis.setPose(0,0,90);
-	chassis.moveTo(10,2,8000,true);
+	chassis.moveTo(-13,-3,8000,true);
 	// Shoot and Reset
 	shootCatapult();
 	//AUTON::runAuton(drive, currentAuton);
