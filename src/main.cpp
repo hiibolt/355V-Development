@@ -287,13 +287,14 @@ void opcontrol() {
 		}
 
 		// Intake/Outtake Handling
-		if(intakeButton.isPressed() && stopSwitch.isPressed()){
-			intakeMotor.moveVoltage(-12000);
-		}else if(outtakeButton.isPressed()){
-			intakeMotor.moveVoltage(12000);
-		}else{
-			intakeMotor.moveVoltage(0);
-		}
+		if(intakeButton.isPressed() && cataRotation.get_angle() < 24400){
+            intakeMotor.moveVoltage(-12000);
+        }else if(outtakeButton.isPressed()){
+            intakeMotor.moveVoltage(12000);
+        }else{
+            intakeMotor.moveVoltage(0);
+        }
+
 	
     	// Wait and give up the time we don't need to other tasks.
     	// Additionally, joystick values, motor telemetry, etc. all updates every 10 ms.
