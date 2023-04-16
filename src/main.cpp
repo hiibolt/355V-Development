@@ -237,15 +237,15 @@ void opcontrol() {
 			desiredCataIndicator = 0xA637A9;
 		}
 		//if(!shootingCata && !stopSwitch.isPressed()){
-		if(!shootingCata && cataRotation.get_angle() < 24400){	
+		if(!shootingCata && cataRotation.get_angle() < 25800){	
 			catapultMotor.moveVoltage(-10000);
 		}else if(!shootingCata){
 			catapultMotor.moveVoltage(0);
 			desiredCataIndicator = getCurrentColorHex();
 		}
-		if(shootingCata && cataRotation.get_angle() >= 24400){
+		if(shootingCata && cataRotation.get_angle() >= 25800){
 			catapultMotor.moveVoltage(-12000);
-		}else if(shootingCata && cataRotation.get_angle() < 24400){
+		}else if(shootingCata && cataRotation.get_angle() < 25800){
 			shootingCata = false;
 			catapultMotor.moveVoltage(0);
 		}
