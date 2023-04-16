@@ -36,6 +36,9 @@ lv_obj_t * logo;
 
 lv_obj_t * altPage = lv_obj_create (NULL,NULL);
 
+lv_obj_t * ALT_buttonHome;
+lv_obj_t * ALT_buttonHomeLabel;
+
 // General
 lv_style_t buttonActive;
 lv_style_t buttonInactive;
