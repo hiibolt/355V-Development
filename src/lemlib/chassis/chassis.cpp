@@ -187,7 +187,7 @@ void lemlib::Chassis::moveTo(float x, float y, int timeout, bool reversed, float
         float angularError = (std::fabs(diffTheta1) < std::fabs(diffTheta2)) ? diffTheta1 : diffTheta2;
         float lateralError = hypot * cos(degToRad(std::fabs(diffTheta1)));
 
-        std::cout << pose.x << " " << pose.y << " " << hypot << " " <<  pose.theta << " " << targetTheta << "\n";
+        //std::cout << pose.x << " " << pose.y << " " << hypot << " " <<  pose.theta << " " << targetTheta << "\n";
         // calculate speed
         float lateralPower = lateralPID.update(lateralError, 0, log);
         float angularPower = -angularPID.update(angularError, 0, log);

@@ -184,27 +184,29 @@ void competition_initialize() {}
 void autonomous() {
 	std::cout << "Running LEFT auton...";
 
-	/* // Get to roller
+	// Get to roller
 	runIntakeReverse();
 	left_side_motors.move(50);
 	right_side_motors.move(50);
-	int i = 0;
-	while( left_side_motors.get_actual_velocities()[0] > 5 ) {
-		if(i++ > 20) {
-			break;
-		}
-		pros::delay(15);
-	}
-	pros::delay(50);
+	pros::delay(150);
 	stopIntake();
 	left_side_motors.move(0);
-	right_side_motors.move(0); */
+	right_side_motors.move(0);
 
 	// Move and aim at towards goal
 	chassis.setPose(0,0,90);
-	chassis.moveTo(-13,-3,8000,true);
+	chassis.moveTo(-10,0,1000,true);
+	chassis.turnTo(10,3,1000);
+			lemlib::Pose pose = chassis.getPose(); // get the current position of the robot
+        	std::cout << pose.x << std::endl; // print the x position
+        	std::cout << pose.y << std::endl; // print the x position
+        	std::cout << pose.theta << std::endl; // print the x position
+            std::cout << std::endl;
+	chassis.moveTo(-10, 30, 5000);
+
 	// Shoot and Reset
 	shootCatapult();
+
 	//AUTON::runAuton(drive, currentAuton);
 }
 
