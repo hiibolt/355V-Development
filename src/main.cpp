@@ -232,7 +232,7 @@ void opcontrol() {
 		
 		// Catapult Shooting/Winding (Thread safe)
 		//if(shootButton.changedToPressed() && !shootingCata && stopSwitch.isPressed()){
-		if(shootButton.changedToPressed() && !shootingCata && cataRotation.get_angle() >= 24400){;
+		if(shootButton.changedToPressed() && !shootingCata && cataRotation.get_angle() >= 25800){;
 			shootingCata = true;
 			desiredCataIndicator = 0xA637A9;
 		}
