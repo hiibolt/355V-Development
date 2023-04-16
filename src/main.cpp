@@ -201,10 +201,7 @@ void autonomous() {
 	right_side_motors.move(0); */
 
 	// Move and aim at towards goal
-	//chassis.setPose(0,0,0);
-	//chassis.setPose(-32.3, -6.3, 38.438886312484506);
 	chassis.setPose(-65.59901302705627, 41.27937892922078, 17.620809843384);
-	//chassis.follow("path.txt", 8000, 15, false, 127, true);
 	chassis.follow("left_aimgoal.txt",2000,15,true);
 	// Shoot and Reset
 	shootCatapult();
