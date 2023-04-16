@@ -108,6 +108,7 @@ void initialize() {
 	// Calibrate chassis
 	std::cout << "Calibrating chassis...";
 	chassis.calibrate();
+	chassis.setPose(0,0,0);
 	std::cout << "Done" << std::endl;
 
 	// Build brain HUD
@@ -181,8 +182,32 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
-	chassis.setPose(0, 0, 0);
-	chassis.moveTo(0, -10, 8000);
+	std::cout << "Running LEFT auton...";
+
+	/* // Get to roller
+	runIntakeReverse();
+	left_side_motors.move(50);
+	right_side_motors.move(50);
+	int i = 0;
+	while( left_side_motors.get_actual_velocities()[0] > 5 ) {
+		if(i++ > 20) {
+			break;
+		}
+		pros::delay(15);
+	}
+	pros::delay(50);
+	stopIntake();
+	left_side_motors.move(0);
+	right_side_motors.move(0); */
+
+	// Move and aim at towards goal
+	//chassis.setPose(0,0,0);
+	//chassis.setPose(-32.3, -6.3, 38.438886312484506);
+	chassis.setPose(-65.59901302705627, 41.27937892922078, 17.620809843384);
+	//chassis.follow("path.txt", 8000, 15, false, 127, true);
+	chassis.follow("left_aimgoal.txt",2000,15,true);
+	// Shoot and Reset
+	shootCatapult();
 	//AUTON::runAuton(drive, currentAuton);
 }
 

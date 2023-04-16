@@ -352,6 +352,7 @@ namespace AUTON{
                 break;
             case LEFT_AUTON_ID:
                 std::cout << "Running LEFT auton...";
+	            //chassis.setPose(0, 0, 0);
 
                 // Get to roller
                 runIntakeReverse();
@@ -369,10 +370,7 @@ namespace AUTON{
                 drive->stop();
 
                 // Move and aim at towards goal
-                drive->setMaxVelocity(100);
-                drive->moveDistance(-10_in);
-                drive->turnAngleAsync(-11_deg);
-                drive->waitUntilSettled();
+                //chassis.follow("left_aimgoal.txt", 2000, 15, true);
 
                 // Shoot and Reset
                 shootCatapult();
