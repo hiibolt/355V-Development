@@ -22,6 +22,7 @@ MotorGroup rightDriveMotors({3,-4,5});
 MotorGroup leftDriveMotorsFlipped({8, -9, 10});
 MotorGroup rightDriveMotorsFlipped({-3, 4, -5});
 pros::Rotation cataRotation(18);
+int rotation_threshold = 25500;
 int endgamePneumaticState = LOW;
 int bandsPneumaticState = LOW;
 pros::ADIDigitalOut endgamePneumatic('B', endgamePneumaticState);
@@ -247,15 +248,15 @@ void opcontrol() {
 			desiredCataIndicator = 0xA637A9;
 		}
 		//if(!shootingCata && !stopSwitch.isPressed()){
-		if(!shootingCata && cataRotation.get_angle() < 24400){	
+		if(!shootingCata && cataRotation.get_angle() < rotation_threshold){	
 			catapultMotor.moveVoltage(-10000);
 		}else if(!shootingCata){
 			catapultMotor.moveVoltage(0);
 			desiredCataIndicator = getCurrentColorHex();
 		}
-		if(shootingCata && cataRotation.get_angle() >= 24400){
+		if(shootingCata && cataRotation.get_angle() >= rotation_threshold){
 			catapultMotor.moveVoltage(-12000);
-		}else if(shootingCata && cataRotation.get_angle() < 24400){
+		}else if(shootingCata && cataRotation.get_angle() < rotation_threshold){
 			shootingCata = false;
 			catapultMotor.moveVoltage(0);
 		}
@@ -297,7 +298,7 @@ void opcontrol() {
 		}
 
 		// Intake/Outtake Handling
-		if(intakeButton.isPressed() && stopSwitch.isPressed()){
+		if(intakeButton.isPressed() && cataRotation.get_angle() > 25500){
 			intakeMotor.moveVoltage(-12000);
 		}else if(outtakeButton.isPressed()){
 			intakeMotor.moveVoltage(12000);

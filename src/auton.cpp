@@ -4,7 +4,7 @@
 
 namespace AUTON{
     void windCatapult(){
-        while (cataRotation.get_angle() < 24400){
+        while (cataRotation.get_angle() < rotation_threshold){
             catapultMotor.moveVoltage(-10000);
             pros::delay(10);
             global_tick++;
@@ -12,7 +12,7 @@ namespace AUTON{
         catapultMotor.moveVoltage(0);
     }
     void shootCatapult(){
-        while (cataRotation.get_angle() >= 24400){
+        while (cataRotation.get_angle() >= rotation_threshold){
             catapultMotor.moveVoltage(-10000);
             pros::delay(10);
             global_tick++;
@@ -352,6 +352,7 @@ namespace AUTON{
                 break;
             case LEFT_AUTON_ID:
                 std::cout << "Running LEFT auton...";
+                windCatapult();
 
                 // Get to roller
                 runIntakeReverse();
@@ -371,7 +372,7 @@ namespace AUTON{
                 // Move and aim at towards goal
                 drive->setMaxVelocity(100);
                 drive->moveDistance(-10_in);
-                drive->turnAngleAsync(-11_deg);
+                drive->turnAngleAsync(-9_deg);
                 drive->waitUntilSettled();
 
                 // Shoot and Reset
@@ -379,20 +380,19 @@ namespace AUTON{
 
                 // Turn towards 3-stack
                 drive->setMaxVelocity(100);
-                drive->turnAngleAsync(-119_deg);
+                drive->turnAngleAsync(-124_deg);
                 drive->waitUntilSettled();
 
                 // Drive to 3-stack
-                drive->setMaxVelocity(600);
-                //profileController->setTarget("LEFT | 1 | Hit stack");
+                drive->setMaxVelocity(200);
+                drive->moveDistanceAsync(27_in);
                 windCatapult();
-                //profileController->waitUntilSettled();
+                drive->waitUntilSettled();
 
                 // Intake discs
                 runIntake();
-                drive->setMaxVelocity(600);
-                //profileController->setTarget("LEFT | 2 | Intake stack");
-                //profileController->waitUntilSettled();
+                drive->setMaxVelocity(80);
+                drive->moveDistance(24_in);
                 
                 // Turn towards goal
                 drive->setMaxVelocity(100);
@@ -401,12 +401,25 @@ namespace AUTON{
 
                 // Drive to half-court and let inertia settle
                 drive->setMaxVelocity(100);
-                drive->moveDistanceAsync(-17_in);
+                drive->moveDistanceAsync(-15_in);
                 stopIntake();
                 drive->waitUntilSettled();
 
-                // Shoot
+                // Turn towards goal
+                drive->setMaxVelocity(100);
+                drive->turnAngleAsync(10_deg);
+                drive->waitUntilSettled();
                 shootCatapult();
+
+                // Drive to speed bump
+                drive->setMaxVelocity(100);
+                drive->moveDistanceAsync(22_in);
+                drive->waitUntilSettled();
+
+                // Turn to next set
+                drive->setMaxVelocity(100);
+                drive->turnAngleAsync(45_deg);
+                drive->waitUntilSettled();
 
                 //bandsPneumatic.set_value(HIGH);
                 pros::delay(200);
