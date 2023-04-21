@@ -22,7 +22,7 @@ MotorGroup rightDriveMotors({3,-4,5});
 MotorGroup leftDriveMotorsFlipped({8, -9, 10});
 MotorGroup rightDriveMotorsFlipped({-3, 4, -5});
 pros::Rotation cataRotation(18);
-int rotation_threshold = 25500;
+int rotation_threshold = 32800;
 int endgamePneumaticState = LOW;
 int bandsPneumaticState = LOW;
 pros::ADIDigitalOut endgamePneumatic('B', endgamePneumaticState);
@@ -46,7 +46,7 @@ ControllerButton colorSwitchButton(ControllerDigital::X);
 
 /**             Variables           **/
 int currentDrive = EXPONENTIAL_DRIVE_ID;
-int currentAuton = LEFT_AUTON_ID;
+int currentAuton = RIGHT_AUTON_ID;
 bool shootingCata = false;
 int desiredCataIndicator = 0xBCB502;
 int currentCataIndicator = 0x000000;
