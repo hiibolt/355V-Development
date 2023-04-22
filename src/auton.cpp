@@ -370,29 +370,32 @@ namespace AUTON{
                 drive->stop();
 
                 // Move and aim at towards goal
-                drive->setMaxVelocity(100);
-                drive->moveDistance(-10_in);
+                drive->setMaxVelocity(200);
+                drive->moveDistance(-6_in);
                 drive->turnAngleAsync(-9_deg);
+
                 drive->waitUntilSettled();
 
                 // Shoot and Reset
                 shootCatapult();
 
                 // Turn towards 3-stack
-                drive->setMaxVelocity(100);
-                drive->turnAngleAsync(-124_deg);
+                drive->setMaxVelocity(200);
+                drive->turnAngleAsync(-133_deg);
+                catapultMotor.moveVoltage(-10000);
                 drive->waitUntilSettled();
+                catapultMotor.moveVoltage(0);
 
                 // Drive to 3-stack
-                drive->setMaxVelocity(200);
+                drive->setMaxVelocity(250);
                 drive->moveDistanceAsync(27_in);
                 windCatapult();
                 drive->waitUntilSettled();
 
                 // Intake discs
                 runIntake();
-                drive->setMaxVelocity(80);
-                drive->moveDistance(24_in);
+                drive->setMaxVelocity(200);
+                drive->moveDistance(42_in);
                 
                 // Turn towards goal
                 drive->setMaxVelocity(100);
@@ -401,32 +404,29 @@ namespace AUTON{
 
                 // Drive to half-court and let inertia settle
                 drive->setMaxVelocity(100);
-                drive->moveDistanceAsync(-15_in);
+                drive->moveDistanceAsync(-13_in);
                 stopIntake();
                 drive->waitUntilSettled();
-
-                // Turn towards goal
-                drive->setMaxVelocity(100);
-                drive->turnAngleAsync(10_deg);
-                drive->waitUntilSettled();
+                
                 shootCatapult();
 
                 // Drive to speed bump
-                drive->setMaxVelocity(100);
-                drive->moveDistanceAsync(22_in);
-                drive->waitUntilSettled();
+                //drive->setMaxVelocity(100);
+                //drive->moveDistanceAsync(22_in);
+                //drive->waitUntilSettled();
 
                 // Turn to next set
-                drive->setMaxVelocity(100);
-                drive->turnAngleAsync(45_deg);
-                drive->waitUntilSettled();
+                //drive->setMaxVelocity(100);
+                //drive->turnAngleAsync(45_deg);
+                //drive->waitUntilSettled();
+                //shootCatapult();
 
                 //bandsPneumatic.set_value(HIGH);
-                pros::delay(200);
+                //pros::delay(200);
                 //bandsPneumatic.set_value(LOW);
-                drive->setMaxVelocity(600);
-                drive->turnAngleAsync(180_deg);
-                windCatapult();
+                //drive->setMaxVelocity(600);
+                //drive->turnAngleAsync(180_deg);
+                //windCatapult();
 
                 std::cout << "Done" << std::endl;
                 break;
