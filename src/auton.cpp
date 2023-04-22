@@ -31,6 +31,66 @@ namespace AUTON{
     void fireEndgame(){
 		endgamePneumatic.set_value(HIGH);
     }
+    void autonLeftCommon(){
+        windCatapult();
+
+        // Get to roller
+        runIntakeReverse();
+        drive->setMaxVelocity(50);
+        drive->moveDistanceAsync(8_in);
+        int i = 0;
+        while(!drive->isSettled()) {
+            if(i++ > 20) {
+                break;
+            }
+            pros::delay(15);
+        }
+        pros::delay(50);
+        stopIntake();
+        drive->stop();
+
+        // Move and aim at towards goal
+        drive->setMaxVelocity(200);
+        drive->moveDistance(-6_in);
+        drive->turnAngleAsync(-9_deg);
+
+        drive->waitUntilSettled();
+
+        // Shoot and Reset
+        shootCatapult();
+
+        // Turn towards 3-stack
+        drive->setMaxVelocity(200);
+        drive->turnAngleAsync(-133_deg);
+        catapultMotor.moveVoltage(-10000);
+        drive->waitUntilSettled();
+        catapultMotor.moveVoltage(0);
+
+        // Drive to 3-stack
+        drive->setMaxVelocity(250);
+        drive->moveDistanceAsync(27_in);
+        windCatapult();
+        drive->waitUntilSettled();
+
+        // Intake discs
+        runIntake();
+        drive->setMaxVelocity(210);
+        drive->moveDistance(32_in);
+        
+        // Turn towards goal
+        drive->setMaxVelocity(200);
+        drive->turnAngleAsync(85_deg);
+        drive->waitUntilSettled();
+
+        // Drive to half-court and let inertia settle
+        drive->setMaxVelocity(200);
+        drive->moveDistanceAsync(-3_in);
+        stopIntake();
+        drive->waitUntilSettled();
+        
+        shootCatapult();
+
+    }
     void runAuton(std::shared_ptr<ChassisController> drive, int autonID){
         intakeMotor.moveVoltage(0);
         int i=0;
@@ -352,63 +412,8 @@ namespace AUTON{
                 break;
             case LEFT_AUTON_ID:
                 std::cout << "Running LEFT auton...";
-                windCatapult();
 
-                // Get to roller
-                runIntakeReverse();
-                drive->setMaxVelocity(50);
-                drive->moveDistanceAsync(8_in);
-                i = 0;
-                while(!drive->isSettled()) {
-                    if(i++ > 20) {
-                        break;
-                    }
-                    pros::delay(15);
-                }
-                pros::delay(50);
-                stopIntake();
-                drive->stop();
-
-                // Move and aim at towards goal
-                drive->setMaxVelocity(200);
-                drive->moveDistance(-6_in);
-                drive->turnAngleAsync(-9_deg);
-
-                drive->waitUntilSettled();
-
-                // Shoot and Reset
-                shootCatapult();
-
-                // Turn towards 3-stack
-                drive->setMaxVelocity(200);
-                drive->turnAngleAsync(-133_deg);
-                catapultMotor.moveVoltage(-10000);
-                drive->waitUntilSettled();
-                catapultMotor.moveVoltage(0);
-
-                // Drive to 3-stack
-                drive->setMaxVelocity(250);
-                drive->moveDistanceAsync(27_in);
-                windCatapult();
-                drive->waitUntilSettled();
-
-                // Intake discs
-                runIntake();
-                drive->setMaxVelocity(200);
-                drive->moveDistance(42_in);
-                
-                // Turn towards goal
-                drive->setMaxVelocity(100);
-                drive->turnAngleAsync(85_deg);
-                drive->waitUntilSettled();
-
-                // Drive to half-court and let inertia settle
-                drive->setMaxVelocity(100);
-                drive->moveDistanceAsync(-13_in);
-                stopIntake();
-                drive->waitUntilSettled();
-                
-                shootCatapult();
+                autonLeftCommon();
 
                 // Drive to speed bump
                 //drive->setMaxVelocity(100);
@@ -433,14 +438,14 @@ namespace AUTON{
             case RIGHT_AUTON_ID:
                 // Drive to roller
                 drive->setMaxVelocity(200);
-                drive->moveDistance(23_in);
+                drive->moveDistance(23.1_in);
 
-                drive->setMaxVelocity(100);
+                drive->setMaxVelocity(200);
                 drive->turnAngle(90_deg);
 
                 // go foward to spin roller
                 runIntakeReverse();
-                drive->setMaxVelocity(50);
+                drive->setMaxVelocity(100);
                 drive->moveDistanceAsync(8_in);
                 i = 0;
                 while(!drive->isSettled()) {
@@ -454,24 +459,28 @@ namespace AUTON{
                 drive->stop();
 
                 drive->setMaxVelocity(300);
-                drive->moveDistance(-9_in);
+                drive->moveDistance(-8_in);
 
                 // Turn and shoot
-                drive->setMaxVelocity(100);
+                drive->setMaxVelocity(200);
                 drive->turnAngle(10_deg);
                 shootCatapult();
 
                 drive->moveDistanceAsync(4_in);
-                windCatapult();
-                drive->turnAngle(134_deg);
-                pros::delay(50);
+                catapultMotor.moveVoltage(-10000);
+                drive->waitUntilSettled();
+                drive->turnAngleAsync(134_deg);
+                drive->waitUntilSettled();
+                catapultMotor.moveVoltage(0);
 
                 runIntake();
                 drive->setMaxVelocity(250);
-                drive->moveDistance(70_in);
+                drive->moveDistanceAsync(70_in);
+                windCatapult();
+                drive->waitUntilSettled();
                 drive->turnAngle(-82_deg);
                 drive->setMaxVelocity(400);
-                drive->moveDistance(-7_in);
+                //drive->moveDistance(-7_in);
                 pros::delay(50);
                 shootCatapult();
                 windCatapult();
@@ -479,11 +488,11 @@ namespace AUTON{
 
                 drive->moveDistance(2_in);
 
-                bandsPneumatic.set_value(HIGH);
-                pros::delay(200);
-                bandsPneumatic.set_value(LOW);
-                drive->setMaxVelocity(600);
-                drive->turnAngle(180_deg);
+                //bandsPneumatic.set_value(HIGH);
+                //pros::delay(200);
+                //bandsPneumatic.set_value(LOW);
+                //drive->setMaxVelocity(600);
+                //drive->turnAngle(180_deg);
                break;
 	    }
     }
