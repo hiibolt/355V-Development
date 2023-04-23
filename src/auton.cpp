@@ -35,11 +35,9 @@ namespace AUTON{
         std::cout << "autonLeftCommon\n";
 
         windCatapult();
-        std::cout << "windCata\n";
 
         // Get to roller
         runIntakeReverse();
-        std::cout << "revIntake\n";
         drive->setMaxVelocity(50);
         drive->moveDistanceAsync(8_in);
         int i = 0;
@@ -49,7 +47,6 @@ namespace AUTON{
             }
             pros::delay(15);
         }
-        std::cout << "Moved\n";
         pros::delay(50);
         stopIntake();
         drive->stop();
@@ -422,30 +419,26 @@ namespace AUTON{
                 autonLeftCommon(drive);
                 catapultMotor.moveVoltage(-10000);
                 drive->setMaxVelocity(200);
-                drive->turnAngle(10_deg);
-                catapultMotor.moveVoltage(0);
+                drive->turnAngle(-15_deg);
                 windCatapult();
+                runIntake();
 
+                drive->setMaxVelocity(200);
+                drive->moveDistance(12_in);
 
-                // Drive to speed bump
-                //drive->setMaxVelocity(100);
-                //drive->moveDistanceAsync(22_in);
-                //drive->waitUntilSettled();
+                drive->setMaxVelocity(200);
+                drive->turnAngle(30_deg);
+                
+                drive->setMaxVelocity(200);
+                drive->moveDistance(20_in);
+                drive->setMaxVelocity(200);
+                drive->turnAngle(-45_deg);
+                drive->setMaxVelocity(250);
+                drive->moveDistance(-30_in);
+                stopIntake();
 
-                // Turn to next set
-                //drive->setMaxVelocity(100);
-                //drive->turnAngleAsync(45_deg);
-                //drive->waitUntilSettled();
-                //shootCatapult();
+                shootCatapult();
 
-                //bandsPneumatic.set_value(HIGH);
-                //pros::delay(200);
-                //bandsPneumatic.set_value(LOW);
-                //drive->setMaxVelocity(600);
-                //drive->turnAngleAsync(180_deg);
-                //windCatapult();
-
-                std::cout << "Done" << std::endl;
                 break;
             case RIGHT_AUTON_ID:
                 // Drive to roller

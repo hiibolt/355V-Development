@@ -22,7 +22,7 @@ MotorGroup rightDriveMotors({3,-4,5});
 MotorGroup leftDriveMotorsFlipped({8, -9, 10});
 MotorGroup rightDriveMotorsFlipped({-3, 4, -5});
 pros::Rotation cataRotation(18);
-int rotation_threshold = 32800;
+int rotation_threshold = 24200;
 int endgamePneumaticState = LOW;
 int bandsPneumaticState = LOW;
 pros::ADIDigitalOut endgamePneumatic('B', endgamePneumaticState);
@@ -131,6 +131,7 @@ void initialize() {
 
 	// Enable catapult braking
 	std::cout << "Configuring catapult...";
+	std::cout << "Starting angle: " << cataRotation.get_angle() << " ...";
 	catapultMotor.setBrakeMode(okapi::AbstractMotor::brakeMode::brake);
 	std::cout << "Done" << std::endl;
 
@@ -170,6 +171,8 @@ void initialize() {
 	std::cout << "Calibrating IMU...";
 	controller.rumble(".");
 	std::cout << "Done" << std::endl;
+	std::cout << "Starting angle: " << cataRotation.get_angle() << std::endl;
+	catapultMotor.setBrakeMode(okapi::AbstractMotor::brakeMode::brake);
 
 	std::cout << std::endl << "Initialized" << std::endl;
 }
@@ -205,7 +208,6 @@ void competition_initialize() {}
  */
 void autonomous() {
 	int startTime = pros::millis();
-	std::cout << "Hello\n";
 	AUTON::runAuton(drive, currentAuton);
 	std::cout << "Auton took: " << pros::millis() - startTime << " millis\n";
 }
@@ -246,7 +248,7 @@ void opcontrol() {
 		
 		// Catapult Shooting/Winding (Thread safe)
 		//if(shootButton.changedToPressed() && !shootingCata && stopSwitch.isPressed()){
-		if(shootButton.changedToPressed() && !shootingCata && cataRotation.get_angle() >= 24400){;
+		if(shootButton.changedToPressed() && !shootingCata && cataRotation.get_angle() >= rotation_threshold){;
 			shootingCata = true;
 			desiredCataIndicator = 0xA637A9;
 		}
@@ -301,7 +303,7 @@ void opcontrol() {
 		}
 
 		// Intake/Outtake Handling
-		if(intakeButton.isPressed() && cataRotation.get_angle() > 25500){
+		if(intakeButton.isPressed() && cataRotation.get_angle() > rotation_threshold){
 			intakeMotor.moveVoltage(-12000);
 		}else if(outtakeButton.isPressed()){
 			intakeMotor.moveVoltage(12000);
