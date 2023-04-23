@@ -31,11 +31,15 @@ namespace AUTON{
     void fireEndgame(){
 		endgamePneumatic.set_value(HIGH);
     }
-    void autonLeftCommon(){
+    void autonLeftCommon(std::shared_ptr<ChassisController> drive){
+        std::cout << "autonLeftCommon\n";
+
         windCatapult();
+        std::cout << "windCata\n";
 
         // Get to roller
         runIntakeReverse();
+        std::cout << "revIntake\n";
         drive->setMaxVelocity(50);
         drive->moveDistanceAsync(8_in);
         int i = 0;
@@ -45,6 +49,7 @@ namespace AUTON{
             }
             pros::delay(15);
         }
+        std::cout << "Moved\n";
         pros::delay(50);
         stopIntake();
         drive->stop();
@@ -61,7 +66,7 @@ namespace AUTON{
 
         // Turn towards 3-stack
         drive->setMaxVelocity(200);
-        drive->turnAngleAsync(-133_deg);
+        drive->turnAngleAsync(-130_deg);
         catapultMotor.moveVoltage(-10000);
         drive->waitUntilSettled();
         catapultMotor.moveVoltage(0);
@@ -94,6 +99,7 @@ namespace AUTON{
     void runAuton(std::shared_ptr<ChassisController> drive, int autonID){
         intakeMotor.moveVoltage(0);
         int i=0;
+        std::cout << "autonID: " << autonID << "\n";
         switch(autonID){
             case NONE_AUTON_ID:
                 // do absolutely nothing. nothing at all. do a thing? you die. a death. died. ead.
@@ -413,7 +419,13 @@ namespace AUTON{
             case LEFT_AUTON_ID:
                 std::cout << "Running LEFT auton...";
 
-                autonLeftCommon();
+                autonLeftCommon(drive);
+                catapultMotor.moveVoltage(-10000);
+                drive->setMaxVelocity(200);
+                drive->turnAngle(10_deg);
+                catapultMotor.moveVoltage(0);
+                windCatapult();
+
 
                 // Drive to speed bump
                 //drive->setMaxVelocity(100);

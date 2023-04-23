@@ -205,6 +205,7 @@ void competition_initialize() {}
  */
 void autonomous() {
 	int startTime = pros::millis();
+	std::cout << "Hello\n";
 	AUTON::runAuton(drive, currentAuton);
 	std::cout << "Auton took: " << pros::millis() - startTime << " millis\n";
 }
