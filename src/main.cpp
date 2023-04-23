@@ -204,7 +204,9 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
+	int startTine = pros::millis();
 	AUTON::runAuton(drive, currentAuton);
+	cout << "Auton took: " << pros::millis() - startTime << " millis\n";
 }
 
 /**
