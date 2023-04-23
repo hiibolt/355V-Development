@@ -22,7 +22,7 @@ MotorGroup rightDriveMotors({3,-4,5});
 MotorGroup leftDriveMotorsFlipped({8, -9, 10});
 MotorGroup rightDriveMotorsFlipped({-3, 4, -5});
 pros::Rotation cataRotation(18);
-int rotation_threshold = 24200;
+int rotation_threshold = 23800;
 int endgamePneumaticState = LOW;
 int bandsPneumaticState = LOW;
 pros::ADIDigitalOut endgamePneumatic('B', endgamePneumaticState);
@@ -209,7 +209,7 @@ void competition_initialize() {}
 void autonomous() {
 	int startTime = pros::millis();
 	AUTON::runAuton(drive, currentAuton);
-	std::cout << "Auton took: " << pros::millis() - startTime << " millis\n";
+	std::cout << "Auton took: " << pros::millis() - startTime << " millisn";
 }
 
 /**
@@ -303,7 +303,7 @@ void opcontrol() {
 		}
 
 		// Intake/Outtake Handling
-		if(intakeButton.isPressed() && cataRotation.get_angle() > rotation_threshold){
+		if(intakeButton.isPressed() && cataRotation.get_angle() > 25500){
 			intakeMotor.moveVoltage(-12000);
 		}else if(outtakeButton.isPressed()){
 			intakeMotor.moveVoltage(12000);
