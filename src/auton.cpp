@@ -20,7 +20,7 @@ namespace AUTON{
         catapultMotor.moveVoltage(0);
     }
     void runIntake(){
-        intakeMotor.moveVoltage(-12000);
+        intakeMotor.moveVoltage(-15000);
     }
     void runIntakeReverse(){
         intakeMotor.moveVoltage(12000);
@@ -389,29 +389,21 @@ namespace AUTON{
                 windCatapult();
                 break;
             case AWP_AUTON_ID:
-                //starting from left side
+                autonLeftCommon(drive);
+                windCatapult();
+                runIntake();
+                drive->setMaxVelocity(200);
                 drive->moveDistance(3_in);
-                //spin roller
-                drive->turnAngle(-45_deg);
-                drive->moveDistance(6_in);
-                //intake disk
-                drive->moveDistance(-12_in);
+                drive->setMaxVelocity(200);
                 drive->turnAngle(-90_deg);
-                drive->moveDistance(12_in);
-                drive->turnAngle(-75_deg);
-                //shoot the three disks
-                drive->turnAngle(75_deg);
-                //intake while moving
-                drive->moveDistance(24_in);
-                drive->turnAngle(-15_deg);
-                //shoot disks
-                drive->turnAngle(15_deg);
-                //intake while moving
-                drive->moveDistance(60_in);
-                //if we have time we can shoot idk if we would have time tho
-                drive->turnAngle(45_deg);
-                drive->moveDistance(12_in);
-                //spin  roller
+                drive->setMaxVelocity(200);
+                drive->moveDistance(36_in);
+                stopIntake();
+
+
+
+
+             
                 break;
             case LEFT_AUTON_ID:
                 std::cout << "Running LEFT auton...";
