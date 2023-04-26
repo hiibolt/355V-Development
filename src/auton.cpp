@@ -63,13 +63,13 @@ namespace AUTON{
 
         // Turn towards 3-stack
         drive->setMaxVelocity(200);
-        drive->turnAngleAsync(-130_deg);
+        drive->turnAngleAsync(-120_deg);
         catapultMotor.moveVoltage(-10000);
         drive->waitUntilSettled();
         catapultMotor.moveVoltage(0);
 
         // Drive to 3-stack
-        drive->setMaxVelocity(250);
+        drive->setMaxVelocity(200);
         drive->moveDistanceAsync(27_in);
         windCatapult();
         drive->waitUntilSettled();
@@ -77,7 +77,7 @@ namespace AUTON{
         // Intake discs
         runIntake();
         drive->setMaxVelocity(210);
-        drive->moveDistance(32_in);
+        drive->moveDistance(30_in);
         
         // Turn towards goal
         drive->setMaxVelocity(200);
@@ -408,27 +408,39 @@ namespace AUTON{
             case LEFT_AUTON_ID:
                 std::cout << "Running LEFT auton...";
 
+                // Complete common
                 autonLeftCommon(drive);
+
+                // Turn around
                 catapultMotor.moveVoltage(-10000);
                 drive->setMaxVelocity(200);
-                drive->turnAngle(-15_deg);
+                drive->turnAngleAsync(-15_deg);
+                drive->waitUntilSettled();
                 windCatapult();
                 runIntake();
 
+                // Drive to speed bump
                 drive->setMaxVelocity(200);
-                drive->moveDistance(12_in);
+                drive->moveDistance(10_in);
 
+                // Turn to disks
                 drive->setMaxVelocity(200);
                 drive->turnAngle(30_deg);
                 
+                // Pick up disks
                 drive->setMaxVelocity(200);
                 drive->moveDistance(20_in);
+
+                // Turn around
                 drive->setMaxVelocity(200);
                 drive->turnAngle(-45_deg);
+
+                // Drive to goal
                 drive->setMaxVelocity(250);
                 drive->moveDistance(-30_in);
-                stopIntake();
 
+                // Shoot
+                stopIntake();
                 shootCatapult();
 
                 break;
