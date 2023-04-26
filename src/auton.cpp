@@ -55,7 +55,6 @@ namespace AUTON{
         drive->setMaxVelocity(200);
         drive->moveDistance(-6_in);
         drive->turnAngleAsync(-9_deg);
-
         drive->waitUntilSettled();
 
         // Shoot and Reset
@@ -66,17 +65,16 @@ namespace AUTON{
         drive->turnAngleAsync(-120_deg);
         catapultMotor.moveVoltage(-10000);
         drive->waitUntilSettled();
-        catapultMotor.moveVoltage(0);
 
         // Drive to 3-stack
-        drive->setMaxVelocity(200);
+        drive->setMaxVelocity(220);
         drive->moveDistanceAsync(27_in);
         windCatapult();
         drive->waitUntilSettled();
 
         // Intake discs
         runIntake();
-        drive->setMaxVelocity(210);
+        drive->setMaxVelocity(180);
         drive->moveDistance(30_in);
         
         // Turn towards goal
@@ -421,11 +419,11 @@ namespace AUTON{
 
                 // Drive to speed bump
                 drive->setMaxVelocity(200);
-                drive->moveDistance(10_in);
+                drive->moveDistance(12_in);
 
                 // Turn to disks
                 drive->setMaxVelocity(200);
-                drive->turnAngle(30_deg);
+                drive->turnAngle(35_deg);
                 
                 // Pick up disks
                 drive->setMaxVelocity(200);
@@ -437,7 +435,7 @@ namespace AUTON{
 
                 // Drive to goal
                 drive->setMaxVelocity(250);
-                drive->moveDistance(-30_in);
+                drive->moveDistance(-15_in);
 
                 // Shoot
                 stopIntake();
@@ -504,5 +502,6 @@ namespace AUTON{
                 //drive->turnAngle(180_deg);
                break;
 	    }
+        bandsPneumatic.set_value(HIGH);
     }
 }

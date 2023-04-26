@@ -25,6 +25,7 @@ pros::Rotation cataRotation(18);
 int rotation_threshold = 24500;
 int endgamePneumaticState = LOW;
 int bandsPneumaticState = LOW;
+int start_time = 0;
 pros::ADIDigitalOut endgamePneumatic('B', endgamePneumaticState);
 pros::ADIDigitalOut bandsPneumatic('C', bandsPneumaticState);
 
@@ -227,6 +228,7 @@ void autonomous() {
  */	
 void opcontrol() {
 	global_tick = 0;
+	start_time = pros::c::millis();
 	while (true){
 		global_tick ++;
 		switch (currentDrive){
@@ -242,7 +244,8 @@ void opcontrol() {
 				auto exponential = [&](float input){return (input/127) * std::pow(1.039,std::abs(input));};
 				float velocity = exponential(leftStick) / 127;
 				float turn     = exponential(rightStick) / 127; 
-				drive->getModel()->arcade(velocity, turn, 0.05);	
+				//drive->getModel()->arcade(velocity, turn, 0.05);
+				drive->getModel()->arcade(velocity, controller.getAnalog(ControllerAnalog::rightX), 0.05);
 				break;
 		}
 		
@@ -267,11 +270,11 @@ void opcontrol() {
 		}
 
 		// Catapult and endgame Notifications
-		if(global_tick > 10500){
-			if(global_tick % 75 == 0){
+		if(pros::c::millis() - start_time > 95000){
+			if(global_tick % 100 == 50){
 				LED::updateColorStrips({0,43}, desiredCataIndicator);
 				pros::delay(10);
-			}else if(global_tick % 25 == 0){
+			}else if(global_tick % 100 == 0){
 				LED::updateColorStrips({0,43}, 0x32CD32);
 				pros::delay(10);
 			}
