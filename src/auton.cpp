@@ -435,9 +435,13 @@ namespace AUTON{
 
                 // TODO
                 bandsPneumatic.set_value(HIGH);
+                pros::delay(100);
+                bandsPneumatic.set_value(LOW);
                 stopIntake();
 
                 // Drive to goal
+
+
                 drive->setMaxVelocity(250);
                 drive->moveDistance(-15_in);
 
