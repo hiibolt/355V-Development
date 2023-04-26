@@ -433,13 +433,16 @@ namespace AUTON{
                 drive->setMaxVelocity(200);
                 drive->turnAngle(-45_deg);
 
+                // TODO
+                bandsPneumatic.set_value(HIGH);
+                stopIntake();
+
                 // Drive to goal
                 drive->setMaxVelocity(250);
                 drive->moveDistance(-15_in);
 
-                // Shoot
-                stopIntake();
-                shootCatapult();
+                // TODO
+                //shootCatapult();
 
                 break;
             case RIGHT_AUTON_ID:
