@@ -7,3 +7,6 @@ VEX Team 355V 'Orange Mambas' experimental code - Intended for competition throu
 
 ## Statistics:
 https://www.robotevents.com/teams/VRC/355V
+
+### Need help/curious?
+Shoot @hibolt on Discord a DM! Always happy to help.
